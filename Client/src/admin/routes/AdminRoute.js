@@ -1,12 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
 import AdminLogin from "../Auth/AdminLogin";
 import AdminLayout from "../layout/AdminLayout";
-import Dashboard from "../pages/admin/Dashboard";
+import Dashboard from "../pages/Dashboard";
 import AddProduct from "../pages/AddProduct";
 import EditProduct from "../pages/EditProduct";
 import Orders from './../pages/Orders';
 import Products from "../pages/Products";
-let AdminRouter=createBrowserRouter(
+
+let AdminRoute=createBrowserRouter(
   [
     {
       path:'/admin/login',
@@ -21,19 +22,19 @@ let AdminRouter=createBrowserRouter(
           Component:Dashboard
         },
         {
-          path:'/addProduct',
+          path:'addProduct',
           Component:AddProduct
         },
         {
-          path:'/editProduct',
+          path:'editProduct',
           Component:EditProduct
         },
         {
-          path:'/orders',
+          path:'orders',
           Component:Orders
         },
         {
-          path:'/produts',
+          path:'products',
           Component:Products
         }
 
@@ -42,4 +43,4 @@ let AdminRouter=createBrowserRouter(
     }
   ]
 )
-export default AdminRouter
+export default AdminRoute

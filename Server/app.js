@@ -1,16 +1,29 @@
-let express=require('express');
-let path=require('path')
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
 
-let app=express();
-let cors=require('cors');
-require('dotenv').config();
-app.use(express.urlencoded({extended:true}));
+import adminRoutes from "./routes/adminRoutes.js";
+
+dotenv.config();
+
+const app = express();
+
 app.use(cors());
 app.use(express.json());
 
-app.get('/',(req,res)=>{
-    res.sendFile(path.join(__dirname,'./view/Home.html'));
+mongoose.connect(process.env.MONGO_URI)
+.then(() => {
+  console.log("MongoDB Connected");
+})
+.catch((err) => {
+  console.log(err);
 });
-app.use('/products',require('./routes/productRoute'));
 
-module.exports=app;
+app.use("/admin", adminRoutes);
+
+app.get("/", (req, res) => {
+  res.send("Server Running");
+});
+
+module.exports=app

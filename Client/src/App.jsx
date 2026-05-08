@@ -1,4 +1,3 @@
-import React from 'react';
 import AdminLayout from './layout/AdminLayout';
 import ClientLayout from './layout/ClientLayout';
 
