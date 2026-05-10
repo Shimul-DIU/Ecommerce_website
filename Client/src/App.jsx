@@ -4,7 +4,7 @@ import ClientLayout from './layout/ClientLayout';
 const App = () => {
   return (
     <div>
-      <AdminLayout></AdminLayout>
+      
       <ClientLayout></ClientLayout>
     </div>
   );

@@ -1,12 +1,13 @@
 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import AdminRoute from './admin/routes/AdminRoute';
 import { RouterProvider } from 'react-router-dom';
+import Router from './routes/routes';
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router= {AdminRoute,} >
+    <RouterProvider router= {Router} >
 
     </RouterProvider>
   </StrictMode>,
