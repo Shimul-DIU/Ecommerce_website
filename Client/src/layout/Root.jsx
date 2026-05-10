@@ -4,10 +4,18 @@ import Footer from "../components/comon/Footer";
 
 const Root = () => {
   return (
-    <div>
-      <Navbar></Navbar>
-      <Outlet></Outlet>
-      <Footer></Footer>
+    <div className="flex flex-col min-h-screen">
+
+      <Navbar />
+
+      {/* Main Content */}
+      <main className="flex-1 pt-2">
+        <Outlet />
+      </main>
+
+      {/* Footer */}
+      <Footer />
+
     </div>
   );
 };
