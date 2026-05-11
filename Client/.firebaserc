@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "default": "shimulshop-4cfec",
+    "live": "shimulshopping",
+    "#": "shimulshopping"
+  },
+  "targets": {},
+  "etags": {}
+}

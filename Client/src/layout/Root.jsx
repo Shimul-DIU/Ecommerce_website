@@ -2,15 +2,19 @@ import { Outlet } from "react-router-dom";
 import Navbar from "../components/comon/Navbar";
 import Footer from "../components/comon/Footer";
 
+
 const Root = () => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen ">
 
-      <Navbar />
+     <Navbar></Navbar>
 
       {/* Main Content */}
-      <main className="flex-1 pt-2">
-        <Outlet />
+      <main className=" ">
+
+           <Outlet />
+
+
       </main>
 
       {/* Footer */}

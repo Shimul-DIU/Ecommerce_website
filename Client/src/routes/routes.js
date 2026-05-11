@@ -3,8 +3,8 @@ import Root from "../layout/Root"
 import Home from './../pages/Home';
 import Categories from "../pages/Categories";
 import Products from "../pages/Products";
-import UserLogin from "../auth/UserLogin";
-import UserRegister from "../auth/UserRegister";
+import Login from "../auth/Login";
+import Register from "../auth/Register";
 
 let Router=createBrowserRouter([
   {
@@ -22,11 +22,11 @@ let Router=createBrowserRouter([
       },
       {
         path: "login",
-        Component: UserLogin
+        Component: Login
       },
       {
         path: "register",
-        Component: UserRegister
+        Component:Register
       },
     ]
 

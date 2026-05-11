@@ -17,22 +17,22 @@ const Navbar = () => {
   const [cartCount] = useState(3);
 
   return (
-    <header className="w-full sticky top-0 z-50 shadow-md  text-gray-800">
+    <header className="w-full sticky top-0 bg-white shadow-md  text-gray-800">
 
       {/* ── DESKTOP VIEW ── */}
       <nav className="hidden md:flex items-center justify-between max-w-7xl mx-auto px-6 py-3 gap-6 ">
 
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-          <img src={logo} alt="Logo" className="w-12 h-12 object-contain" />
+          <img src={logo} alt="Logo" className="h-14 w-auto" />
         </Link>
 
         {/* Search Bar */}
-        <div className="flex flex-1 max-w-md">
+        <div className="flex  flex-1 max-w-md">
           <input
             type="search"
             placeholder="Search products..."
-            className="w-full border px-4 py-2 rounded-l-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-gray-100 border-gray-300 placeholder:italic"
+            className="w-full  px-4 py-2 border rounded-l-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset transition bg-gray-100 border-gray-300 placeholder:italic"
           />
           <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 rounded-r-full transition text-sm">
             <FontAwesomeIcon icon={faSearch} />
@@ -44,12 +44,13 @@ const Navbar = () => {
           <li><Link to="/" className="hover:text-blue-600 transition-colors duration-200">Home</Link></li>
           <li><Link to="/categories" className="hover:text-blue-600 transition-colors duration-200">Categories</Link></li>
           <li><Link to="/products" className="hover:text-blue-600 transition-colors duration-200">Products</Link></li>
-          <li><Link to="/login" className="hover:text-blue-600 transition-colors duration-200">Login</Link></li>
-          <li><Link to="/register" className="hover:text-blue-600 transition-colors duration-200">Register</Link></li>
-        </ul>
+          <li className="bg-blue-600 hover:text-white rounded-md px-3 py-2 text-white hover:scale-110 duration-200"><Link to="/login" className="">Login</Link></li>
+          {/* <li><Link to="/register" className="hover:text-blue-600 transition-colors duration-200">Register</Link></li>
+         */}
+         </ul>
 
         {/* Action Icons */}
-        <div className="flex items-center gap-4 text-lg">
+        <div className="flex items-center gap-4 text-lg lg:mr-6">
           <button
             onClick={() => setDarkMode(!darkMode)}
             className="hover:text-blue-500 transition"
@@ -74,7 +75,7 @@ const Navbar = () => {
         {/* Top Row */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
           <Link to="/">
-            <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
+            <img src={logo} alt="Logo" className="w-auto h-12 object-contain" />
           </Link>
 
           <div className="flex items-center gap-4 text-lg">
