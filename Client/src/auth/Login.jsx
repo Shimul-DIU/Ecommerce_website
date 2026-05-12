@@ -1,30 +1,41 @@
 import React, { useState } from "react";
+import { app } from "../firebase/firebase.config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import {faEye,faEyeSlash,} from "@fortawesome/free-solid-svg-icons";
-
 import {faGoogle,faFacebook,faGithub,} from "@fortawesome/free-brands-svg-icons";
-import signInWithGoogle from "./SignInWithGoogle";
+const provider = new GoogleAuthProvider();
+const auth = getAuth(app);
+
+import {getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
 
 const Login = () => {
-  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin=(e)=>{
+const [showPassword, setShowPassword] = useState(false);
+const [user,setUser]=useState(null)
+const handleLogin=(e)=>{
     e.preventDefault()
   }
 
-  const handleGoogleLogin=async()=>{
-    try {
-       await signInWithGoogle()
-    } catch (error) {
-      console.log(error)
+  const handleGoogleLogin=()=>{
+        signInWithPopup(auth, provider)
+        .then(result=>{
+          let userInfo=result.user;
+          setUser(userInfo)
+        })
+        .catch(
+          (error)=>{
+              console.log(error)
+          }
+        )
+
+
     }
-
-
-  }
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-1">
-
+        <div>
+          
+        </div>
       {/* Login Card */}
       <div className="w-full max-w-md h-auto bg-white rounded-2xl shadow-xl p-8">
 
