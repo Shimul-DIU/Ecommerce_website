@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import logo from "../../assets/images/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { NavLink } from "react-router-dom";
 import {
   faCartShopping,
   faBars,
@@ -14,6 +15,7 @@ import { Link } from "react-router-dom";
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+
   const [cartCount] = useState(3);
 
   return (
@@ -23,9 +25,9 @@ const Navbar = () => {
       <nav className="hidden md:flex items-center justify-between max-w-7xl mx-auto px-6 py-3 gap-6 ">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 flex-shrink-0">
+        <NavLink to="/" className="flex items-center gap-2 flex-shrink-0">
           <img src={logo} alt="Logo" className="h-14 w-auto" />
-        </Link>
+        </NavLink>
 
         {/* Search Bar */}
         <div className="flex  flex-1 max-w-md">
@@ -41,10 +43,40 @@ const Navbar = () => {
 
         {/* Nav Links */}
         <ul className="flex items-center gap-6 text-sm font-medium">
-          <li><Link to="/" className="hover:text-blue-600 transition-colors duration-200">Home</Link></li>
-          <li><Link to="/categories" className="hover:text-blue-600 transition-colors duration-200">Categories</Link></li>
-          <li><Link to="/products" className="hover:text-blue-600 transition-colors duration-200">Products</Link></li>
-          <li className="bg-blue-600 hover:text-white rounded-md px-3 py-2 text-white hover:scale-110 duration-200"><Link to="/login" className="">Login</Link></li>
+
+
+          <li>
+            <NavLink to="/" className={({isActive})=>
+              isActive
+              ? "text-blue-700 transition-colors duration-200"
+              : "hover:text-blue-600 transition-colors duration-200"
+
+            } >
+              Home
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/categories" className={({isActive})=>
+              isActive
+              ? "text-blue-700 transition-colors duration-200"
+              : "hover:text-blue-600 transition-colors duration-200"
+
+            } >
+              Categories
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/products" className={({isActive})=>
+              isActive
+              ? "text-blue-700 transition-colors duration-200"
+              : "hover:text-blue-600 transition-colors duration-200"
+
+            } >
+              Products
+            </NavLink>
+          </li>
+          <li className="bg-blue-600 hover:text-white rounded-md px-3 py-2 text-white hover:scale-110 duration-200"><NavLink to="/login" className="">Login</NavLink>
+          </li>
           {/* <li><Link to="/register" className="hover:text-blue-600 transition-colors duration-200">Register</Link></li>
          */}
          </ul>
