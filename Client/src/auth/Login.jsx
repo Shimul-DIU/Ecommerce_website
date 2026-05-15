@@ -7,6 +7,8 @@ const provider = new GoogleAuthProvider();
 const auth = getAuth(app);
 
 import {getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import SignWithGoogle from "./SignInWithGoogle";
+import SignWithFacebook from "./SignInWithFacebook";
 
 
 const Login = () => {
@@ -17,24 +19,17 @@ const handleLogin=(e)=>{
     e.preventDefault()
   }
 
-  const handleGoogleLogin=()=>{
-        signInWithPopup(auth, provider)
-        .then(result=>{
-          let userInfo=result.user;
-          setUser(userInfo)
-        })
-        .catch(
-          (error)=>{
-              console.log(error)
-          }
-        )
-
+  const handleGoogleLogin=async()=>{
+        await SignWithGoogle();
 
     }
+  const handleFacebookLogin=async()=>{
+    await SignWithFacebook();
+  }
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-1">
         <div>
-          
+
         </div>
       {/* Login Card */}
       <div className="w-full max-w-md h-auto bg-white rounded-2xl shadow-xl p-8">
@@ -162,7 +157,7 @@ const handleLogin=(e)=>{
           </button>
 
           {/* Facebook */}
-          <button className="w-full border border-gray-300 hover:bg-gray-100 transition py-2 lg:py-3 rounded-lg flex items-center justify-center gap-3 font-medium">
+          <button onClick={handleFacebookLogin} className="w-full border border-gray-300 hover:bg-gray-100 transition py-2 lg:py-3 rounded-lg flex items-center justify-center gap-3 font-medium">
             <FontAwesomeIcon
               icon={faFacebook}
               className="text-blue-600 text-lg"
