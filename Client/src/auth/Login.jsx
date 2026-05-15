@@ -3,10 +3,9 @@ import { app } from "../firebase/firebase.config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faEye,faEyeSlash,} from "@fortawesome/free-solid-svg-icons";
 import {faGoogle,faFacebook,faGithub,} from "@fortawesome/free-brands-svg-icons";
-const provider = new GoogleAuthProvider();
-const auth = getAuth(app);
 
-import {getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
+
 import SignWithGoogle from "./SignInWithGoogle";
 import SignWithFacebook from "./SignInWithFacebook";
 
@@ -15,8 +14,8 @@ const Login = () => {
 
 const [showPassword, setShowPassword] = useState(false);
 const [user,setUser]=useState(null)
-const handleLogin=(e)=>{
-    e.preventDefault()
+const handleLogin=(event)=>{
+    event?.preventDefault()
   }
 
   const handleGoogleLogin=async()=>{
