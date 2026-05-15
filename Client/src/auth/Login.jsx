@@ -14,9 +14,7 @@ const Login = () => {
 
 const [showPassword, setShowPassword] = useState(false);
 const [user,setUser]=useState(null)
-const handleLogin=(event)=>{
-    event?.preventDefault()
-  }
+
 
   const handleGoogleLogin=async()=>{
         await SignWithGoogle();
@@ -45,7 +43,7 @@ const handleLogin=(event)=>{
         </div>
 
         {/* Form */}
-        <form className="space-y-4" onSubmit={handleLogin} >
+        <form className="space-y-4"  >
 
           {/* Email */}
           <div>
