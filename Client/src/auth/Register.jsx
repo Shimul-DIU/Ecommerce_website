@@ -15,6 +15,23 @@ import {
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [FormData,setFormData]=useState({
+    fullname:"",
+    email:"",
+    password:"",
+    confirmPassword: ""
+  })
+  const formHandler=(e)=>{
+    e.preventDefault();
+    // transfer form data to backend
+    
+  }
+  const changeHandler=(e)=>{
+    setFormData((prev)=>({
+      ...prev,
+      [e.target.name]:e.target.value
+    }))
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-1">
@@ -34,7 +51,7 @@ const Register = () => {
         </div>
 
         {/* Form */}
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={formHandler}>
 
           {/* Name */}
           <div>
@@ -44,6 +61,8 @@ const Register = () => {
 
             <input
               type="text"
+              name="fullname"
+              onChange={changeHandler}
               placeholder="Enter your full name"
               className="w-full px-4 py-2 lg:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -57,6 +76,8 @@ const Register = () => {
 
             <input
               type="email"
+              name="email"
+              onChange={changeHandler}
               placeholder="Enter your email"
               className="w-full px-4 py-2 lg:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -73,6 +94,8 @@ const Register = () => {
               <div className="w-11/12">
                 <input
                   type={showPassword ? "text" : "password"}
+                  name="password"
+                  onChange={changeHandler}
                   placeholder="Enter your password"
                   className="w-full px-4 py-2 lg:py-3 rounded-lg outline-none"
                 />
@@ -104,6 +127,8 @@ const Register = () => {
               <div className="w-11/12">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
+                  name='confirmPassword'
+                  onChange={changeHandler}
                   placeholder="Confirm your password"
                   className="w-full px-4 py-2 lg:py-3 rounded-lg outline-none"
                 />
