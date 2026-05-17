@@ -1,33 +1,44 @@
-import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios"
 import {
   faEye,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
+
   faGoogle,
   faFacebook,
   faGithub,
 } from "@fortawesome/free-brands-svg-icons";
+import { useState } from "react";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [FormData,setFormData]=useState({
+  const [message,setMessage]=useState('')
+  const [user,setUser]=useState({
     fullname:"",
     email:"",
     password:"",
     confirmPassword: ""
   })
-  const formHandler=(e)=>{
+  const formHandler=async(e)=>{
     e.preventDefault();
     // transfer form data to backend
-    
+    try {
+         let res=await axios.post('https://shimulshopping.web.app/user/register',user);
+         setMessage(res.data)
+
+    } catch (error) {
+      console.log(error)
+    }
+
+
   }
   const changeHandler=(e)=>{
-    setFormData((prev)=>({
+    setUser((prev)=>({
       ...prev,
       [e.target.name]:e.target.value
     }))
@@ -150,7 +161,7 @@ const Register = () => {
 
             </div>
           </div>
-
+                  <div className="mx-auto">{message}</div>
           {/* Terms */}
           <div className="flex items-start gap-2 text-sm text-gray-600">
             <input type="checkbox" className="mt-1" />
