@@ -3,6 +3,6 @@ const createUser = require('./controller/userController')
 let route=express.Router()
 
 
-route.get('/register',createUser)
+route.post('/register',createUser)
 
 module.exports=route

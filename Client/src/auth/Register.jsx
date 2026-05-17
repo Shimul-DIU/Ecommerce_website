@@ -28,7 +28,7 @@ const Register = () => {
     e.preventDefault();
     // transfer form data to backend
     try {
-         let res=await axios.post('https://shimulshopping.web.app/user/register',user);
+         let res=await axios.post('https://ecommerce-website-3b36.onrender.com/user/register',user);
          setMessage(res.data)
 
     } catch (error) {
