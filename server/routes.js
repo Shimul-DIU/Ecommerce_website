@@ -4,5 +4,6 @@ let route=express.Router()
 
 
 route.post('/register',createUser)
+route.post('/login',createUser)
 
 module.exports=route
