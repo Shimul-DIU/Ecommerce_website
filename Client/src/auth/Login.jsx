@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { app } from "../firebase/firebase.config";
+import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faEye,faEyeSlash,} from "@fortawesome/free-solid-svg-icons";
 import {faGoogle,faFacebook,faGithub,} from "@fortawesome/free-brands-svg-icons";
@@ -13,7 +13,11 @@ import SignWithFacebook from "./SignInWithFacebook";
 const Login = () => {
 
 const [showPassword, setShowPassword] = useState(false);
-const [user,setUser]=useState(null)
+const[message,setMessage]=useState('')
+const [user,setUser]=useState({
+  email:"",
+  password:""
+})
 
 
   const handleGoogleLogin=async()=>{
@@ -22,6 +26,18 @@ const [user,setUser]=useState(null)
     }
   const handleFacebookLogin=async()=>{
     await SignWithFacebook();
+  }
+  const changeHandler=(e)=>{
+    setUser((prev)=>({
+      ...prev,
+      [e.target.name]:e.target.value,
+      [e.target.password]:e.target.value
+    }))
+  }
+  const handleLogin=async(e)=>{
+    e.preventDefault();
+    let response=await axios.post("http://localhost:4000/user/login",user)
+      setMessage(response.data.message)
   }
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-1">
@@ -43,7 +59,7 @@ const [user,setUser]=useState(null)
         </div>
 
         {/* Form */}
-        <form className="space-y-4"  >
+        <form className="space-y-4"  onSubmit={handleLogin} >
 
           {/* Email */}
           <div>
@@ -53,6 +69,8 @@ const [user,setUser]=useState(null)
 
             <input
               type="email"
+              name="email"
+              onChange={changeHandler}
               placeholder="Enter your email"
               className="w-full px-4 py-2 lg:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -68,6 +86,7 @@ const [user,setUser]=useState(null)
               <div className="w-11/12">
                 <input
                 type={showPassword ? "text" : "password"}
+                onChange={changeHandler}
                 placeholder="Enter your password"
                 className="w-full px-4 py-2 lg:py-3  border-gray-300 rounded-lg outline-none "
               />
@@ -75,6 +94,7 @@ const [user,setUser]=useState(null)
               <div className="mr-3">
                   <button
                 type="button"
+                name="password"
                 onClick={() => setShowPassword(!showPassword)}
                 className=" text-gray-500"
               >
@@ -123,12 +143,13 @@ const [user,setUser]=useState(null)
           {/* Login Button */}
           <button
             type="submit"
+
             className="w-full bg-blue-600 hover:bg-blue-700 transition duration-300 text-white py-2 lg:py-3 rounded-lg font-semibold"
           >
             Login
           </button>
-        </form>
-
+        </form >
+            {message && <div className="mx-auto">{message}</div>}
         {/* Divider */}
         <div className="flex items-center gap-2 my-2">
           <div className="flex-1 h-1 bg-gray-300"></div>
