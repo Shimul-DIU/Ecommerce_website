@@ -30,14 +30,17 @@ const [user,setUser]=useState({
   const changeHandler=(e)=>{
     setUser((prev)=>({
       ...prev,
-      [e.target.name]:e.target.value,
-      [e.target.password]:e.target.value
+      [e.target.name]:e.target.value
     }))
   }
   const handleLogin=async(e)=>{
     e.preventDefault();
-    let response=await axios.post("http://localhost:4000/user/login",user)
+    try {
+      let response=await axios.post("http://localhost:4000/user/login",user)
       setMessage(response.data.message)
+    } catch (error) {
+      setMessage(error.response?.data?.message || "An error occurred")
+    }
   }
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-1">
@@ -86,6 +89,7 @@ const [user,setUser]=useState({
               <div className="w-11/12">
                 <input
                 type={showPassword ? "text" : "password"}
+                name="password"
                 onChange={changeHandler}
                 placeholder="Enter your password"
                 className="w-full px-4 py-2 lg:py-3  border-gray-300 rounded-lg outline-none "

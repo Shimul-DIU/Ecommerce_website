@@ -26,13 +26,18 @@ const Register = () => {
   })
   const formHandler=async(e)=>{
     e.preventDefault();
+    if (user.password !== user.confirmPassword) {
+      setMessage("Passwords do not match");
+      return;
+    }
+
     // transfer form data to backend
     try {
-         let res=await axios.post('https://ecommerce-website-3b36.onrender.com/user/register',user);
-         setMessage(res.data)
+         let res=await axios.post('http://localhost:4000/user/register',user);
+         setMessage(res.data.message || "Registration successful");
 
     } catch (error) {
-      console.log(error)
+      setMessage(error.response?.data?.message || "An error occurred");
     }
 
 
@@ -161,7 +166,12 @@ const Register = () => {
 
             </div>
           </div>
-                  <div className="mx-auto">{message}</div>
+
+          {message && (
+            <div className={`text-center text-sm ${message.includes("successful") ? "text-green-600" : "text-red-600"}`}>
+              {message}
+            </div>
+          )}
           {/* Terms */}
           <div className="flex items-start gap-2 text-sm text-gray-600">
             <input type="checkbox" className="mt-1" />
