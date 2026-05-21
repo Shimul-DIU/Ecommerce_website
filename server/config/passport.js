@@ -2,13 +2,13 @@ const JwtStrategy = require('passport-jwt').Strategy,
     ExtractJwt = require('passport-jwt').ExtractJwt;
 const passport = require('passport');
 require('dotenv').config();
+let users=require('../model/userModel')
 const opts = {}
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.JWT_SECRET;
-opts.issuer = 'accounts.examplesoft.com';
-opts.audience = 'yoursite.net';
+
 passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
-    User.findOne({id: jwt_payload.sub}, function(err, user) {
+    users.findOne({_id: jwt_payload.id}, function(err, user) {
         if (err) {
             return done(err, false);
         }
