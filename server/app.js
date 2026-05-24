@@ -19,6 +19,8 @@ app.use(cors())
 app.use(passport.initialize());
 
 app.use('/user',userRoute)
+app.use('/api',adminRoute)
+
 
 
 

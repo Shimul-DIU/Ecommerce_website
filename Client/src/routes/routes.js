@@ -5,6 +5,7 @@ import Categories from "../pages/Categories";
 import Products from "../pages/Products";
 import Login from "../auth/Login";
 import Register from "../auth/Register";
+import admin from './../pages/admin';
 
 let Router=createBrowserRouter([
   {
@@ -27,6 +28,10 @@ let Router=createBrowserRouter([
       {
         path: "register",
         Component:Register
+      },
+      {
+        path: "admin",
+        Component:admin
       },
     ]
 
