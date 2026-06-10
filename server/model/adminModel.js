@@ -1,5 +1,5 @@
 let mongoose=require('mongoose')
-let userSchema=new mongoose.Schema({
+let adminSchema=new mongoose.Schema({
   email:{
     type:String,
     required:true,

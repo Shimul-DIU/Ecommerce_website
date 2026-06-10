@@ -5,7 +5,12 @@ var jwt = require('jsonwebtoken');
 let createAdmin=async(req,res)=>{
 
     try {
-      let {email,password}=req.body
+      let {email,password,confirmPassword}=req.body
+      if (!email || !password || !confirmPassword) {
+        return res.status(400).json({
+          message: "Email, password, and confirmPassword are required"
+        });
+      }
       if (password !== confirmPassword){
         return res.status(400).json({
             message: "Password and Confirm Password do not match"
@@ -25,7 +30,7 @@ let createAdmin=async(req,res)=>{
         password:hashpassword
       })
       await admin.save();
-      return res.status(200).json({ message: "User created successfully" });
+      return res.status(200).json({ message: "Admin created successfully" });
     } catch (error) {
       console.log(error)
       return res.status(500).json({ message: "Internal server error" });
@@ -58,7 +63,7 @@ const loginAdmin=async(req,res)=>{
          });
 
       }
-      const token=jwt.sign({email:admin.email,id:admin._id}, process.env.JWT_SECRET,'{expiresIn: 2d}' )
+      const token=jwt.sign({email:admin.email,id:admin._id}, process.env.JWT_SECRET, { expiresIn: '2d' })
       return res.status(200).json({
 
          message: "Login successful",

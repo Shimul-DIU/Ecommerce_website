@@ -1,16 +1,14 @@
 let express=require('express')
 const { loginAdmin, createAdmin } = require('./controller/adminController')
-let route=express.Router()
+const { createUser, loginUser } = require('./controller/userController')
 
+const userRoute = express.Router()
+userRoute.post('/register', createUser)
+userRoute.post('/login', loginUser)
 
-route.post('/register',createUser)
-route.post('/login',loginUser)
-
-
-
+const adminRoute = express.Router()
 // admin route
-route.post('/createAdmin',createAdmin)
-route.get('/loginAdmin',loginAdmin)
+adminRoute.post('/createAdmin', createAdmin)
+adminRoute.post('/loginAdmin', loginAdmin)
 
-
-module.exports=route
+module.exports = { userRoute, adminRoute }
