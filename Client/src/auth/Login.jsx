@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faEye,faEyeSlash,} from "@fortawesome/free-solid-svg-icons";
@@ -36,7 +36,8 @@ const [user,setUser]=useState({
   const handleLogin=async(e)=>{
     e.preventDefault();
     try {
-      let response=await axios.post("http://localhost:4000/user/login",user)
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+      let response=await axios.post(`${API_BASE_URL}/user/login`,user)
       setMessage(response.data.message)
     } catch (error) {
       setMessage(error.response?.data?.message || "An error occurred")

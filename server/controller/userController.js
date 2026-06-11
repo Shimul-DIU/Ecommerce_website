@@ -7,16 +7,30 @@ let createUser=async(req,res)=>{
 
     try {
       let {fullname,email,password,confirmPassword}=req.body
+      const fields = { fullname, email, password, confirmPassword };
+        for (let [key, value] of Object.entries(fields)) {
+            if (!value) {
+                return res.status(400).json({
+                    error: { [key]: `${key} is required` }
+                });
+            }
+        }
+
       if (password !== confirmPassword){
         return res.status(400).json({
-            message: "Password and Confirm Password do not match"
+            error:{
+                confirmPassword:'Password not matched'
+            }
+
          });
       }
 
       let existingUser = await users.findOne({ email });
       if (existingUser) {
         return res.status(400).json({
-          message: "Email is already registered"
+          error:{
+            email:'Email is already registered'
+          }
         });
       }
 
@@ -28,9 +42,9 @@ let createUser=async(req,res)=>{
       })
       await user.save();
       return res.status(200).json({ message: "User created successfully" });
-    } catch (error) {
-      console.log(error)
-      return res.status(500).json({ message: "Internal server error" });
+    }
+     catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
     }
 
 }
@@ -69,7 +83,7 @@ const loginUser=async(req,res)=>{
         });
     }
     catch(error){
-      console.log(error)
+      if (process.env.NODE_ENV === 'development') console.log(error);
       return res.status(500).json({ message: "Internal server error" });
     }
 }

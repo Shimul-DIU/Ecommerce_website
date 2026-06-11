@@ -4,5 +4,5 @@ let port=process.env.PORT || 3000
 
 
 app.listen(port,()=>{
-  console.log(`runnig at http://localhost:${port}`)
+  console.log(`running at http://localhost:${port}`)
 })

@@ -7,7 +7,10 @@ import Login from "../auth/Login";
 import Register from "../auth/Register";
 import admin from './../pages/admin';
 
-let Router=createBrowserRouter([
+// Placeholder component for Cart
+import Cart from "../components/comon/Cart";
+
+const Router=createBrowserRouter([
   {
     path:'/',
     Component:Root,
@@ -32,6 +35,10 @@ let Router=createBrowserRouter([
       {
         path: "admin",
         Component:admin
+      },
+      {
+        path: "cart",
+        Component:Cart
       },
     ]
 

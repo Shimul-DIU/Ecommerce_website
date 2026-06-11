@@ -3,20 +3,25 @@ const JwtStrategy = require('passport-jwt').Strategy,
 const passport = require('passport');
 require('dotenv').config();
 let users=require('../model/userModel')
+
+// Validate JWT_SECRET
+if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is required but not defined. Please add it to your .env file.');
+}
+
 const opts = {}
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.JWT_SECRET;
 
-passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
-    users.findOne({_id: jwt_payload.id}, function(err, user) {
-        if (err) {
-            return done(err, false);
-        }
+passport.use(new JwtStrategy(opts, async function(jwt_payload, done) {
+    try {
+        const user = await users.findOne({_id: jwt_payload.id});
         if (user) {
             return done(null, user);
         } else {
             return done(null, false);
-            // or you could create a new account
         }
-    });
+    } catch (err) {
+        return done(err, false);
+    }
 }));

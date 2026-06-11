@@ -1,9 +1,8 @@
-import React from 'react';
-
 const Home = () => {
   return (
-    <div>
-      THIS IS HOME COMPO
+    <div className="p-8">
+      <h1 className="text-3xl font-bold">Welcome to Our Store</h1>
+      <p className="text-gray-600 mt-4">Browse our collection of products</p>
     </div>
   );
 };

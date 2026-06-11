@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 const admin = () => {
   const [admin,setAdmin]=useState({
@@ -7,32 +7,37 @@ const admin = () => {
       confirmPassword: ""
     })
   const handleChange=(e)=>{
-    e.preventDefault()
       setAdmin((Prev)=>({
           ...Prev,
-          [e.target.email]:e.target.email,
+          [e.target.name]:e.target.value,
 
       }))
   }
 
   const formHandler=async(e)=>{
     e.preventDefault()
-    let res=await axios.post('http://localhost:4000/api/createAdmin',admin)
-    console.log(res.data.message)
+    try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+      let res=await axios.post(`${API_BASE_URL}/api/createAdmin`,admin)
+      alert('Admin created successfully')
+      setAdmin({email:"", password:"", confirmPassword:""})
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to create admin')
+    }
   }
   return (
     <div>
-      <form action="/admin/createAdmin" method="post" >
-          <label for='email'>Email :
+      <form onSubmit={formHandler}>
+          <label htmlFor='email'>Email :
               <input type='email' name='email'onChange={handleChange} ></input>
           </label>
-          <label for='password'>Password :
+          <label htmlFor='password'>Password :
               <input type='password' name='password' onChange={handleChange} ></input>
           </label>
-          <label for='confirmPassword'>Password :
-              <input type='confirmPassword' name='confirmPassword' onChange={handleChange} ></input>
+          <label htmlFor='confirmPassword'>Confirm Password :
+              <input type='password' name='confirmPassword' onChange={handleChange} ></input>
           </label>
-          <button type='submit' onSubmit={formHandler}></button>
+          <button type='submit'>Create Admin</button>
       </form>
     </div>
   );

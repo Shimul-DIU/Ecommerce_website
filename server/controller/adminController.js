@@ -32,7 +32,7 @@ let createAdmin=async(req,res)=>{
       await admin.save();
       return res.status(200).json({ message: "Admin created successfully" });
     } catch (error) {
-      console.log(error)
+      if (process.env.NODE_ENV === 'development') console.log(error);
       return res.status(500).json({ message: "Internal server error" });
     }
 
@@ -71,7 +71,7 @@ const loginAdmin=async(req,res)=>{
         });
     }
     catch(error){
-      console.log(error)
+      if (process.env.NODE_ENV === 'development') console.log(error);
       return res.status(500).json({ message: "Internal server error" });
     }
 }

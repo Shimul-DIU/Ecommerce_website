@@ -1,23 +1,23 @@
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios"
-import {
-  faEye,
-  faEyeSlash,
-} from "@fortawesome/free-solid-svg-icons";
-
-import {
-
-  faGoogle,
-  faFacebook,
-  faGithub,
-} from "@fortawesome/free-brands-svg-icons";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {faEye, faEyeSlash,} from "@fortawesome/free-solid-svg-icons";
+
+import{faGoogle,faFacebook,faGithub,} from "@fortawesome/free-brands-svg-icons";
+
 
 const Register = () => {
+  const navigate=useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const[message,setMessage]=useState('');
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [message,setMessage]=useState('')
+  const [error,setError]=useState({
+    fullname:'',
+    email:'',
+    password:'',
+    confirmPassword:''
+  })
   const [user,setUser]=useState({
     fullname:"",
     email:"",
@@ -26,21 +26,39 @@ const Register = () => {
   })
   const formHandler=async(e)=>{
     e.preventDefault();
+
     if (user.password !== user.confirmPassword) {
-      setMessage("Passwords do not match");
+      setError((prev)=>({
+        ...prev,
+        confirmPassword:'Password not matched'
+      }));
       return;
     }
+    setError({
+      fullname:"",
+      email:"",
+      password:"",
+      confirmPassword: '',
+
+    })
 
     // transfer form data to backend
     try {
-         let res=await axios.post('http://localhost:4000/user/register',user);
-         setMessage(res.data.message || "Registration successful");
+
+        await axios.post('http://localhost:4000/user/register',user);
+
+      navigate('/login')
 
     } catch (error) {
-      setMessage(error.response?.data?.message || "An error occurred");
+        const serverError=error.response?.data?.error;
+        if (serverError){
+            setError((prev)=>({
+                ...prev,
+                ...serverError
+            }));
+        }
+
     }
-
-
   }
   const changeHandler=(e)=>{
     setUser((prev)=>({
@@ -77,12 +95,14 @@ const Register = () => {
 
             <input
               type="text"
-              name="fullname"
+              name="fullname" required
               onChange={changeHandler}
               placeholder="Enter your full name"
               className="w-full px-4 py-2 lg:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+          {error.fullname  && <p className="text-red-500 text-sm">{error.fullname}</p>}
+
 
           {/* Email */}
           <div>
@@ -92,12 +112,14 @@ const Register = () => {
 
             <input
               type="email"
-              name="email"
+              name="email" required
               onChange={changeHandler}
               placeholder="Enter your email"
               className="w-full px-4 py-2 lg:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+                    {error.email  && <p className="text-red-500 text-sm">{error.email}</p>}
+
 
           {/* Password */}
           <div>
@@ -107,10 +129,11 @@ const Register = () => {
 
             <div className="flex border border-gray-300 rounded-lg justify-between items-center focus-within:ring-2 focus-within:ring-blue-500">
 
+
               <div className="w-11/12">
                 <input
                   type={showPassword ? "text" : "password"}
-                  name="password"
+                  name="password" required
                   onChange={changeHandler}
                   placeholder="Enter your password"
                   className="w-full px-4 py-2 lg:py-3 rounded-lg outline-none"
@@ -124,13 +147,15 @@ const Register = () => {
                   className="text-gray-500"
                 >
                   <FontAwesomeIcon
-                    icon={showPassword ? faEyeSlash : faEye}
+                    icon={showPassword ? faEye:faEyeSlash }
                   />
                 </button>
               </div>
 
             </div>
           </div>
+                    {error.password  && <p className="text-red-500 text-sm">{error.password}</p>}
+
 
           {/* Confirm Password */}
           <div>
@@ -143,7 +168,7 @@ const Register = () => {
               <div className="w-11/12">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
-                  name='confirmPassword'
+                  name='confirmPassword' required
                   onChange={changeHandler}
                   placeholder="Confirm your password"
                   className="w-full px-4 py-2 lg:py-3 rounded-lg outline-none"
@@ -159,13 +184,15 @@ const Register = () => {
                   className="text-gray-500"
                 >
                   <FontAwesomeIcon
-                    icon={showConfirmPassword ? faEyeSlash : faEye}
+                    icon={showConfirmPassword ? faEye:faEyeSlash }
                   />
                 </button>
               </div>
 
             </div>
           </div>
+                    {error.confirmPassword  && <p className="text-red-500 text-sm">{error.confirmPassword}</p>}
+
 
           {message && (
             <div className={`text-center text-sm ${message.includes("successful") ? "text-green-600" : "text-red-600"}`}>

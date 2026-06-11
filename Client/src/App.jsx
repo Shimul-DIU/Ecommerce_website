@@ -1,11 +1,11 @@
 
-import ClientLayout from './layout/ClientLayout';
+import Root from './layout/Root';
 
 const App = () => {
   return (
     <div>
 
-      <ClientLayout></ClientLayout>
+      <Root></Root>
     </div>
   );
 };
