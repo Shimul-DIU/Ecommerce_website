@@ -8,10 +8,11 @@ import {faGoogle,faFacebook,faGithub,} from "@fortawesome/free-brands-svg-icons"
 
 import SignWithGoogle from "./SignInWithGoogle";
 import SignWithFacebook from "./SignInWithFacebook";
+import { useNavigate } from "react-router-dom";
 
 
 const Login = () => {
-
+const Navigate=useNavigate();
 const [showPassword, setShowPassword] = useState(false);
 const[message,setMessage]=useState('')
 const [user,setUser]=useState({
@@ -36,9 +37,11 @@ const [user,setUser]=useState({
   const handleLogin=async(e)=>{
     e.preventDefault();
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
-      let response=await axios.post(`${API_BASE_URL}/user/login`,user)
+      const response=await axios.post('http://localhost:4000/user/login',user)
       setMessage(response.data.message)
+      console.log(setMessage);
+      localStorage.setItem('token',response.data.token)
+      Navigate('/profile')
     } catch (error) {
       setMessage(error.response?.data?.message || "An error occurred")
     }
@@ -73,7 +76,7 @@ const [user,setUser]=useState({
 
             <input
               type="email"
-              name="email"
+              name="email" required
               onChange={changeHandler}
               placeholder="Enter your email"
               className="w-full px-4 py-2 lg:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
@@ -90,7 +93,7 @@ const [user,setUser]=useState({
               <div className="w-11/12">
                 <input
                 type={showPassword ? "text" : "password"}
-                name="password"
+                name="password" required
                 onChange={changeHandler}
                 placeholder="Enter your password"
                 className="w-full px-4 py-2 lg:py-3  border-gray-300 rounded-lg outline-none "
@@ -104,7 +107,7 @@ const [user,setUser]=useState({
                 className=" text-gray-500"
               >
                 <FontAwesomeIcon
-                  icon={showPassword ? faEyeSlash : faEye}
+                  icon={showPassword ? faEye:faEyeSlash }
                 />
               </button>
               </div>
@@ -113,6 +116,7 @@ const [user,setUser]=useState({
 
             </div>
           </div>
+          {message && <p className="text-red-500 text-sm">{message}</p>}
 
           {/* Remember + Forgot */}
           <div className="flex items-center justify-between text-sm">
@@ -154,7 +158,7 @@ const [user,setUser]=useState({
             Login
           </button>
         </form >
-            {message && <div className="mx-auto">{message}</div>}
+
         {/* Divider */}
         <div className="flex items-center gap-2 my-2">
           <div className="flex-1 h-1 bg-gray-300"></div>

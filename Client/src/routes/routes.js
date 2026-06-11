@@ -9,6 +9,7 @@ import admin from './../pages/admin';
 
 // Placeholder component for Cart
 import Cart from "../components/comon/Cart";
+import Profile from "../auth/Profile";
 
 const Router=createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const Router=createBrowserRouter([
       {
         path: "cart",
         Component:Cart
+      },
+      {
+        path: "profile",
+        Component:Profile
       },
     ]
 
