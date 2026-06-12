@@ -1,7 +1,9 @@
-import  { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "../../assets/images/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+// import { FaUserCircle } from "react-icons/fa";
+
 import {
   faCartShopping,
   faBars,
@@ -9,32 +11,36 @@ import {
   faMoon,
   faSun,
   faSearch,
+  faUser
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-
   const [cartCount] = useState(3);
+  const [isLoggedIn , setIsLoggedIn]=useState(false);
+  useEffect(()=>{
+    const token=localStorage.getItem('token')
+    if(token){
+      setIsLoggedIn(true)
+    }
+  },[])
 
   return (
-    <header className="w-full sticky top-0 bg-white shadow-md  text-gray-800">
-
+    <header className="w-full sticky top-0 bg-white shadow-md text-gray-800">
       {/* ── DESKTOP VIEW ── */}
-      <nav className="hidden md:flex items-center justify-between max-w-7xl mx-auto px-6 py-3 gap-6 ">
-
+      <nav className="hidden md:flex items-center justify-between max-w-7xl mx-auto px-6 py-3 gap-6">
         {/* Logo */}
-        <NavLink to="/" className="flex items-center gap-2 flex-shrink-0">
+        <NavLink to="/" className="flex items-center gap-2 shrink-0">
           <img src={logo} alt="Logo" className="h-14 w-auto" />
         </NavLink>
 
         {/* Search Bar */}
-        <div className="flex  flex-1 max-w-md">
+        <div className="flex flex-1 max-w-md">
           <input
             type="search"
             placeholder="Search products..."
-            className="w-full  px-4 py-2 border rounded-l-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset transition bg-gray-100 border-gray-300 placeholder:italic"
+            className="w-full px-4 py-2 border rounded-l-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset transition bg-gray-100 border-gray-300 placeholder:italic"
           />
           <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 rounded-r-full transition text-sm">
             <FontAwesomeIcon icon={faSearch} />
@@ -43,50 +49,60 @@ const Navbar = () => {
 
         {/* Nav Links */}
         <ul className="flex items-center gap-6 text-sm font-medium">
-
-
           <li>
-            <NavLink to="/" className={({isActive})=>
-              isActive
-              ? "text-blue-700 transition-colors duration-200"
-              : "hover:text-blue-600 transition-colors duration-200"
-
-            } >
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-blue-700 transition-colors duration-200"
+                  : "hover:text-blue-600 transition-colors duration-200"
+              }
+            >
               Home
             </NavLink>
           </li>
           <li>
-            <NavLink to="/categories" className={({isActive})=>
-              isActive
-              ? "text-blue-700 transition-colors duration-200"
-              : "hover:text-blue-600 transition-colors duration-200"
-
-            } >
+            <NavLink
+              to="/categories"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-blue-700 transition-colors duration-200"
+                  : "hover:text-blue-600 transition-colors duration-200"
+              }
+            >
               Categories
             </NavLink>
           </li>
           <li>
-            <NavLink to="/products" className={({isActive})=>
-              isActive
-              ? "text-blue-700 transition-colors duration-200"
-              : "hover:text-blue-600 transition-colors duration-200"
-
-            } >
+            <NavLink
+              to="/products"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-blue-700 transition-colors duration-200"
+                  : "hover:text-blue-600 transition-colors duration-200"
+              }
+            >
               Products
             </NavLink>
           </li>
-          <li className="bg-blue-600 hover:text-white rounded-md px-3 py-2 text-white hover:scale-110 duration-200"><NavLink to="/login" className="">Login</NavLink>
+          <li className="  px-3 py-2  ">
+            {isLoggedIn? (
+              <NavLink to='/profile'>
+                <FontAwesomeIcon icon={faUser} />
+              </NavLink>
+            ): <NavLink to="/login">Login</NavLink>}
+
           </li>
-          {/* <li><Link to="/register" className="hover:text-blue-600 transition-colors duration-200">Register</Link></li>
-         */}
-         </ul>
+          {/* <li>
+            <Link to="/register" className="hover:text-blue-600 transition-colors duration-200">
+              Register
+            </Link>
+          </li> */}
+        </ul>
 
         {/* Action Icons */}
         <div className="flex items-center gap-4 text-lg lg:mr-6">
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="hover:text-blue-500 transition"
-          >
+          <button onClick={() => setDarkMode(!darkMode)} className="hover:text-blue-500 transition">
             <FontAwesomeIcon icon={darkMode ? faSun : faMoon} />
           </button>
 
@@ -98,13 +114,13 @@ const Navbar = () => {
               </span>
             )}
           </Link>
-          <Link to={'../../pages/admin'}>Admin</Link>
+
+          <Link to="../../pages/admin">Admin</Link>
         </div>
       </nav>
 
       {/* ── MOBILE VIEW ── */}
       <nav className="md:hidden">
-
         {/* Top Row */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
           <Link to="/">
@@ -125,10 +141,7 @@ const Navbar = () => {
               )}
             </Link>
 
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="hover:text-blue-500 transition"
-            >
+            <button onClick={() => setMenuOpen(!menuOpen)} className="hover:text-blue-500 transition">
               <FontAwesomeIcon icon={menuOpen ? faXmark : faBars} />
             </button>
           </div>
@@ -149,11 +162,41 @@ const Navbar = () => {
         {/* Collapsible Menu */}
         {menuOpen && (
           <div className="flex flex-col px-4 py-3 gap-3 text-sm font-medium border-b border-gray-200 bg-white">
-            <Link to="/" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 transition-colors duration-200 py-1 border-b border-dashed border-gray-200">Home</Link>
-            <Link to="/categories" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 transition-colors duration-200 py-1 border-b border-dashed border-gray-200">Categories</Link>
-            <Link to="/products" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 transition-colors duration-200 py-1 border-b border-dashed border-gray-200">Products</Link>
-            <Link to="/login" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 transition-colors duration-200 py-1 border-b border-dashed border-gray-200">Login</Link>
-            <Link to="/register" onClick={() => setMenuOpen(false)} className="hover:text-blue-600 transition-colors duration-200 py-1">Register</Link>
+            <Link
+              to="/"
+              onClick={() => setMenuOpen(false)}
+              className="hover:text-blue-600 transition-colors duration-200 py-1 border-b border-dashed border-gray-200"
+            >
+              Home
+            </Link>
+            <Link
+              to="/categories"
+              onClick={() => setMenuOpen(false)}
+              className="hover:text-blue-600 transition-colors duration-200 py-1 border-b border-dashed border-gray-200"
+            >
+              Categories
+            </Link>
+            <Link
+              to="/products"
+              onClick={() => setMenuOpen(false)}
+              className="hover:text-blue-600 transition-colors duration-200 py-1 border-b border-dashed border-gray-200"
+            >
+              Products
+            </Link>
+            <Link
+              to="/login"
+              onClick={() => setMenuOpen(false)}
+              className="hover:text-blue-600 transition-colors duration-200 py-1 border-b border-dashed border-gray-200"
+            >
+              Login
+            </Link>
+            <Link
+              to="/register"
+              onClick={() => setMenuOpen(false)}
+              className="hover:text-blue-600 transition-colors duration-200 py-1"
+            >
+              Register
+            </Link>
           </div>
         )}
       </nav>

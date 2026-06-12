@@ -44,6 +44,7 @@ const [user,setUser]=useState({
       Navigate('/profile')
     } catch (error) {
       setMessage(error.response?.data?.message || "An error occurred")
+      Navigate('/login')
     }
   }
   return (
