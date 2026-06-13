@@ -47,6 +47,11 @@ const Router=createBrowserRouter([
       },
     ]
 
+  },
+  // admin route
+
+  {
+    
   }
 ])
 export default Router
