@@ -5,7 +5,7 @@ import Footer from "../components/comon/Footer";
 
 const Root = () => {
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen  ">
 
      <Navbar></Navbar>
 

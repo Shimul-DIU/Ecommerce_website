@@ -115,7 +115,7 @@ const Navbar = () => {
             )}
           </Link>
 
-          <Link to="../../pages/admin">Admin</Link>
+          <Link to="admin/login">Admin</Link>
         </div>
       </nav>
 

@@ -1,15 +1,18 @@
 let express=require('express')
-const limiter= require( 'express-rate-limit');
-
+const rateLimit = require( 'express-rate-limit');
+const loginAdmin =require('../controller/adminController')
 const passport = require('passport');
-const { loginAdmin, createAdmin } = require('../controller/adminController');
 
 const adminRouter = express.Router()
 // admin route
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+  limit: 4,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  ipv6Subnet: 56,
+})
 
-
-
-adminRouter.post('/createAdmin', createAdmin)
-adminRouter.post('/loginAdmin',limiter, loginAdmin)
+adminRouter.post('/login',limiter, loginAdmin)
 
 module.exports = adminRouter

@@ -1,78 +1,55 @@
-let Admin=require('../model/adminModel')
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
-var jwt = require('jsonwebtoken');
-let createAdmin=async(req,res)=>{
+const Admin = require("../model/adminModel");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
-    try {
-      let {email,password,confirmPassword}=req.body
-      if (!email || !password || !confirmPassword) {
-        return res.status(400).json({
-          message: "Email, password, and confirmPassword are required"
-        });
-      }
-      if (password !== confirmPassword){
-        return res.status(400).json({
-            message: "Password and Confirm Password do not match"
-         });
-      }
+const loginAdmin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-      let existingAdmin = await Admin.findOne({ email });
-      if (existingAdmin) {
-        return res.status(400).json({
-          message: "Email is already registered"
-        });
-      }
-
-      let hashpassword=await bcrypt.hash(password, saltRounds);
-      let admin=new Admin({
-        email,
-        password:hashpassword
-      })
-      await admin.save();
-      return res.status(200).json({ message: "Admin created successfully" });
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') console.log(error);
-      return res.status(500).json({ message: "Internal server error" });
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
     }
 
-}
-const loginAdmin=async(req,res)=>{
-    try{
-      let {email,password}=req.body
-      if (!email){
-        return res.status(400).json({
-            message: "Email is required"
-         });
-      }
-      if (!password){
-        return res.status(400).json({
-            message: "Password is required"
-         });
-      }
-      let admin=await Admin.findOne({email})
-      if (!admin){
-        return res.status(400).json({
-            message: "Invalid email or password"
-         });
-      }
-      let isMatch=await bcrypt.compare(password,admin.password)
-      if (!isMatch){
-        return res.status(400).json({
-            message: "Invalid email or password"
-         });
+    const existingAdmin = await Admin.findOne({ email }).select("+password");
 
-      }
-      const token=jwt.sign({email:admin.email,id:admin._id}, process.env.JWT_SECRET, { expiresIn: '2d' })
-      return res.status(200).json({
+    if (!existingAdmin) {
+      return res.status(400).json({
+        message: "Admin not found",
+      });
+    }
 
-         message: "Login successful",
-         token:"Bearer " + token
-        });
+    const isMatch = await bcrypt.compare(
+      password,
+      existingAdmin.password
+    );
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Invalid password",
+      });
     }
-    catch(error){
-      if (process.env.NODE_ENV === 'development') console.log(error);
-      return res.status(500).json({ message: "Internal server error" });
-    }
-}
-module.exports={createAdmin,loginAdmin}
+
+    const token = jwt.sign(
+      {
+        id: existingAdmin._id,
+        email: existingAdmin.email,
+        role: existingAdmin.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1000d" }
+    );
+
+    return res.status(200).json({
+      message: "Login successful",
+      token: "Bearer " + token,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = loginAdmin;
