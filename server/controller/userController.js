@@ -25,7 +25,7 @@ let createUser=async(req,res)=>{
          });
       }
 
-      let existingUser = await users.findOne({ email });
+      let existingUser = await users.findOne({ email }).select("+password");
       if (existingUser) {
         return res.status(400).json({
           error:{
@@ -75,7 +75,7 @@ const loginUser=async(req,res)=>{
 
       }
       const payload={email:user.email,id:user._id}
-      const token=jwt.sign(payload, process.env.JWT_SECRET,{expiresIn: '2d'} )
+      const token=jwt.sign(payload, process.env.JWT_SECRET,{expiresIn: '200d'} )
       return res.status(200).json({
 
          message: "Login successful",
@@ -83,7 +83,7 @@ const loginUser=async(req,res)=>{
         });
     }
     catch(error){
-      if (process.env.NODE_ENV === 'development') console.log(error);
+
       return res.status(500).json({ message: "Internal server error" });
     }
 }

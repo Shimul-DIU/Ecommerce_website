@@ -31,14 +31,8 @@ const loginAdmin = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      {
-        id: existingAdmin._id,
-        email: existingAdmin.email,
-        role: existingAdmin.role,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "1000d" }
+    const token = jwt.sign({id: existingAdmin._id,email: existingAdmin.email,role: existingAdmin.role,
+      },process.env.ADMIN_JWT_SECRET,{ expiresIn: "1000d" }
     );
 
     return res.status(200).json({

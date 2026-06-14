@@ -12,7 +12,16 @@ const limiter = rateLimit({
   legacyHeaders: false,
   ipv6Subnet: 56,
 })
-
+adminRouter.get(
+  "/dashboard",
+  passport.authenticate("admin-jwt", { session: false }),
+  (req, res) => {
+    res.json({
+      success: true,
+      message: "Welcome Admin Dashboard"
+    });
+  }
+);
 adminRouter.post('/login',limiter, loginAdmin)
 
 module.exports = adminRouter

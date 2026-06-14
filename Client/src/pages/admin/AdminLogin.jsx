@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const AdminLogin = () => {
+  const navigate=useNavigate()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -19,10 +20,12 @@ const AdminLogin = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:4000/admin/loginAdmin",
+        "http://localhost:4000/admin/login",
         formData
-      );
 
+      );
+       localStorage.setItem('adminToken',res.data.token)
+      navigate('/admin')
       console.log(res.data);
     } catch (error) {
       console.log(error.response?.data || error.message);
