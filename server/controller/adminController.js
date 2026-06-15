@@ -4,14 +4,16 @@ const jwt = require("jsonwebtoken");
 
 const loginAdmin = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const email= req.body.email;
+    const password= req.body.password;
 
     if (!email || !password) {
       return res.status(400).json({
         message: "Email and password are required",
       });
     }
-
+    console.log(email,password)
+    alert('shimul')
     const existingAdmin = await Admin.findOne({ email }).select("+password");
 
     if (!existingAdmin) {
@@ -40,10 +42,11 @@ const loginAdmin = async (req, res) => {
       token: "Bearer " + token,
     });
   } catch (error) {
-    return res.status(500).json({
-      message: "Internal server error",
-    });
-  }
+  console.log(error);
+  return res.status(500).json({
+    message: "Internal server error",
+  });
+}
 };
 
 module.exports = loginAdmin;

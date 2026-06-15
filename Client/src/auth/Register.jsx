@@ -26,6 +26,7 @@ const Register = () => {
   })
   const formHandler=async(e)=>{
     e.preventDefault();
+    setMessage('');
 
     if (user.password !== user.confirmPassword) {
       setError((prev)=>({
@@ -57,6 +58,7 @@ const Register = () => {
                 ...serverError
             }));
         }
+        setMessage(error.response?.data?.message || 'Registration failed. Please try again.');
 
     }
   }

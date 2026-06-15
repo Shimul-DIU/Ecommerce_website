@@ -9,27 +9,28 @@ const AdminLogin = () => {
   });
 
   const handleChange = (e) => {
+    console.log(e)
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [e.target.name]:e.target.value
     }));
   };
 
   const submitHandler = async (e) => {
-    e.preventDefault();
-
     try {
-      const res = await axios.post(
-        "http://localhost:4000/admin/login",
-        formData
-
-      );
+       e.preventDefault();
+       const res = await axios.post("http://localhost:4000/admin/login",formData);
+       console.log(res)
        localStorage.setItem('adminToken',res.data.token)
       navigate('/admin')
       console.log(res.data);
-    } catch (error) {
-      console.log(error.response?.data || error.message);
     }
+    catch (error) {
+      console.error("Login error:", error);
+
+    }
+
+
   };
 
   return (

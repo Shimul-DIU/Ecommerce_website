@@ -5,9 +5,10 @@ const passport = require('passport');
 
 const adminRouter = express.Router()
 // admin route
+adminRouter.post('/login', loginAdmin)
 const limiter = rateLimit({
 	windowMs: 15 * 60 * 1000,
-  limit: 4,
+  limit: 40,
   standardHeaders: 'draft-8',
   legacyHeaders: false,
   ipv6Subnet: 56,
@@ -22,6 +23,6 @@ adminRouter.get(
     });
   }
 );
-adminRouter.post('/login',limiter, loginAdmin)
+
 
 module.exports = adminRouter

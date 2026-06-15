@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import logo from "../../assets/images/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, NavLink } from "react-router-dom";
@@ -18,13 +18,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [cartCount] = useState(3);
-  const [isLoggedIn , setIsLoggedIn]=useState(false);
-  useEffect(()=>{
-    const token=localStorage.getItem('token')
-    if(token){
-      setIsLoggedIn(true)
-    }
-  },[])
+  const [isLoggedIn] = useState(() => Boolean(localStorage.getItem('token')));
 
   return (
     <header className="w-full sticky top-0 bg-white shadow-md text-gray-800">

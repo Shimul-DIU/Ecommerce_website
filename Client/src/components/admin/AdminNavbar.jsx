@@ -1,5 +1,3 @@
-import React from 'react';
-
 const AdminNavbar = () => {
   return (
     <div className='flex justify-around'>
