@@ -2,6 +2,7 @@ import { useState } from "react";
 import logo from "../../assets/images/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, NavLink } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 // import { FaUserCircle } from "react-icons/fa";
 
 import {
@@ -15,6 +16,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
+
+  const adminToken=localStorage.getItem('adminToken')
+  
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [cartCount] = useState(3);
@@ -109,7 +113,7 @@ const Navbar = () => {
             )}
           </Link>
 
-          <Link to="admin/login">Admin</Link>
+          {adminToken?<Link to="/admin">Admin</Link>:<Link to="admin/login">Admin</Link>}
         </div>
       </nav>
 

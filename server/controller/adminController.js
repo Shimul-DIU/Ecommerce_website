@@ -1,19 +1,19 @@
-const Admin = require("../model/adminModel");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import Admin from "../model/adminModel.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const loginAdmin = async (req, res) => {
+export const loginAdmin = async (req, res) => {
   try {
-    const email= req.body.email;
-    const password= req.body.password;
+    const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
         message: "Email and password are required",
       });
     }
-    console.log(email,password)
-    alert('shimul')
+
+    console.log(email, password);
+
     const existingAdmin = await Admin.findOne({ email }).select("+password");
 
     if (!existingAdmin) {
@@ -22,10 +22,7 @@ const loginAdmin = async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(
-      password,
-      existingAdmin.password
-    );
+    const isMatch = await bcrypt.compare(password, existingAdmin.password);
 
     if (!isMatch) {
       return res.status(400).json({
@@ -33,8 +30,14 @@ const loginAdmin = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({id: existingAdmin._id,email: existingAdmin.email,role: existingAdmin.role,
-      },process.env.ADMIN_JWT_SECRET,{ expiresIn: "1000d" }
+    const token = jwt.sign(
+      {
+        id: existingAdmin._id,
+        email: existingAdmin.email,
+        role: existingAdmin.role,
+      },
+      process.env.ADMIN_JWT_SECRET,
+      { expiresIn: "1000d" }
     );
 
     return res.status(200).json({
@@ -42,11 +45,9 @@ const loginAdmin = async (req, res) => {
       token: "Bearer " + token,
     });
   } catch (error) {
-  console.log(error);
-  return res.status(500).json({
-    message: "Internal server error",
-  });
-}
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
 };
-
-module.exports = loginAdmin;

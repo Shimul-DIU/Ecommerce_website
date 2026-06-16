@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const adminSchema = new mongoose.Schema(
   {
@@ -18,8 +18,8 @@ const adminSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["admin", "superadmin"],
-      default: "admin",
+      enum: ['admin', 'superadmin'],
+      default: 'admin',
     },
 
     isActive: {
@@ -33,8 +33,10 @@ const adminSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
 
-module.exports = mongoose.model("Admin", adminSchema);
+const Admin = mongoose.model('Admin', adminSchema);
+
+export default Admin;

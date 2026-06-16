@@ -20,6 +20,7 @@ import AdminProducts from '../pages/admin/product/AdminProducts';
 import Dashboard from "../pages/admin/Dashboard";
 import AddProduct from "../pages/admin/product/AddProduct";
 import EditProduct from "../pages/admin/product/EditProduct";
+import ProtectedRoute from "./protectedRoute";
 
 
 
@@ -46,20 +47,27 @@ const Router=createBrowserRouter([
   },
   {
    path:'/admin',
-   Component:Adminlayout,
+   Component:ProtectedRoute,
    children:[
-     { index: true, Component: Dashboard },
+    {
+    Component:Adminlayout,
+    children:[
+      { index: true, Component: Dashboard },
 
-      // products CRUD
-      { path: "products", Component: AdminProducts },
-      { path: "products/add", Component: AddProduct },
-      { path: "products/edit/:id", Component: EditProduct },
+        // products CRUD
+        { path: "products", Component: AdminProducts },
+        { path: "products/add", Component: AddProduct },
+        { path: "products/edit/:id", Component: EditProduct },
 
-      // other admin pages
-      { path: "orders", Component: Orders },
-      { path: "customers", Component: Customers},
-      { path: "setting", Component: Setting },
-   ]
-  }
+        // other admin pages
+        { path: "orders", Component: Orders },
+        { path: "customers", Component: Customers},
+        { path: "setting", Component: Setting },
+    ]
+
+      }
+    ]
+
+    }
 ])
 export default Router
