@@ -21,6 +21,7 @@ import Dashboard from "../pages/admin/Dashboard";
 import AddProduct from "../pages/admin/product/AddProduct";
 import EditProduct from "../pages/admin/product/EditProduct";
 import ProtectedRoute from "./protectedRoute";
+import UserProtectedRoute from "./UserProtectedRoute";
 
 
 
@@ -34,16 +35,18 @@ const Router=createBrowserRouter([
       { path: "categories", Component: Categories },
       { path: "products", Component: Products },
       { path: "cart", Component: Cart },
-      { path: "profile", Component: Profile },
       { path: "login", Component: Login },
-      { path: "register", Component: Register }
+      { path: "register", Component: Register },
+      { path:'profile', Component:UserProtectedRoute},
     ]
 
   },
+
   // admin route
-  {
-    path:'/admin/login',
-    Component:AdminLogin
+
+   {
+    path: "/admin/login",
+    Component: AdminLogin,
   },
   {
    path:'/admin',

@@ -41,10 +41,10 @@ const [user,setUser]=useState({
       setMessage(response.data.message)
       console.log(setMessage);
       localStorage.setItem('token',response.data.token)
-      Navigate('/profile')
+      Navigate('/profile',{ replace: true })
     } catch (error) {
       setMessage(error.response?.data?.message || "An error occurred")
-      Navigate('/login')
+
     }
   }
   return (

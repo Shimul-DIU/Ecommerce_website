@@ -16,13 +16,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
-
-  const adminToken=localStorage.getItem('adminToken')
-  
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [cartCount] = useState(3);
-  const [isLoggedIn] = useState(() => Boolean(localStorage.getItem('token')));
+  const userToken=localStorage.getItem('token');
 
   return (
     <header className="w-full sticky top-0 bg-white shadow-md text-gray-800">
@@ -84,11 +81,11 @@ const Navbar = () => {
             </NavLink>
           </li>
           <li className="  px-3 py-2  ">
-            {isLoggedIn? (
+            { userToken?
               <NavLink to='/profile'>
                 <FontAwesomeIcon icon={faUser} />
               </NavLink>
-            ): <NavLink to="/login">Login</NavLink>}
+            :  <NavLink to="/login">Login</NavLink>}
 
           </li>
           {/* <li>
@@ -113,7 +110,7 @@ const Navbar = () => {
             )}
           </Link>
 
-          {adminToken?<Link to="/admin">Admin</Link>:<Link to="admin/login">Admin</Link>}
+         <Link to="/admin/login">Admin</Link>
         </div>
       </nav>
 

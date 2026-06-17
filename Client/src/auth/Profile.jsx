@@ -35,7 +35,7 @@ const Profile = () => {
         <div>
             <p>user : {user.fullname}</p>
             <p>email : {user.email}</p>
-            <p onClick={handleLogin()} className='cursor-pointer bg-blue-400 rounded-md py-2 px-0 w-18 text-center text-white'>logout</p>
+            <p onClick={handleLogin} className='cursor-pointer bg-blue-400 rounded-md py-2 px-0 w-18 text-center text-white'>logout</p>
         </div>
 
       )} <hr />
