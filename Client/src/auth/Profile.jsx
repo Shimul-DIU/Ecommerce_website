@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { authContext } from '../context/authContext';
+import { authContext } from '../context/AuthContext';
 const Profile = () => {
   const {logout}=useContext(authContext)
    const [user, setUser] = useState(null);

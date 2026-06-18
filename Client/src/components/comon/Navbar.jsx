@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, NavLink } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 // import { FaUserCircle } from "react-icons/fa";
-import { authContext } from './../../context/AuthContext';
+
 import {
 
   faCartShopping,
@@ -15,6 +15,7 @@ import {
   faSearch,
   faUser
 } from "@fortawesome/free-solid-svg-icons";
+import { authContext } from "../../context/AuthContext";
 
 
 const Navbar = () => {
