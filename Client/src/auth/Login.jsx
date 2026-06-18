@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import  { useContext, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faEye,faEyeSlash,} from "@fortawesome/free-solid-svg-icons";
@@ -9,9 +9,11 @@ import {faGoogle,faFacebook,faGithub,} from "@fortawesome/free-brands-svg-icons"
 import SignWithGoogle from "./SignInWithGoogle";
 import SignWithFacebook from "./SignInWithFacebook";
 import { useNavigate } from "react-router-dom";
+import { authContext } from "../context/AuthContext";
 
 
 const Login = () => {
+const{login} = useContext(authContext)
 const Navigate=useNavigate();
 const [showPassword, setShowPassword] = useState(false);
 const[message,setMessage]=useState('')
@@ -39,8 +41,7 @@ const [user,setUser]=useState({
     try {
       const response=await axios.post('http://localhost:4000/user/login',user)
       setMessage(response.data.message)
-      console.log(setMessage);
-      localStorage.setItem('token',response.data.token)
+      login(response.data.token)
       Navigate('/profile',{ replace: true })
     } catch (error) {
       setMessage(error.response?.data?.message || "An error occurred")

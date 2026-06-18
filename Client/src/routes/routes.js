@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom"
-import Root from "../layout/Root"
+import Userlayout from "../layout/Userlayout";
 import Home from './../pages/Home';
 import Categories from "../pages/Categories";
 import Products from "../pages/Products";
@@ -26,10 +26,11 @@ import UserProtectedRoute from "./UserProtectedRoute";
 
 
 
+
 const Router=createBrowserRouter([
   {
     path:'/',
-    Component:Root,
+    Component:Userlayout,
     children:[
      { index: true, Component: Home },
       { path: "categories", Component: Categories },
@@ -37,7 +38,13 @@ const Router=createBrowserRouter([
       { path: "cart", Component: Cart },
       { path: "login", Component: Login },
       { path: "register", Component: Register },
-      { path:'profile', Component:UserProtectedRoute},
+      { path:'profile',
+        Component:UserProtectedRoute,
+        children:[
+          {index:true,Component:Profile}
+        ]
+
+      },
     ]
 
   },

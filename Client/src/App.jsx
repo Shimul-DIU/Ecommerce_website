@@ -1,10 +1,9 @@
 
-import Root from './layout/Root';
+import Root from './layout/Userlayout';
 
 const App = () => {
   return (
     <div >
-
       <Root></Root>
     </div>
   );

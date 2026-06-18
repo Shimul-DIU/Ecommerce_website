@@ -3,19 +3,21 @@ import Navbar from "../components/comon/Navbar";
 import Footer from "../components/comon/Footer";
 
 
-const Root = () => {
+
+const Userlayout = () => {
   return (
     <div className="min-h-screen  ">
 
-     <Navbar></Navbar>
+
+              <Navbar></Navbar>
 
       {/* Main Content */}
       <main className=" ">
+            <Outlet />
+        </main>
 
-           <Outlet />
 
 
-      </main>
 
       {/* Footer */}
       <Footer />
@@ -24,4 +26,4 @@ const Root = () => {
   );
 };
 
-export default Root;
+export default Userlayout;

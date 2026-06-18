@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import logo from "../../assets/images/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, NavLink } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 // import { FaUserCircle } from "react-icons/fa";
-
+import { authContext } from './../../context/AuthContext';
 import {
+
   faCartShopping,
   faBars,
   faXmark,
@@ -15,11 +16,12 @@ import {
   faUser
 } from "@fortawesome/free-solid-svg-icons";
 
+
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [cartCount] = useState(3);
-  const userToken=localStorage.getItem('token');
+  const {token}=useContext(authContext)
 
   return (
     <header className="w-full sticky top-0 bg-white shadow-md text-gray-800">
@@ -81,7 +83,7 @@ const Navbar = () => {
             </NavLink>
           </li>
           <li className="  px-3 py-2  ">
-            { userToken?
+            { token?
               <NavLink to='/profile'>
                 <FontAwesomeIcon icon={faUser} />
               </NavLink>
