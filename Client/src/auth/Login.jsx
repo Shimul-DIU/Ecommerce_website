@@ -1,4 +1,4 @@
-import  { useContext, useState } from "react";
+import  { useContext, useRef, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faEye,faEyeSlash,} from "@fortawesome/free-solid-svg-icons";
@@ -10,9 +10,11 @@ import SignWithGoogle from "./SignInWithGoogle";
 import SignWithFacebook from "./SignInWithFacebook";
 import { useNavigate } from "react-router-dom";
 import { authContext } from "../context/AuthContext";
+import Forgotpassword from './sendPasswordResetEmail';
 
 
 const Login = () => {
+ const refEmail= useRef(null)
 const{login} = useContext(authContext)
 const Navigate=useNavigate();
 const [showPassword, setShowPassword] = useState(false);
@@ -36,6 +38,22 @@ const [user,setUser]=useState({
       [e.target.name]:e.target.value
     }))
   }
+
+  const forgetPasswordHandler = async () => {
+  const email = refEmail.current.value;
+
+  if (!email) {
+    setMessage("Please enter your email first");
+    return;
+  }
+
+  try {
+    await Forgotpassword(email);
+    setMessage("Password reset email has been sent.");
+  } catch (error) {
+    setMessage(error.message);
+  }
+};
   const handleLogin=async(e)=>{
     e.preventDefault();
     try {
@@ -78,6 +96,7 @@ const [user,setUser]=useState({
 
             <input
               type="email"
+              ref={refEmail}
               name="email" required
               onChange={changeHandler}
               placeholder="Enter your email"
@@ -128,8 +147,9 @@ const [user,setUser]=useState({
             </label>
 
             <a
-              href="/"
-              className="text-blue-600 hover:underline"
+
+              onClick={forgetPasswordHandler}
+              className="text-blue-600 hover:underline cursor-pointer"
             >
               Forgot Password?
             </a>

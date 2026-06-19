@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { authContext } from '../context/AuthContext';
 const Profile = () => {
-  const {logout}=useContext(authContext)
+  const {logout,token}=useContext(authContext)
    const [user, setUser] = useState(null);
    const navigate=useNavigate();
 
@@ -16,8 +16,7 @@ const Profile = () => {
   useEffect(()=>{
     const fetchProfile=async()=>{
       try {
-        const token=localStorage.getItem('token');
-        const res=await axios.get('http://localhost:4000/user/profile',{
+          const res=await axios.get('http://localhost:4000/user/profile',{
           headers:{
             Authorization: token
           }

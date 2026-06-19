@@ -27,7 +27,9 @@ userRouter.get(
       fullname: req.user.fullname,
       email: req.user.email,
       role: req.user.role,
-    });
+
+    })
+    res.end();
   }
 );
 
