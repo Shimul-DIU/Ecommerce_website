@@ -40,6 +40,7 @@ const Profile = () => {
         </div>
 
       )} <hr />
+      <button onClick={logout}>logout</button>
       Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt possimus ut dicta non iusto? Labore perferendis repellendus, architecto numquam ab cupiditate? Nulla dignissimos harum at veniam. Optio odio laboriosam ad maiores animi accusamus suscipit voluptatibus blanditiis cupiditate nobis dolore doloremque quas officia, officiis tempore? Officiis cumque ut amet reprehenderit eum earum quidem fugit facere est. Eveniet nihil veniam cumque ipsam, dicta, expedita repudiandae earum distinctio aliquid iusto quae, aperiam magni.
     </div>
   );

@@ -1,7 +1,7 @@
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import dotenv from 'dotenv';
-import User from '../../model/userModel.js';
+import users from '../../model/userModel.js';
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ const opts = {
 passport.use(
   new JwtStrategy(opts, async (jwt_payload, done) => {
     try {
-      const user = await User.findById(jwt_payload.id);
+      const user = await users.findById(jwt_payload.id);
 
       if (user) {
         return done(null, user);

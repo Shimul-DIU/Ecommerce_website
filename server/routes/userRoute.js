@@ -22,9 +22,7 @@ userRouter.post(
   resetPassword
 );
 
-userRouter.get(
-  '/profile',
-  passport.authenticate('jwt', { session: false }),
+userRouter.get('/profile',passport.authenticate('jwt', { session: false }),
   (req, res) => {
     res.status(200).json({
       id: req.user._id,

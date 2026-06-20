@@ -66,6 +66,7 @@ const [user,setUser]=useState({
       const response=await axios.post('http://localhost:4000/user/login',user)
       setMessage(response.data.message)
       login(response.data.token)
+      console.log(response)
       Navigate('/profile',{ replace: true })
     } catch (error) {
       setMessage(error.response?.data?.message || "An error occurred")
