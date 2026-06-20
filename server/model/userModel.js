@@ -48,12 +48,20 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+
+     resetPasswordToken: {
+      type: String,
+    },
+
+    resetPasswordExpire: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const User = mongoose.model('User', userSchema);
+const users = mongoose.model('users', userSchema);
 
-export default User;
+export default users;

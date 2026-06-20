@@ -10,7 +10,6 @@ import SignWithGoogle from "./SignInWithGoogle";
 import SignWithFacebook from "./SignInWithFacebook";
 import { useNavigate } from "react-router-dom";
 import { authContext } from "../context/AuthContext";
-import Forgotpassword from './sendPasswordResetEmail';
 
 
 const Login = () => {
@@ -48,10 +47,17 @@ const [user,setUser]=useState({
   }
 
   try {
-    await Forgotpassword(email);
-    setMessage("Password reset email has been sent.");
+    const response = await axios.post(
+      "http://localhost:4000/user/forgot-password",
+      { email }
+    );
+
+    setMessage(response.data.message);
+
   } catch (error) {
-    setMessage(error.message);
+    setMessage(
+      error.response?.data?.message || "Something went wrong"
+    );
   }
 };
   const handleLogin=async(e)=>{

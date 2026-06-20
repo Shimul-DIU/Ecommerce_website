@@ -1,8 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import rateLimit from 'express-rate-limit';
-import { createUser, loginUser } from '../controller/userController.js';
-
+import { createUser, loginUser ,forgotPassword,resetPassword} from '../controller/userController.js';
 const userRouter = express.Router();
 
 const limiter = rateLimit({
@@ -15,8 +14,13 @@ const limiter = rateLimit({
 });
 
 userRouter.post('/register', createUser);
-
 userRouter.post('/login', limiter, loginUser);
+userRouter.post("/forgot-password", forgotPassword);
+
+userRouter.post(
+  "/reset-password/:token",
+  resetPassword
+);
 
 userRouter.get(
   '/profile',

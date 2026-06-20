@@ -23,6 +23,9 @@ import EditProduct from "../pages/admin/product/EditProduct";
 import ProtectedRoute from "./protectedRoute";
 import UserProtectedRoute from "./UserProtectedRoute";
 
+import ResetPassword from "../pages/ResetPassword.jsx";
+
+
 
 
 
@@ -38,6 +41,7 @@ const Router=createBrowserRouter([
       { path: "cart", Component: Cart },
       { path: "login", Component: Login },
       { path: "register", Component: Register },
+      {path: "reset-password/:token",Component:ResetPassword },
       { path:'profile',
         Component:UserProtectedRoute,
         children:[

@@ -1,14 +1,16 @@
 import users from '../model/userModel.js';
+import sendEmail from '../utils/sendEmail.js';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 dotenv.config();
 
 const saltRounds = 10;
 
-// ================= CREATE USER =================
-export const createUser = async (req, res) => {
+/* ================= CREATE USER ================= */
+const createUser = async (req, res) => {
   try {
     const { fullname, email, password, confirmPassword } = req.body;
 
@@ -24,19 +26,15 @@ export const createUser = async (req, res) => {
 
     if (password !== confirmPassword) {
       return res.status(400).json({
-        error: {
-          confirmPassword: 'Password not matched',
-        },
+        error: { confirmPassword: 'Password not matched' },
       });
     }
 
-    const existingUser = await users.findOne({ email }).select('+password');
+    const existingUser = await users.findOne({ email });
 
     if (existingUser) {
       return res.status(400).json({
-        error: {
-          email: 'Email is already registered',
-        },
+        error: { email: 'Email is already registered' },
       });
     }
 
@@ -53,28 +51,22 @@ export const createUser = async (req, res) => {
     return res.status(200).json({
       message: 'User created successfully',
     });
+
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: 'Internal server error',
     });
   }
 };
 
-// ================= LOGIN USER =================
-export const loginUser = async (req, res) => {
+/* ================= LOGIN USER ================= */
+const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email) {
+    if (!email || !password) {
       return res.status(400).json({
-        message: 'Email is required',
-      });
-    }
-
-    if (!password) {
-      return res.status(400).json({
-        message: 'Password is required',
+        message: 'Email and password required',
       });
     }
 
@@ -94,23 +86,110 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    const payload = {
-      email: user.email,
-      id: user._id,
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: '200d',
-    });
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '200d' }
+    );
 
     return res.status(200).json({
       message: 'Login successful',
       token: 'Bearer ' + token,
     });
+
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: 'Internal server error',
     });
   }
+};
+
+/* ================= FORGOT PASSWORD ================= */
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await users.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+
+    await user.save();
+
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+
+    await sendEmail(
+      user.email,
+      "Password Reset Request",
+      `
+        <h2>Password Reset Request</h2>
+        <p>Click the link below to reset your password:</p>
+        <a href="${resetUrl}">Reset Password</a>
+        <p>This link will expire in 15 minutes.</p>
+      `
+    );
+
+    return res.json({
+      success: true,
+      message: "Reset email sent",
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+/* ================= RESET PASSWORD ================= */
+const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    const user = await users.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Token expired or invalid",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: "Password changed successfully",
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+/* ================= EXPORT ================= */
+export {
+  createUser,
+  loginUser,
+  forgotPassword,
+  resetPassword
 };
