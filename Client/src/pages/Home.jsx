@@ -2,7 +2,7 @@ const Home = () => {
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold">Welcome to Our Store</h1>
-      <p className="text-gray-600 mt-4">Browse our collection of products</p>
+      <p className="text-gray-600 mt-4 black-ops-one">Browse our collection of products</p>
     </div>
   );
 };

@@ -2,4 +2,13 @@
 /* input[type="search"]::-webkit-search-cancel-button {
   display: none;
 } */
-
+@font-face {
+  font-family: 'Black ops one';
+  src: url('./assets/fonts/BlackOpsOne-Regular.ttf');
+}
+:root{
+  --black-ops-one:'Black ops one',sans-serif
+}
+.black-ops-one{
+  font-family: var(--black-ops-one);
+}

@@ -5,7 +5,7 @@ import Categories from "../pages/Categories";
 import Products from "../pages/Products";
 import Login from "../auth/Login";
 import Register from "../auth/Register";
-import Cart from "../components/comon/Cart";
+
 import Profile from "../auth/Profile";
 
 
@@ -23,7 +23,9 @@ import EditProduct from "../pages/admin/product/EditProduct";
 import ProtectedRoute from "./protectedRoute";
 import UserProtectedRoute from "./UserProtectedRoute";
 
-import ResetPassword from "../pages/ResetPassword.jsx";
+import ResetPassword from "./ResetPassword.jsx";
+import Card from "../components/comon/Card.jsx";
+
 
 
 
@@ -38,7 +40,7 @@ const Router=createBrowserRouter([
      { index: true, Component: Home },
       { path: "categories", Component: Categories },
       { path: "products", Component: Products },
-      { path: "cart", Component: Cart },
+      { path: "card", Component: Card },
       { path: "login", Component: Login },
       { path: "register", Component: Register },
       {path: "reset-password/:token",Component:ResetPassword },
@@ -70,6 +72,7 @@ const Router=createBrowserRouter([
 
         // products CRUD
         { path: "products", Component: AdminProducts },
+        { path: "card", Component: Card },
         { path: "products/add", Component: AddProduct },
         { path: "products/edit/:id", Component: EditProduct },
 

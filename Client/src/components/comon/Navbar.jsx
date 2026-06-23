@@ -10,134 +10,54 @@ import {
   faMoon,
   faSun,
   faSearch,
+  faRightToBracket,
   faUser,
+  faMicrophone,
+  faArrowLeft
 } from "@fortawesome/free-solid-svg-icons";
 
 import { authContext } from "../../context/AuthContext";
 
 const Navbar = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-  const [cartCount] = useState(3);
-
-  const { token } = useContext(authContext);
-
-  const linkClass =
-    "hover:text-blue-600 transition text-sm font-medium";
-
-  const mobileLink =
-    "px-4 py-3 rounded-lg hover:bg-blue-50 transition";
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-md">
+    isSearchOpen ? (
+      <nav className="flex items-center gap-2 px-3  py-3 min-h-14 border" style={{height:  "73.333334px"}}
+       >
+        <button onClick={() => setIsSearchOpen(false)}>
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </button>
 
-      {/* ───── TOP BAR ───── */}
-      <div className="flex items-center justify-between px-4 md:px-6 py-3">
-
-        {/* Logo */}
-        <Link to="/" className="flex items-center">
-          <img src={logo} className="h-12 md:h-14" />
-        </Link>
-
-
-        <div className="md:flex flex-1 max-w-md mx-6">
+        <div className="flex items-center bg-gray-200 w-full border-2 border-black rounded-full px-3">
           <input
-            className="w-full px-4 py-2 border rounded-l-full bg-gray-100"
-            placeholder="Search products..."
+            type="search"
+            placeholder="Search Products"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full  pl-2 outline-none"
           />
-          <button className="bg-blue-600 text-white px-5 rounded-r-full">
+          <button >
             <FontAwesomeIcon icon={faSearch} />
           </button>
         </div>
 
-        {/* RIGHT ICONS */}
-        <div className="flex items-center gap-4 text-lg">
+        <button>
+          <FontAwesomeIcon icon={faMicrophone} />
+        </button>
+      </nav>
+    ) : (
+      <nav className="sticky top-0 bg-white border flex justify-between items-center px-3 py-3">
+        <img src={logo} alt="logo" className="h-12" />
 
-          <button onClick={() => setDarkMode(!darkMode)}>
-            <FontAwesomeIcon icon={darkMode ? faSun : faMoon} />
-          </button>
-
-          <Link to="/cart" className="relative">
-            <FontAwesomeIcon icon={faCartShopping} />
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
-                {cartCount}
-              </span>
-            )}
-          </Link>
-
-          {token ? (
-            <NavLink to="/profile">
-              <FontAwesomeIcon icon={faUser} />
-            </NavLink>
-          ) : (
-            <NavLink to="/login">Login</NavLink>
-          )}
-
-          {/* mobile menu button */}
-          <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
-            <FontAwesomeIcon icon={menuOpen ? faXmark : faBars} />
-          </button>
-        </div>
-      </div>
-
-      {/* ───── DESKTOP NAV ITEMS (NOW BELOW TOP BAR) ───── */}
-      <div className="hidden md:flex items-center gap-6 px-6 pb-3 border-t text-sm">
-
-        <NavLink className={linkClass} to="/">Home</NavLink>
-        <NavLink className={linkClass} to="/categories">Categories</NavLink>
-        <NavLink className={linkClass} to="/products">Products</NavLink>
-
-        <NavLink className={linkClass} to="/admin/login">
-          Admin
-        </NavLink>
-
-      </div>
-
-      {/* ───── MOBILE MENU ───── */}
-      {menuOpen && (
-        <>
-          {/* overlay */}
-          <div
-            onClick={() => setMenuOpen(false)}
-            className="fixed inset-0 bg-black/30 z-40"
-          />
-
-          {/* sidebar */}
-          <div className="fixed top-0 left-0 w-72 h-screen bg-white z-50 shadow-xl flex flex-col">
-
-            <div className="flex justify-between items-center p-4 border-b">
-              <img src={logo} className="h-10" />
-              <button onClick={() => setMenuOpen(false)}>
-                <FontAwesomeIcon icon={faXmark} />
-              </button>
-            </div>
-
-            <div className="flex flex-col p-4 gap-2 text-sm">
-
-              <Link onClick={() => setMenuOpen(false)} className={mobileLink} to="/">
-                Home
-              </Link>
-
-              <Link onClick={() => setMenuOpen(false)} className={mobileLink} to="/categories">
-                Categories
-              </Link>
-
-              <Link onClick={() => setMenuOpen(false)} className={mobileLink} to="/products">
-                Products
-              </Link>
-
-              <Link onClick={() => setMenuOpen(false)} className={mobileLink} to="/admin/login">
-                Admin
-              </Link>
-
-            </div>
-          </div>
-        </>
-      )}
-
-    </header>
+        <button onClick={() => setIsSearchOpen(true)}>
+          <FontAwesomeIcon icon={faSearch} />
+        </button>
+      </nav>
+    )
   );
 };
+
 
 export default Navbar;
