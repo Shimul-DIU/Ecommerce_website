@@ -11,7 +11,7 @@ const FooterNav = ({ className,onMenuClick }) => {
 
   return (
     <footer
-      className={`fixed bottom-0  left-0 shadow-2xl shadow-cyan-500 w-full bg-white border-t flex justify-around py-3 ${className || ""}`}
+      className={`md:hidden fixed bottom-0  left-0 shadow-2xl shadow-cyan-500 w-full bg-white border-t flex justify-around py-3 ${className || ""}`}
     >
 
       <button className="flex flex-col items-center text-sm" onClick={onMenuClick}>

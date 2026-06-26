@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-import banner1 from "../assets/images/bImg.png";
+import banner1 from "../assets/images/bImg1.png";
 import banner2 from "../assets/images/bImg2.png";
 import banner3 from "../assets/images/bImg3.png";
 import banner4 from "../assets/images/bImg4.png";
+import banner6 from "../assets/images/bImg6.png";
 
 const Home = () => {
-  const banners = [banner1, banner2, banner3, banner4];
+  const banners = [banner1, banner2, banner3, banner4,banner6];
 
   const [currentBanner, setCurrentBanner] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentBanner((prev) => (prev + 1) % banners.length);
-    }, 3000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCurrentBanner((prev) => (prev + 1) % banners.length);
+  //   }, 3000);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const nextSlide = () => {
     setCurrentBanner((prev) => (prev + 1) % banners.length);
@@ -35,18 +36,28 @@ const Home = () => {
 
         {/* Slider */}
         <div
-          className="h-4/6 flex transition-transform duration-700 ease-in-out"
+          className="flex duration-700 "
           style={{
             transform: `translateX(-${currentBanner * 100}%)`,
           }}
         >
           {banners.map((banner, index) => (
             <img
-              key={index}
-              src={banner}
-              alt={`banner-${index}`}
-              className="w-full "
-            />
+  key={index}
+  src={banner}
+  alt={`banner-${index}`}
+  className="
+    min-w-full
+    h-[30vh]
+    sm:h-[35vh]
+    md:h-[40vh]
+    lg:h-[45vh]
+    xl:h-[50vh]
+    object-contain
+
+
+  "
+/>
           ))}
         </div>
 
