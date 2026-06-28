@@ -26,12 +26,6 @@ import UserProtectedRoute from "./UserProtectedRoute";
 import ResetPassword from "./ResetPassword.jsx";
 import Card from "../components/comon/Card.jsx";
 
-
-
-
-
-
-
 const Router=createBrowserRouter([
   {
     path:'/',
