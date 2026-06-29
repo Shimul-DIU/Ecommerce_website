@@ -25,6 +25,7 @@ import UserProtectedRoute from "./UserProtectedRoute";
 
 import ResetPassword from "./ResetPassword.jsx";
 import Card from "../components/comon/Card.jsx";
+import AdminResetPassword from '../auth/AdminResetPassword.jsx';
 
 const Router=createBrowserRouter([
   {
@@ -79,6 +80,10 @@ const Router=createBrowserRouter([
       }
     ]
 
+    },
+    {
+      path:'/admin/reset-password/:token',
+      Component:AdminResetPassword
     }
 ])
 export default Router

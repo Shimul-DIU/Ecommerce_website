@@ -3,26 +3,45 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const AdminLogin = () => {
+  const [message,setMessage]=useState('')
+  const [formData,setFormData]=useState({
+    email:'',
+  })
     const navigate=useNavigate()
 
+    const handleChange = (e) => {
+  setFormData((prev) => ({
+    ...prev,
+    [e.target.name]: e.target.value,
+  }));
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  if (e.target.name === "email" && e.target.value.trim() !== "") {
+    setMessage("");
+  }
+};
 
-  const handleChange = (e) => {
-    console.log(e)
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]:e.target.value
-    }));
-  };
+  const handleForgotPassword = async() => {
+  try {
+    if (!formData.email.trim()) {
+    setMessage("Email is required");
+    return;
+  }
+
+  setMessage("");
+  const response= await axios.post('http://localhost:4000/api/admin/forgot-password',formData)
+  // console.log(`response send serer ${response}`)
+  setMessage(response.data)
+
+  } catch (error) {
+    console.log(error)
+  }
+
+};
 
   const submitHandler = async (e) => {
     try {
        e.preventDefault();
-       const res = await axios.post("http://localhost:4000/admin/login",formData);
+       const res = await axios.post("http://localhost:4000/api/admin/login",formData);
        console.log(res)
        localStorage.setItem('adminToken',res.data.token)
      navigate("/admin", { replace: true });
@@ -52,14 +71,19 @@ const AdminLogin = () => {
           {/* EMAIL */}
           <label htmlFor="email" className="text-sm sm:text-base">Email :</label>
           <input
+            onChange={handleChange}
             type="email"
             name="email"
             id="email"
+
             required
             onChange={handleChange}
             placeholder="admin@gmail.com"
             className="w-full p-2 text-sm sm:text-base border border-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded mb-3"
           />
+            { message && (
+            <p className="text-red-600">{message}</p>
+          )}
 
           {/* PASSWORD */}
           <label htmlFor="password" className="text-sm sm:text-base">Password :</label>
@@ -80,7 +104,8 @@ const AdminLogin = () => {
               <p>Remember me</p>
             </div>
 
-            <p className="text-blue-600 cursor-pointer">
+
+            <p className="text-blue-600 cursor-pointer" onClick={handleForgotPassword}>
               Forgot Password?
             </p>
           </div>

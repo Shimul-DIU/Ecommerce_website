@@ -1,7 +1,7 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import passport from 'passport';
-import { loginAdmin } from '../controller/adminController.js';
+import  {ResetPassword, ForgotPassword, loginAdmin } from '../controller/adminController.js';
 
 const adminRouter = express.Router();
 
@@ -16,7 +16,8 @@ const limiter = rateLimit({
 
 // admin login route
 adminRouter.post('/login', loginAdmin);
-
+adminRouter.post('/forgot-password',ForgotPassword)
+adminRouter.post("/reset-password", ResetPassword);
 // admin dashboard (protected route)
 adminRouter.get(
   '/dashboard',

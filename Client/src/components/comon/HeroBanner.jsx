@@ -106,7 +106,7 @@ const BannerItem = ({ banner }) => {
   return (
     <div
       style={{ background: banner.bg }}
-      className="w-full rounded-xl overflow-hidden flex items-center h-[280px] md:h-[340px]"
+      className="w-full rounded-xl overflow-hidden flex items-center h-40 sm:h-52 md:h-60 lg:h-72"
     >
       <div
         className="flex items-center justify-between w-full px-5 py-5 md:px-10 gap-4 h-full"
@@ -383,7 +383,7 @@ const HeroBanner = () => {
         </button>
 
         {/* Dots/Indicators */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex  gap-2 z-10">
           {banners.map((_, index) => (
             <button
               key={index}

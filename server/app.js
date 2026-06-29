@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
 /* ================= ROUTES ================= */
-app.use('/user', userRouter);
-app.use('/admin', adminRouter);
+app.use('/api/user', userRouter);
+app.use('/api/admin', adminRouter);
 
 export default app;
