@@ -11,13 +11,12 @@ import Profile from "../auth/Profile";
 
 // admin
 
-import AdminLogin from "../pages/admin/AdminLogin";
+import AdminLogin from "./AdminLogin.jsx";
 import Adminlayout from "../layout/Adminlayout";
 import Orders from "../pages/admin/Orders";
-import Customers from "../pages/admin/Customers";
+import Customers from "../pages/Customers.jsx";
 import Setting from "../pages/admin/Setting";
 import AdminProducts from '../pages/admin/product/AdminProducts';
-import Dashboard from "../pages/admin/Dashboard";
 import AddProduct from "../pages/admin/product/AddProduct";
 import EditProduct from "../pages/admin/product/EditProduct";
 import ProtectedRoute from "./protectedRoute";
@@ -26,6 +25,7 @@ import UserProtectedRoute from "./UserProtectedRoute";
 import ResetPassword from "./ResetPassword.jsx";
 import Card from "../components/comon/Card.jsx";
 import AdminResetPassword from '../auth/AdminResetPassword.jsx';
+import AdminDashboard from "../pages/admin/AdminDashboard.jsx";
 
 const Router=createBrowserRouter([
   {
@@ -63,7 +63,7 @@ const Router=createBrowserRouter([
     {
     Component:Adminlayout,
     children:[
-      { index: true, Component: Dashboard },
+      { index: true, Component: AdminDashboard },
 
         // products CRUD
         { path: "products", Component: AdminProducts },
