@@ -1,8 +1,5 @@
 import { createBrowserRouter } from "react-router-dom"
 import Userlayout from "../layout/Userlayout";
-import Home from './../pages/Home';
-import Categories from "../pages/Categories";
-import Products from "../pages/Products";
 import Login from "../auth/Login";
 import Register from "../auth/Register";
 
@@ -14,7 +11,6 @@ import Profile from "../auth/Profile";
 import AdminLogin from "./AdminLogin.jsx";
 import Adminlayout from "../layout/Adminlayout";
 import Orders from "../pages/admin/Orders";
-import Customers from "../pages/Customers.jsx";
 import Setting from "../pages/admin/Setting";
 import AdminProducts from '../pages/admin/product/AdminProducts';
 import AddProduct from "../pages/admin/product/AddProduct";
@@ -23,9 +19,13 @@ import ProtectedRoute from "./protectedRoute";
 import UserProtectedRoute from "./UserProtectedRoute";
 
 import ResetPassword from "./ResetPassword.jsx";
-import Card from "../components/comon/Card.jsx";
 import AdminResetPassword from '../auth/AdminResetPassword.jsx';
 import AdminDashboard from "../pages/admin/AdminDashboard.jsx";
+import Home from './../pages/client/Home';
+import Categories from "../pages/client/Categories.jsx";
+import Products from './../pages/client/Products';
+import Customers from './../pages/admin/Customers';
+import Card from './../components/common/Card';
 
 const Router=createBrowserRouter([
   {

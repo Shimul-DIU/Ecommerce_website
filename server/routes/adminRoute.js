@@ -2,6 +2,8 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import passport from 'passport';
 import  {ResetPassword, ForgotPassword, loginAdmin } from '../controller/adminController.js';
+import upload from '../middleware/upload.middleware.js';
+import productController from '../controller/productController.js';
 
 const adminRouter = express.Router();
 
@@ -29,5 +31,9 @@ adminRouter.get(
     });
   }
 );
+
+// add product
+adminRouter.post('/add-product',upload.single('image'),productController)
+
 
 export default adminRouter;

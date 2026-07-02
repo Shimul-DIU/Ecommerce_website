@@ -1,262 +1,219 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  faArrowLeft,
+  faCloudArrowUp,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faCloudArrowUp, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
-export default function AddProduct() {
-  const [images, setImages] = useState([]);
+const AddProduct = () => {
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
-  const handleImage = (e) => {
-    setImages([...e.target.files]);
+  const [form, setForm] = useState({
+    name: "",
+    category: "",
+    price: "",
+    stock: "",
+    status: "Active",
+    description: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      setError(null);
+
+     const response= await axios.post(
+        "http://localhost:5000/api/admin/add-product",
+        form
+      );
+      setError(response.data)
+      navigate("/admin/products");
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+    }
   };
 
   return (
-    <div className="h-[calc(100vh-64px)] overflow-y-auto p-6 bg-gray-100">
-
+    <div className="px-2">
       {/* Header */}
-
-      <div className="flex items-center justify-between mb-6">
-
-        <div>
-          <h1 className="text-3xl font-bold">Add Product</h1>
-          <p className="text-gray-500 mt-1">
-            Create a new product
-          </p>
-        </div>
-
-        <button className="flex items-center gap-2 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg">
+      <div className="flex items-center gap-3 mb-6">
+        <button
+          onClick={() => navigate(-1)}
+          className="w-9 h-9 flex items-center justify-center rounded-lg border hover:bg-gray-100"
+        >
           <FontAwesomeIcon icon={faArrowLeft} />
-          Back
         </button>
-
+        <h1 className="text-lg font-semibold">Add Product</h1>
       </div>
 
-      {/* Form */}
+      <form
+        onSubmit={handleSubmit}
+        encType="multipart/form-data"
+        className="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      >
+        {/* Left: main fields */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="bg-white rounded-xl shadow p-5">
+            <h2 className="font-medium mb-4">Product Information</h2>
 
-      <div className="bg-white rounded-xl shadow p-6">
-
-        <form className="space-y-6">
-
-          {/* Basic Information */}
-
-          <div className="grid md:grid-cols-2 gap-6">
-
-            <div>
-              <label className="block font-medium mb-2">
-                Product Name
-              </label>
-
-              <input
-                type="text"
-                placeholder="Enter product name"
-                className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium mb-2">
-                SKU
-              </label>
-
-              <input
-                type="text"
-                placeholder="SKU"
-                className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-            </div>
-
-          </div>
-
-          {/* Category */}
-
-          <div className="grid md:grid-cols-2 gap-6">
-
-            <div>
-
-              <label className="block font-medium mb-2">
-                Category
-              </label>
-
-              <select className="w-full border rounded-lg px-4 py-3">
-
-                <option>Select Category</option>
-
-                <option>Men Fashion</option>
-
-                <option>Women Fashion</option>
-
-                <option>Electronics</option>
-
-                <option>Shoes</option>
-
-              </select>
-
-            </div>
-
-            <div>
-
-              <label className="block font-medium mb-2">
-                Brand
-              </label>
-
-              <input
-                type="text"
-                placeholder="Brand Name"
-                className="w-full border rounded-lg px-4 py-3"
-              />
-
-            </div>
-
-          </div>
-
-          {/* Price */}
-
-          <div className="grid md:grid-cols-3 gap-6">
-
-            <div>
-
-              <label className="block font-medium mb-2">
-                Price
-              </label>
-
-              <input
-                type="number"
-                className="w-full border rounded-lg px-4 py-3"
-              />
-
-            </div>
-
-            <div>
-
-              <label className="block font-medium mb-2">
-                Discount Price
-              </label>
-
-              <input
-                type="number"
-                className="w-full border rounded-lg px-4 py-3"
-              />
-
-            </div>
-
-            <div>
-
-              <label className="block font-medium mb-2">
-                Stock
-              </label>
-
-              <input
-                type="number"
-                className="w-full border rounded-lg px-4 py-3"
-              />
-
-            </div>
-
-          </div>
-
-          {/* Description */}
-
-          <div>
-
-            <label className="block font-medium mb-2">
-              Description
-            </label>
-
-            <textarea
-              rows="5"
-              placeholder="Product description..."
-              className="w-full border rounded-lg px-4 py-3"
-            ></textarea>
-
-          </div>
-
-          {/* Image Upload */}
-
-          <div>
-
-            <label className="block font-medium mb-2">
-              Product Images
-            </label>
-
-            <label className="border-2 border-dashed rounded-xl h-52 flex flex-col justify-center items-center cursor-pointer hover:border-blue-500">
-
-              <FontAwesomeIcon
-                icon={faCloudArrowUp}
-                className="text-5xl text-gray-400 mb-3"
-              />
-
-              <p className="text-gray-500">
-                Click to upload product images
-              </p>
-
-              <input
-                type="file"
-                multiple
-                hidden
-                onChange={handleImage}
-              />
-
-            </label>
-
-            {images.length > 0 && (
-
-              <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-5">
-
-                {images.map((img, index) => (
-
-                  <img
-                    key={index}
-                    src={URL.createObjectURL(img)}
-                    alt=""
-                    className="h-24 w-full rounded-lg object-cover"
-                  />
-
-                ))}
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm text-gray-600 mb-1">
+                  Product Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="e.g. Nike Air Max"
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 ${
+                    error ? "border-red-400" : ""
+                  }`}
+                />
+                {error && (
+                  <p className="text-red-500 text-xs mt-1">{error}</p>
+                )}
               </div>
 
-            )}
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">
+                  Category
+                </label>
+                <select
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 ${
+                    error ? "border-red-400" : ""
+                  }`}
+                >
+                  <option value="">Select Category</option>
+                  <option value="Shoes">Shoes</option>
+                  <option value="Men Fashion">Men Fashion</option>
+                  <option value="Electronics">Electronics</option>
+                </select>
 
+                {error && (
+                  <p className="text-red-500 text-xs mt-1">{error}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">
+                  Status
+                </label>
+                <select
+                  name="status"
+                  value={form.status}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">
+                  Price ($)
+                </label>
+                <input
+                  type="number"
+                  name="price"
+                  value={form.price}
+                  onChange={handleChange}
+                  placeholder="0.00"
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 ${
+                    error ? "border-red-400" : ""
+                  }`}
+                />
+                {error && (
+                  <p className="text-red-500 text-xs mt-1">{error}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">
+                  Stock
+                </label>
+                <input
+                  type="number"
+                  name="stock"
+                  value={form.stock}
+                  onChange={handleChange}
+                  placeholder="0"
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 ${
+                    error ? "border-red-400" : ""
+                  }`}
+                />
+                {error && (
+                  <p className="text-red-500 text-xs mt-1">{error}</p>
+                )}
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm text-gray-600 mb-1">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={form.description}
+                  onChange={handleChange}
+                  rows={4}
+                  placeholder="Short product description..."
+                  className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                />
+              </div>
+            </div>
           </div>
+        </div>
 
-          {/* Status */}
+        {/* Right: image + actions */}
+        <div className="space-y-4">
+          <div className="bg-white rounded-xl shadow p-5">
+            <h2 className="font-medium mb-4">Product Image</h2>
 
-          <div>
-
-            <label className="block font-medium mb-2">
-              Status
+            <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed rounded-lg h-48 cursor-pointer text-gray-400 hover:bg-gray-50">
+              <FontAwesomeIcon icon={faCloudArrowUp} className="text-2xl" />
+              <span className="text-sm">Click to upload image</span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+              />
             </label>
-
-            <select className="w-full border rounded-lg px-4 py-3">
-
-              <option>Active</option>
-
-              <option>Inactive</option>
-
-            </select>
-
           </div>
 
-          {/* Button */}
-
-          <div className="flex justify-end">
-
+          <div className="bg-white rounded-xl shadow p-5 flex flex-col gap-3">
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg flex items-center gap-2"
+              className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium"
             >
-
-              <FontAwesomeIcon icon={faFloppyDisk} />
-
               Save Product
-
             </button>
 
+            <button
+              type="button"
+              onClick={() => navigate("/admin/products")}
+              className="border py-2 rounded-lg font-medium hover:bg-gray-100"
+            >
+              Cancel
+            </button>
           </div>
-
-        </form>
-
-      </div>
-
+        </div>
+      </form>
     </div>
   );
-}
+};
+
+export default AddProduct;

@@ -1,9 +1,9 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/comon/Navbar";
-import Footer from "../components/comon/Footer";
-import ScrollToTop from "../components/comon/ScrollToTop";
-import Sidebar from "../components/comon/Sidebar";
+import ScrollToTop from "../components/common/ScrollToTop";
+import Sidebar from "../components/common/Sidebar";
 import { useState } from "react";
+import Navbar from './../components/common/Navbar';
+import FooterNav from './../components/common/FooterNav';
 
 const Userlayout = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +33,7 @@ const Userlayout = () => {
         <Outlet />
       </main>
 
-      <Footer />
+      <FooterNav />
     </div>
   );
 };

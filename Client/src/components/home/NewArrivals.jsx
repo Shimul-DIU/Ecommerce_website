@@ -1,4 +1,4 @@
-import ProductCard from '../comon/ProductCard';
+import ProductCard from '../common/ProductCard';
 import { useProducts } from '../../hooks/useProducts';
 
 const NewArrivals = () => {
