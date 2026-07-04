@@ -1,65 +1,51 @@
-import ProductCard from '../common/ProductCard';
-import { useProducts } from '../../hooks/useProducts';
+import useProducts from "../../hooks/useProducts";
 
 const NewArrivals = () => {
-  const { products, loading, error, refetch } = useProducts('/api/products/new-arrivals');
-
-  if (loading) {
-    return (
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, index) => (
-            <div key={index} className="bg-gray-200 rounded-lg h-80 animate-pulse"></div>
-          ))}
-        </div>
-      </section>
-    );
-  }
+  const [products, loading, error] = useProducts();
 
   if (error) {
-    return (
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center text-red-500">
-          <p>Failed to load new arrivals. Please try again later.</p>
-          <button
-            onClick={refetch}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Retry
-          </button>
-        </div>
-      </section>
-    );
-  }
-
-  if (products.length === 0) {
-    return (
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center text-gray-500">
-          <p>No new arrivals at the moment. Check back soon!</p>
-        </div>
-      </section>
-    );
+    return <h2>{error}</h2>;
   }
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900">New Arrivals</h2>
-          <p className="text-gray-500 mt-1">Fresh styles just dropped for you</p>
+    <div>
+      {loading && (
+        <div className="flex flex-wrap gap-4 animate-pulse">
+          <div className="h-24 w-24 rounded-2xl bg-gray-200"></div>
+          <div className="h-24 w-24 rounded-2xl bg-gray-200"></div>
+          <div className="h-24 w-24 rounded-2xl bg-gray-200"></div>
+          <div className="h-24 w-24 rounded-2xl bg-gray-200"></div>
+          <div className="h-24 w-24 rounded-2xl bg-gray-200"></div>
+          <div className="h-24 w-24 rounded-2xl bg-gray-200"></div>
         </div>
-        <a href="/shop?category=new-arrivals" className="text-blue-600 hover:text-blue-800 font-medium">
-          View All →
-        </a>
-      </div>
+      )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard key={product._id || product.id} product={product} />
-        ))}
-      </div>
-    </section>
+      {!loading && (
+        <div className="grid grid-cols-4 gap-6">
+          {products.map((item) => (
+            <div key={item._id} className="border rounded-lg p-4">
+              <img
+                src={`http://localhost:5000/uploads/${item.image}`}
+                alt={item.name}
+                className="w-full h-48 object-cover"
+              />
+
+              <h2 className="text-xl font-bold mt-3">{item.name}</h2>
+
+              <p>Category: {item.category}</p>
+
+              <p>Price: ৳{item.price}</p>
+
+              <p>Stock: {item.stock}</p>
+
+              <p>Status: {item.status}</p>
+
+              <p>{item.description}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
