@@ -48,7 +48,7 @@ const [user,setUser]=useState({
 
   try {
     const response = await axios.post(
-      "http://localhost:4000/user/forgot-password",
+      "https://ecommerce-server-6rux.onrender.com/api/user/forgot-password",
       { email }
     );
 

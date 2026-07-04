@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   faPlus,
   faPen,
@@ -7,37 +7,25 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const AdminProducts = () => {
-  const [products] = useState([
-    {
-      id: 1,
-      image: "https://via.placeholder.com/60",
-      name: "Nike Air Max",
-      category: "Shoes",
-      price: 120,
-      stock: 20,
-      status: "Active",
-    },
-    {
-      id: 2,
-      image: "https://via.placeholder.com/60",
-      name: "T-Shirt",
-      category: "Men Fashion",
-      price: 30,
-      stock: 50,
-      status: "Active",
-    },
-    {
-      id: 3,
-      image: "https://via.placeholder.com/60",
-      name: "Smart Watch",
-      category: "Electronics",
-      price: 90,
-      stock: 10,
-      status: "Inactive",
-    },
-  ]);
+  const [message,setMessage]=useState('')
+  const [products,setProducts]=useState([])
+  useEffect(()=>{
+    const fetchProducts=async()=>{
+           try {
+        const response=await axios.get('http://localhost:5000/api/products')
+    await setProducts(response.data.data)
+   
+    }catch (error) {
+      setMessage(error.response.message)
+    }
+
+    }
+     fetchProducts()
+
+  },[])
 
   return (
     <div className="px-2">
@@ -99,10 +87,10 @@ const AdminProducts = () => {
 
           <tbody>
             {products.map((item) => (
-              <tr key={item.id} className="border-t hover:bg-gray-50">
+              <tr key={item._id} className="border-t hover:bg-gray-50">
                 <td className="p-2">
                   <img
-                    src={item.image}
+                    src={`http://localhost:5000/uploads/${item.image}`}
                     alt={item.name}
                     className="w-14 h-14 rounded-lg object-cover"
                   />
@@ -143,6 +131,7 @@ const AdminProducts = () => {
             ))}
           </tbody>
         </table>
+        {message && <p className="text-red-500">{message}</p>}
 
         {/* Pagination */}
         <div className="flex justify-between mt-3 items-center p-3 border-t">
