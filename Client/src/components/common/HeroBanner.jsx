@@ -344,7 +344,7 @@ const HeroBanner = () => {
   };
 
   return (
-    <div className="relative px-4 py-4 md:px-8">
+    <div className="relative px-4 py-4 md:px-8  ">
       {/* Slider Container */}
       <div className="relative overflow-hidden rounded-xl">
         {/* Slides */}

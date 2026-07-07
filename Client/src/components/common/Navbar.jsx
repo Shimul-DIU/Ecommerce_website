@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
-import logo from "../../assets/images/logo.png";
+import logo from "../../assets/images/logo-Photoroom.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,9 +14,12 @@ import {
   faChevronDown,
   faBagShopping,
   faTag,
+  faHeart
 } from "@fortawesome/free-solid-svg-icons";
+import { CountContext } from "../../context/countContext";
 
 const Navbar = ({ onMenuClick }) => {
+  const { wishlist, cart } = useContext(CountContext);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -92,7 +95,7 @@ const Navbar = ({ onMenuClick }) => {
 
             {/* Left — Logo (always visible) */}
             <Link to="/" className="shrink-0">
-              <img src={logo} alt="logo" className="h-11" />
+              <img src={logo} alt="logo" className="h-11 mix-blend-darken" />
             </Link>
 
             {/* Center — Search Bar */}
@@ -186,12 +189,29 @@ const Navbar = ({ onMenuClick }) => {
 
               {/* Cart & Profile */}
               <Link
-                to="/cart"
-                onClick={() => setIsCategoryOpen(false)}
-                className="text-xl hover:text-blue-600 transition"
-              >
-                <FontAwesomeIcon icon={faCartShopping} />
-              </Link>
+                  to="/wishlist"
+                  className="relative text-xl hover:text-blue-600 transition"
+                >
+                  <FontAwesomeIcon icon={faHeart} />
+
+                  {wishlist.length> 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
+                      {wishlist.length}
+                    </span>
+                  )}
+                </Link>
+              <Link
+                  to="/cart"
+                  className="relative text-xl hover:text-blue-600 transition"
+                >
+                  <FontAwesomeIcon icon={faCartShopping} />
+
+                  {cart.length> 0 && (
+                    <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
+                      {cart.length}
+                    </span>
+                  )}
+                </Link>
               <Link
                 to="/profile"
                 onClick={() => setIsCategoryOpen(false)}

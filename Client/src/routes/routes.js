@@ -26,64 +26,61 @@ import Categories from "../pages/client/Categories.jsx";
 import Products from './../pages/client/Products';
 import Customers from './../pages/admin/Customers';
 import Card from './../components/common/Card';
+import Checkout from "../pages/client/Checkout.jsx";
 
-const Router=createBrowserRouter([
+const Router = createBrowserRouter([
   {
-    path:'/',
-    Component:Userlayout,
-    children:[
-     { index: true, Component: Home },
+    path: "/",
+    Component: Userlayout,
+    children: [
+      { index: true, Component: Home },
       { path: "categories", Component: Categories },
       { path: "products", Component: Products },
       { path: "card", Component: Card },
       { path: "login", Component: Login },
       { path: "register", Component: Register },
-      {path: "reset-password/:token",Component:ResetPassword },
-      { path:'profile',
-        Component:UserProtectedRoute,
-        children:[
-          {index:true,Component:Profile}
-        ]
-
+      { path: "checkout", Component: Checkout },
+      { path: "reset-password/:token", Component: ResetPassword },
+      {
+        path: "profile",
+        Component: UserProtectedRoute,
+        children: [{ index: true, Component: Profile }],
       },
-    ]
-
+    ],
   },
 
   // admin route
 
-   {
+  {
     path: "/admin/login",
     Component: AdminLogin,
   },
   {
-   path:'/admin',
-   Component:ProtectedRoute,
-   children:[
-    {
-    Component:Adminlayout,
-    children:[
-      { index: true, Component: AdminDashboard },
+    path: "/admin",
+    Component: ProtectedRoute,
+    children: [
+      {
+        Component: Adminlayout,
+        children: [
+          { index: true, Component: AdminDashboard },
 
-        // products CRUD
-        { path: "products", Component: AdminProducts },
-        { path: "card", Component: Card },
-        { path: "products/add", Component: AddProduct },
-        { path: "products/edit/:id", Component: EditProduct },
+          // products CRUD
+          { path: "products", Component: AdminProducts },
+          { path: "card", Component: Card },
+          { path: "products/add", Component: AddProduct },
+          { path: "products/edit/:id", Component: EditProduct },
 
-        // other admin pages
-        { path: "orders", Component: Orders },
-        { path: "customers", Component: Customers},
-        { path: "setting", Component: Setting },
-    ]
-
-      }
-    ]
-
-    },
-    {
-      path:'/admin/reset-password/:token',
-      Component:AdminResetPassword
-    }
-])
+          // other admin pages
+          { path: "orders", Component: Orders },
+          { path: "customers", Component: Customers },
+          { path: "setting", Component: Setting },
+        ],
+      },
+    ],
+  },
+  {
+    path: "/admin/reset-password/:token",
+    Component: AdminResetPassword,
+  },
+]);
 export default Router
