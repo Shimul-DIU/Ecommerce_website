@@ -1,17 +1,21 @@
 import NewArrivals from '../../components/home/NewArrivals';
 import HeroBanner from '../../components/common/HeroBanner';
-import Filter from './../../components/Filter';
+// import Filter from './../../components/Filter';
+import DealOfTheDay from '../../components/home/DealOFTheDay';
 
 const Home = () => (
   <div>
     <HeroBanner />
-    <div className="flex ">
-      <div className='hidden md:block'>
+
+      {/* <div className='hidden md:block'>
       <Filter/>
+      </div> */}
+      <div>
+        <DealOfTheDay />
       </div>
-      <div className='flex-1 order-1 md:order-2'>
-        <NewArrivals />
-      </div>
+   
+    <div >
+      <NewArrivals />
     </div>
   </div>
 );
