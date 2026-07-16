@@ -2,6 +2,7 @@ import NewArrivals from '../../components/home/NewArrivals';
 import HeroBanner from '../../components/common/HeroBanner';
 // import Filter from './../../components/Filter';
 import DealOfTheDay from '../../components/home/DealOFTheDay';
+import DevelopmentPopup from '../../components/common/DevelopmentPopup';
 
 const Home = () => (
   <div>
@@ -13,7 +14,7 @@ const Home = () => (
       <div>
         <DealOfTheDay />
       </div>
-   
+    <DevelopmentPopup></DevelopmentPopup>
     <div >
       <NewArrivals />
     </div>
