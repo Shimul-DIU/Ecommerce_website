@@ -8,6 +8,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import axiosInstance from "../../../utils/axiosInstance";
 
 const AdminProducts = () => {
   const [message,setMessage]=useState('')
@@ -15,9 +16,10 @@ const AdminProducts = () => {
   useEffect(()=>{
     const fetchProducts=async()=>{
            try {
-        const response=await axios.get('http://localhost:5000/api/products')
+        const response = await axiosInstance.get("/api/products",
+        );
     await setProducts(response.data.data)
-   
+
     }catch (error) {
       setMessage(error.response.message)
     }
@@ -33,7 +35,10 @@ const AdminProducts = () => {
       <div className="flex flex-col md:flex-row justify-between md:items-center gap-2 mb-6">
         <h1 className="text-lg font-semibold">Products</h1>
 
-        <Link to='/admin/products/add'  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg flex items-center gap-2">
+        <Link
+          to="/admin/products/add"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg flex items-center gap-2"
+        >
           <FontAwesomeIcon icon={faPlus} />
           Add Product
         </Link>
@@ -43,17 +48,19 @@ const AdminProducts = () => {
       <div className="bg-white rounded-xl shadow p-3 mb-2">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 ">
           <div className="relative">
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <FontAwesomeIcon icon={faMagnifyingGlass} className="text-gray-400" />
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                className="text-gray-400"
+              />
+            </div>
+
+            <input
+              type="text"
+              placeholder="Search Product..."
+              className="w-full pl-11 pr-4 py-1 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
-
-          <input
-            type="text"
-            placeholder="Search Product..."
-            className="w-full pl-11 pr-4 py-1 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
 
           <select className="border rounded-lg px-4 p-1">
             <option>All Categories</option>
@@ -69,7 +76,6 @@ const AdminProducts = () => {
           </select>
         </div>
       </div>
-
 
       <div className="bg-white rounded-xl shadow overflow-x-auto">
         <table className="w-full">
@@ -90,7 +96,7 @@ const AdminProducts = () => {
               <tr key={item._id} className="border-t hover:bg-gray-50">
                 <td className="p-2">
                   <img
-                    src={`http://localhost:5000/uploads/${item.image}`}
+                    src={`${import.meta.env.process.env.VITE_API_URL}/uploads/${item.image}`}
                     alt={item.name}
                     className="w-14 h-14 rounded-lg object-cover"
                   />

@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import axiosInstance from "../utils/axiosInstance";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const AdminLogin = () => {
@@ -28,7 +28,9 @@ const AdminLogin = () => {
   }
 
   setMessage("");
-  const response= await axios.post('http://localhost:4000/api/admin/forgot-password',formData)
+  const response = await axiosInstance.post("/api/admin/forgot-password",
+    formData,
+  );
   // console.log(`response send serer ${response}`)
   setMessage(response.data)
 
@@ -41,7 +43,9 @@ const AdminLogin = () => {
   const submitHandler = async (e) => {
     try {
        e.preventDefault();
-       const res = await axios.post("http://localhost:4000/api/admin/login",formData);
+       const res = await axiosInstance.post("/api/admin/login",
+         formData,
+       );
        console.log(res)
        localStorage.setItem('adminToken',res.data.token)
      navigate("/admin", { replace: true });

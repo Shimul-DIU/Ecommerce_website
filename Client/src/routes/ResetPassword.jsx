@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import axiosInstance from "../utils/axiosInstance";
 const ResetPassword = () => {
   const { token } = useParams();
   const navigate = useNavigate();
@@ -13,9 +13,9 @@ const ResetPassword = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        `http://localhost:4000/user/reset-password/${token}`,
-        { password }
+      const response = await axiosInstance.post(
+        `/api/user/reset-password/${token}`,
+        { password },
       );
 
       setMessage(response.data.message);

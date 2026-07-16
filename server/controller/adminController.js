@@ -2,7 +2,7 @@ import Admin from "../model/adminModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import transporter from "../config/mail.js";
-
+import axiosInstance from "../../client/src/utils/axiosInstance.js";
 export const loginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -73,7 +73,7 @@ export const ForgotPassword = async (req, res) => {
             { expiresIn: "15m" }
         );
 
-        const resetLink = `http://localhost:5173/admin/reset-password/${token}`;
+        const resetLink = `${import.meta.env.VITE_API_URL}/api/admin/reset-password/${token}`;
 
         await transporter.sendMail({
             from: process.env.EMAIL,

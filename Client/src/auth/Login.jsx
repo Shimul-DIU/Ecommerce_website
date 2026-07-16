@@ -3,14 +3,13 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faEye,faEyeSlash,} from "@fortawesome/free-solid-svg-icons";
 import {faGoogle,faFacebook,faGithub,} from "@fortawesome/free-brands-svg-icons";
-
+import axiosInstance from "../utils/axiosInstance";
 
 
 import SignWithGoogle from "./SignInWithGoogle";
 import SignWithFacebook from "./SignInWithFacebook";
 import { useNavigate } from "react-router-dom";
 import { authContext } from "../context/AuthContext";
-
 
 const Login = () => {
  const refEmail= useRef(null)
@@ -47,8 +46,7 @@ const [user,setUser]=useState({
   }
 
   try {
-    const response = await axios.post(
-      "https://ecommerce-server-6rux.onrender.com/api/user/forgot-password",
+    const response = await axiosInstance.post("/api/user/forgot-password",
       { email }
     );
 
@@ -63,7 +61,7 @@ const [user,setUser]=useState({
   const handleLogin=async(e)=>{
     e.preventDefault();
     try {
-      const response=await axios.post('http://localhost:4000/user/login',user)
+      const response=await axiosInstance.post('/api/user/login',user)
       setMessage(response.data.message)
       login(response.data.token)
       console.log(response)

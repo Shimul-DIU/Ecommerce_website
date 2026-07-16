@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
@@ -11,6 +12,8 @@ import {
 
 /*
   Fonts used (add these to your index.html <head>, or import in index.css):
+import { dotenv } from 'dotenv';
+import { dotenv } from 'dotenv';
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -153,7 +156,7 @@ const Checkout = () => {
 
                 <div className="flex gap-4">
                   <img
-                    src={`http://localhost:5000/uploads/${image}`}
+                    src={`${import.meta.env.VITE_API_URL}/uploads/${image}`}
                     alt={name}
                     className="w-20 h-20 object-cover rounded-lg border border-[#E4DDCE]"
                   />

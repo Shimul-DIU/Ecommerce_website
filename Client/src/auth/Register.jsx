@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import {faEye, faEyeSlash,} from "@fortawesome/free-solid-svg-icons";
 
 import{faGoogle,faFacebook,faGithub,} from "@fortawesome/free-brands-svg-icons";
-
+import axiosInstance from "../utils/axiosInstance";
 
 const Register = () => {
   const navigate=useNavigate();
@@ -46,7 +46,7 @@ const Register = () => {
     // transfer form data to backend
     try {
 
-        await axios.post('http://localhost:4000/user/register',user);
+        await axiosInstance.post("/api/user/register", user);
 
       navigate('/login')
 

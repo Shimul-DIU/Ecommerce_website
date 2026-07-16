@@ -68,7 +68,7 @@ const NewArrivals = () => {
                     {/* Image */}
                     <div className="relative">
                       <img
-                        src={`http://localhost:5000/uploads/${item.image}`}
+                        src={`${import.meta.env.VITE_API_URL}/uploads/${item.image}`}
                         alt={item.name}
                         className="w-full h-40 object-cover"
                       />

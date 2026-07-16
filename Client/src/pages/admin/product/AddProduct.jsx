@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-
+import axiosInstance from "../../../utils/axiosInstance";
 const AddProduct = () => {
   const navigate = useNavigate();
   const [prevImg,setPrevImg]=useState(null)
@@ -33,7 +33,7 @@ const AddProduct = () => {
     setPrevImg(URL.createObjectURL(e.target.files[0]));
     }
     setError({});
-  }; 
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,9 +47,8 @@ const AddProduct = () => {
         formData.append(key, value);
       });
 
-      const response = await axios.post(
-        "http://localhost:5000/api/admin/add-product",
-        formData
+      const response = await axiosInstance.post("/api/admin/add-product",
+        formData,
       );
 
       console.log(response.data);
