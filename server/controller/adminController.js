@@ -2,7 +2,7 @@ import Admin from "../model/adminModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import transporter from "../config/mail.js";
-import axiosInstance from "../../client/src/utils/axiosInstance.js";
+// import axiosInstance from "../../client/src/utils/axiosInstance.js";
 export const loginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
