@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,20 +10,29 @@ import {
   faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 
-/*
-  Fonts used (add these to your index.html <head>, or import in index.css):
-import { dotenv } from 'dotenv';
-import { dotenv } from 'dotenv';
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-*/
-
 const FONT_DISPLAY = "'Fraunces', serif";
 const FONT_BODY = "'Inter', sans-serif";
 const FONT_MONO = "'IBM Plex Mono', monospace";
 
 const Checkout = () => {
+  const [formdata,setFormdata]=useState({
+    name:'',
+    phone:'',
+    address:'',
+
+
+
+  })
+  const changeHandler=(e)=>{
+    setFormdata((prev)=>({
+      ...prev,
+      [e.target.name]: e.target.value
+    }))
+  }
+  const submitHandler=(e)=>{
+    e.preventDefault();
+
+  }
   const [count, setCount] = useState(1);
   const { state } = useLocation();
   const product = state?.product;
@@ -52,20 +61,6 @@ const Checkout = () => {
       style={{ fontFamily: FONT_BODY }}
     >
       <div className="max-w-6xl mx-auto">
-        {/* Step indicator */}
-        <div className="flex items-center gap-3 mb-8 text-sm">
-          <span className="text-[#16241F]/40">Cart</span>
-          <span className="w-6 h-px bg-[#16241F]/20" />
-          <span className="font-semibold text-[#16241F] flex items-center gap-1.5">
-            <span className="w-5 h-5 rounded-full bg-[#16241F] text-[#FAF6EF] text-xs flex items-center justify-center">
-              2
-            </span>
-            Shipping
-          </span>
-          <span className="w-6 h-px bg-[#16241F]/20" />
-          <span className="text-[#16241F]/40">Confirmation</span>
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
           {/* Shipping Information */}
           <div className="lg:col-span-3 bg-white rounded-2xl border border-[#E4DDCE] p-8 sm:p-10">
@@ -79,38 +74,69 @@ const Checkout = () => {
               We'll use this to get your order to you.
             </p>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={submitHandler}>
               <div>
-                <label className="block mb-2 text-sm font-medium text-[#16241F]">
+                <label
+                  htmlFor="name"
+                  className="block mb-2 text-sm font-medium text-[#16241F]"
+                >
                   Full name
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Rahim Uddin"
+                  required
+                  name="name"
+                  onChange={changeHandler}
+                  placeholder="e.g. Md. Shimul"
                   className="w-full border border-[#E4DDCE] bg-[#FAF6EF]/40 rounded-lg px-4 py-3 text-[#16241F] placeholder:text-[#16241F]/30 outline-none focus:ring-2 focus:ring-[#B08946] focus:border-[#B08946] transition"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 text-sm font-medium text-[#16241F]">
+                <label
+                  htmlFor="phone"
+                  className="block mb-2 text-sm font-medium text-[#16241F]"
+                >
                   Phone number
                 </label>
                 <input
                   type="text"
+                  name="phone"
                   placeholder="01XXXXXXXXX"
                   className="w-full border border-[#E4DDCE] bg-[#FAF6EF]/40 rounded-lg px-4 py-3 text-[#16241F] placeholder:text-[#16241F]/30 outline-none focus:ring-2 focus:ring-[#B08946] focus:border-[#B08946] transition"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 text-sm font-medium text-[#16241F]">
+                <label
+                  htmlFor="address"
+                  className="block mb-2 text-sm font-medium text-[#16241F]"
+                >
                   Delivery address
                 </label>
                 <textarea
                   rows="4"
+                  name="address"
                   placeholder="House no, Road no, Area, Thana, District"
                   className="w-full border border-[#E4DDCE] bg-[#FAF6EF]/40 rounded-lg px-4 py-3 text-[#16241F] placeholder:text-[#16241F]/30 outline-none focus:ring-2 focus:ring-[#B08946] focus:border-[#B08946] transition resize-none"
                 />
+              </div>
+              <div className="flex flex-col">
+                <h2>Payment method </h2>
+                <div className="flex flex-col">
+                  <div>
+                    <input type="radio" name="payment" required  />
+                    <label htmlFor="bkash">Bkash</label>
+                  </div>
+                  <div>
+                    <input type="radio" name="payment" required />
+                    <label htmlFor="nagad">Nagad</label>
+                  </div>
+                  <div>
+                    <input type="radio" name="payment" required />
+                    <label htmlFor="cash on delivery">Cash on Delivery</label>
+                  </div>
+                </div>
               </div>
             </form>
 
@@ -249,13 +275,16 @@ const Checkout = () => {
                   </span>
                 </div>
 
-                <button className="w-full mt-8 bg-[#16241F] hover:bg-[#0F1A16] duration-200 text-[#FAF6EF] py-3.5 rounded-xl font-medium text-base flex items-center justify-center gap-2 group">
+                <Link
+                  to="/orders"
+                  className="w-full mt-8 bg-[#16241F] hover:bg-[#0F1A16] duration-200 text-[#FAF6EF] py-3.5 rounded-xl font-medium text-base flex items-center justify-center gap-2 group"
+                >
                   <FontAwesomeIcon
                     icon={faCircleCheck}
                     className="text-[#B08946] group-hover:text-[#c9a25c] transition"
                   />
                   Confirm &amp; Place Order
-                </button>
+                </Link>
               </div>
             </div>
           </div>

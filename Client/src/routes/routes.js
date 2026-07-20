@@ -27,6 +27,7 @@ import Products from './../pages/client/Products';
 import Customers from './../pages/admin/Customers';
 import Card from './../components/common/Card';
 import Checkout from "../pages/client/Checkout.jsx";
+import MyOrders from "../components/common/MyOrder.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -40,6 +41,7 @@ const Router = createBrowserRouter([
       { path: "login", Component: Login },
       { path: "register", Component: Register },
       { path: "checkout", Component: Checkout },
+      { path: "orders", Component: MyOrders },
       { path: "reset-password/:token", Component: ResetPassword },
       {
         path: "profile",
