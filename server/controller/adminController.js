@@ -90,7 +90,6 @@ export const ForgotPassword = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error.stack)
     if (error.name === "TokenExpiredError") {
         return res.status(400).json({
             message: "Reset link has expired"
