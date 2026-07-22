@@ -2,7 +2,6 @@ import Admin from "../model/adminModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import transporter from "../config/mail.js";
-// import axiosInstance from "../../client/src/utils/axiosInstance.js";
 export const loginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -58,13 +57,13 @@ export const ForgotPassword = async (req, res) => {
         const { email } = req.body;
 
         if (!email) {
-            return res.send('Email is required');
+            return res.status(400).json({message:"Email is required"});
         }
 
         const admin = await Admin.findOne({ email });
 
         if (!admin) {
-            return res.status(400).send("Email not found");
+            return res.status(400).json({message:"Email not found"});
         }
 
         const token = jwt.sign(
@@ -73,7 +72,7 @@ export const ForgotPassword = async (req, res) => {
             { expiresIn: "15m" }
         );
 
-        const resetLink = `${import.meta.env.VITE_API_URL}/api/admin/reset-password/${token}`;
+        const resetLink = `${process.env.CLIENT_URL}/admin/reset-password/${token}`;
 
         await transporter.sendMail({
             from: process.env.EMAIL,
@@ -86,11 +85,28 @@ export const ForgotPassword = async (req, res) => {
                 </a>`
         });
 
-        res.status(200).send('Reset link sent successfully');
+        res.status(200).json({
+            message:"Reset link sent successfully"
+        });
 
     } catch (error) {
-        res.status(500).send(error.message);
+        console.log(error.stack)
+    if (error.name === "TokenExpiredError") {
+        return res.status(400).json({
+            message: "Reset link has expired"
+        });
     }
+
+    if (error.name === "JsonWebTokenError") {
+        return res.status(400).json({
+            message: "Invalid reset link"
+        });
+    }
+
+    return res.status(500).json({
+        message: error.message
+    });
+}
 };
 
 export const ResetPassword = async (req, res) => {

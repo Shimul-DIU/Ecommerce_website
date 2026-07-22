@@ -6,6 +6,7 @@ const AdminLogin = () => {
   const [message,setMessage]=useState('')
   const [formData,setFormData]=useState({
     email:'',
+
   })
     const navigate=useNavigate()
 
@@ -32,11 +33,18 @@ const AdminLogin = () => {
     formData,
   );
   // console.log(`response send serer ${response}`)
-  setMessage(response.data)
+  setMessage(response.data.message)
 
-  } catch (error) {
-    console.log(error)
-  }
+  }catch (error) {
+    console.log(error);
+  console.log(error.response);
+  console.log(error.response?.status);
+  console.log(error.response?.data);
+  setMessage(
+
+    error.response?.data?.message || "Something went wrong"
+  );
+}
 
 };
 
@@ -52,9 +60,10 @@ const AdminLogin = () => {
       console.log(res.data);
     }
     catch (error) {
-      console.error("Login error:", error);
-
-    }
+  setMessage(
+    error.response?.data?.message || "Login failed"
+  );
+}
 
 
   };
@@ -75,7 +84,7 @@ const AdminLogin = () => {
           {/* EMAIL */}
           <label htmlFor="email" className="text-sm sm:text-base">Email :</label>
           <input
-            onChange={handleChange}
+
             type="email"
             name="email"
             id="email"
@@ -109,12 +118,12 @@ const AdminLogin = () => {
             </div>
 
 
-            <p className="text-blue-600 cursor-pointer" onClick={handleForgotPassword}>
+            <button type="button" className="text-blue-600 cursor-pointer" onClick={handleForgotPassword}>
               Forgot Password?
-            </p>
+            </button>
           </div>
 
-          <button className="bg-black text-white w-full p-2 text-sm sm:text-base rounded">
+          <button type="submit" className="bg-black text-white w-full p-2 text-sm sm:text-base rounded">
             Login
           </button>
         </form>

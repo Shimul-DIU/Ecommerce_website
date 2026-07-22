@@ -8,8 +8,14 @@ import {
   faUser,
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminNavbar({ toggleSidebar }) {
+  const navigate=useNavigate()
+  const handleLogout=()=>{
+    localStorage.removeItem('adminToken')
+    navigate('/admin/login')
+  }
   const [profileOpen, setProfileOpen] = useState(false);
   const [mobileSearch, setMobileSearch] = useState(false);
 
@@ -27,7 +33,7 @@ export default function AdminNavbar({ toggleSidebar }) {
           <FontAwesomeIcon icon={faBars} />
         </button>
 
-        
+
       </div>
 
       {/* CENTER SEARCH (DESKTOP) */}
@@ -83,7 +89,7 @@ export default function AdminNavbar({ toggleSidebar }) {
               <button className="w-full text-left px-4 py-2 hover:bg-gray-100">
                 Settings
               </button>
-              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500">
+              <button onClick={handleLogout} className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500">
                 Logout
               </button>
             </div>

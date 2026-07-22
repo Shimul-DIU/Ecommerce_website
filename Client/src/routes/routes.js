@@ -8,17 +8,15 @@ import Profile from "../auth/Profile";
 
 // admin
 
-import AdminLogin from "./AdminLogin.jsx";
 import Adminlayout from "../layout/Adminlayout";
 import Orders from "../pages/admin/Orders";
 import Setting from "../pages/admin/Setting";
 import AdminProducts from '../pages/admin/product/AdminProducts';
 import AddProduct from "../pages/admin/product/AddProduct";
 import EditProduct from "../pages/admin/product/EditProduct";
-import ProtectedRoute from "./protectedRoute";
 import UserProtectedRoute from "./UserProtectedRoute";
 
-import ResetPassword from "./ResetPassword.jsx";
+import ResetPassword from "../auth/ResetPassword.jsx";
 import AdminResetPassword from '../auth/AdminResetPassword.jsx';
 import AdminDashboard from "../pages/admin/AdminDashboard.jsx";
 import Home from './../pages/client/Home';
@@ -28,6 +26,8 @@ import Customers from './../pages/admin/Customers';
 import Card from './../components/common/Card';
 import Checkout from "../pages/client/Checkout.jsx";
 import MyOrders from "../components/common/MyOrder.jsx";
+import AdminLogin from "../auth/AdminLogin.jsx";
+import AdminProtectedRoute from "./AdminProtectedRoute.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -59,7 +59,7 @@ const Router = createBrowserRouter([
   },
   {
     path: "/admin",
-    Component: ProtectedRoute,
+    Component: AdminProtectedRoute,
     children: [
       {
         Component: Adminlayout,
