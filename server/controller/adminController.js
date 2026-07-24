@@ -90,18 +90,6 @@ export const ForgotPassword = async (req, res) => {
         });
 
     } catch (error) {
-    if (error.name === "TokenExpiredError") {
-        return res.status(400).json({
-            message: "Reset link has expired"
-        });
-    }
-
-    if (error.name === "JsonWebTokenError") {
-        return res.status(400).json({
-            message: "Invalid reset link"
-        });
-    }
-
     return res.status(500).json({
         message: error.message
     });
