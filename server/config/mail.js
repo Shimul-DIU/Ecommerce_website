@@ -12,5 +12,8 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
 });
+transporter.verify()
+  .then(() => console.log("SMTP Connected"))
+  .catch((err) => console.error("SMTP Verify Error:", err));
 
 export default transporter;

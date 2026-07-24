@@ -53,47 +53,44 @@ export const loginAdmin = async (req, res) => {
 };
 
 export const ForgotPassword = async (req, res) => {
-    try {
-        const { email } = req.body;
+  try {
+    const { email } = req.body;
 
-        if (!email) {
-            return res.status(400).json({message:"Email is required"});
-        }
+    console.log("Step 1", email);
 
-        const admin = await Admin.findOne({ email });
+    const admin = await Admin.findOne({ email });
+    console.log("Step 2");
 
-        if (!admin) {
-            return res.status(400).json({message:"Email not found"});
-        }
+    const token = jwt.sign(
+      { id: admin._id },
+      process.env.FORGOT_PASSWORD,
+      { expiresIn: "15m" }
+    );
 
-        const token = jwt.sign(
-            { id: admin._id },
-            process.env.FORGOT_PASSWORD,
-            { expiresIn: "15m" }
-        );
+    console.log("Step 3");
 
-        const resetLink = `${process.env.CLIENT_URL}/admin/reset-password/${token}`;
-         
-        await transporter.sendMail({
-            from: process.env.EMAIL,
-            to: email,
-            subject: "Reset Password",
-            html: `<h2>Reset password</h2>
-            <p>click here</p>
-             <a href="${resetLink}">
-                    Reset Password
-                </a>`
-        });
+    console.log("Before sendMail");
 
-        res.status(200).json({
-            message:"Reset link sent successfully"
-        });
-
-    } catch (error) {
-    return res.status(500).json({
-        message: error.message
+    await transporter.sendMail({
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Reset Password",
+      html: "<h1>Hello</h1>",
     });
-}
+
+    console.log("After sendMail");
+
+    return res.status(200).json({
+      message: "Mail sent",
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
 };
 
 export const ResetPassword = async (req, res) => {
