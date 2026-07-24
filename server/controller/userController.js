@@ -1,9 +1,9 @@
 import users from '../model/userModel.js';
-import sendEmail from '../utils/sendEmail.js';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import transporter from '../config/mail.js';
 
 dotenv.config();
 
@@ -126,15 +126,21 @@ const forgotPassword = async (req, res) => {
 
     const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
-    await sendEmail(
-      user.email,
-      "Password Reset Request",
-      `
-        <h2>Password Reset Request</h2>
+    await transporter.sendMail(
+     {
+      from:process.env.EMAIL,
+      to:email,
+      subject:"Password Reset Request",
+      html:`
+         <h2>Password Reset Request</h2>
         <p>Click the link below to reset your password:</p>
         <a href="${resetUrl}">Reset Password</a>
         <p>This link will expire in 15 minutes.</p>
       `
+     }
+
+
+      
     );
 
     return res.json({
