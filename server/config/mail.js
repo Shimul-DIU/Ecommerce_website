@@ -1,16 +1,14 @@
-import nodemailer from 'nodemailer'
-import dns from 'dns'
-
-dns.setDefaultResultOrder('ipv4first')
+// config/mail.js
+import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
-  secure: true,    
+  secure: true,
   auth: {
     user: process.env.EMAIL,
     pass: process.env.SMTP_PASS,
   },
 });
 
-export default transporter
+export default transporter;
