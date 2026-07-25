@@ -77,7 +77,7 @@ export const ForgotPassword = async (req, res) => {
         const resetLink = `${process.env.CLIENT_URL}/admin/reset-password/${token}`;
 
         await resend.emails.send({
-            from: "onboarding@resend.dev", // Resend এর ফ্রি টেস্ট ডোমেইন, প্রোডাকশনে নিজের ভেরিফায়েড ডোমেইন বসাবে
+            from: "md.shimuldiu7@gmail.com",
             to: email,
             subject: "Reset Password",
             html: `<h2>Reset password</h2>
