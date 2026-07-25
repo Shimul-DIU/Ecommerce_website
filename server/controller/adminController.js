@@ -1,7 +1,6 @@
 import Admin from "../model/adminModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import transporter from "../config/mail.js";
 export const loginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -77,7 +76,7 @@ export const ForgotPassword = async (req, res) => {
         const resetLink = `${process.env.CLIENT_URL}/admin/reset-password/${token}`;
 
         await resend.emails.send({
-            from: "md.shimuldiu7@gmail.com",
+            from: "onboarding@resend.dev",
             to: email,
             subject: "Reset Password",
             html: `<h2>Reset password</h2>
