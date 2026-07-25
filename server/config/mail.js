@@ -1,22 +1,5 @@
-import nodemailer from "nodemailer";
-import dns from "node:dns";
+import { Resend } from "resend";
 
-dns.setDefaultResultOrder("ipv4first");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  requireTLS: true,
-  family: 4,
-  auth: {
-    user: process.env.EMAIL,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
-transporter.verify()
-  .then(() => console.log("SMTP Connected"))
-  .catch((err) => console.error("SMTP Verify Error:", err));
-
-export default transporter;
+export default resend;

@@ -52,18 +52,20 @@ export const loginAdmin = async (req, res) => {
     }
 };
 
+import resend from "../config/mail.js";
+
 export const ForgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
 
         if (!email) {
-            return res.status(400).json({message:"Email is required"});
+            return res.status(400).json({ message: "Email is required" });
         }
 
         const admin = await Admin.findOne({ email });
 
         if (!admin) {
-            return res.status(400).json({message:"Email not found"});
+            return res.status(400).json({ message: "Email not found" });
         }
 
         const token = jwt.sign(
@@ -74,28 +76,25 @@ export const ForgotPassword = async (req, res) => {
 
         const resetLink = `${process.env.CLIENT_URL}/admin/reset-password/${token}`;
 
-        await transporter.sendMail({
-            from: process.env.EMAIL,
+        await resend.emails.send({
+            from: "onboarding@resend.dev", // Resend এর ফ্রি টেস্ট ডোমেইন, প্রোডাকশনে নিজের ভেরিফায়েড ডোমেইন বসাবে
             to: email,
             subject: "Reset Password",
             html: `<h2>Reset password</h2>
             <p>click here</p>
-             <a href="${resetLink}">
-                    Reset Password
-                </a>`
+             <a href="${resetLink}">Reset Password</a>`,
         });
 
         res.status(200).json({
-            message:"Reset link sent successfully"
+            message: "Reset link sent successfully",
         });
 
     } catch (error) {
-    return res.status(500).json({
-        message: error.message
-    });
-}
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
 };
-
 export const ResetPassword = async (req, res) => {
     try {
         const { token, password } = req.body;
