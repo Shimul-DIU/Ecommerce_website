@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import cors from 'cors';
 import passport from 'passport';
-
+import dns from 'dns';
+dns.setDefaultResultOrder('ipv4first');
 import './config/passport/userJwtStrategy.js';
 import './config/passport/adminJwtStrategy.js';
 
