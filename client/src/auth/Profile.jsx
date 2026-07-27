@@ -17,7 +17,7 @@ const Profile = () => {
   useEffect(()=>{
     const fetchProfile=async()=>{
       try {
-          const res = await axiosInstance.get("/user/profile", {
+          const res = await axiosInstance.get("/api/user/profile", {
             headers: {
               Authorization: token,
             },

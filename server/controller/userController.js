@@ -1,4 +1,4 @@
-import users from '../model/userModel.js';
+import Users from '../model/userModel.js';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -192,10 +192,51 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const GoogleLogin = async (req, res) => {
+  try {
+    const { fullname, email, photoURL, firebaseId } = req.body;
+
+    if (!email || !firebaseId) {
+      return res.status(400).json({
+        message: 'Email and firebaseId are required',
+      });
+    }
+
+    let user = await Users.findOne({email});
+
+    if (!user) {
+      user = new Users({
+        email,
+        fullname,
+        avatar: photoURL,
+        firebaseId,
+      });
+      await user.save();
+    }
+
+    const token = jwt.sign(
+      { email: user.email, id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '40d' }
+    );
+
+    return res.status(200).json({
+      message: 'Login successful',
+      token: 'Bearer ' + token,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Internal server error',
+    });
+  }
+};
 /* ================= EXPORT ================= */
 export {
   createUser,
   loginUser,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  GoogleLogin
 };
+
+

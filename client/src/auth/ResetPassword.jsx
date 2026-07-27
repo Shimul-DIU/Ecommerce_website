@@ -181,6 +181,7 @@ const ResetPassword = () => {
             {/* Submit Button */}
             <button
               type="submit"
+              value={ResetPassword}
               disabled={isLoading}
               className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all duration-200 transform hover:scale-[1.02] ${isLoading
                   ? "bg-blue-400 cursor-not-allowed"

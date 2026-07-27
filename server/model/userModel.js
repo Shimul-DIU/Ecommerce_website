@@ -1,26 +1,44 @@
+// model/userModel.js
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema(
   {
     fullname: {
       type: String,
-      required: true,
+      required: [true, 'Full name is required'],
       trim: true,
+      minlength: [2, 'Full name must be at least 2 characters'],
+      maxlength: [100, 'Full name cannot exceed 100 characters'],
     },
 
     email: {
       type: String,
-      required: true,
+      required: [true, 'Email is required'],
       unique: true,
       lowercase: true,
       trim: true,
+      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please provide a valid email address'],
     },
 
     password: {
       type: String,
-      required: true,
-      minlength: 6,
+      minlength: [6, 'Password must be at least 6 characters'],
       select: false, // security
+      required: function () {
+        return this.provider === 'local';
+      },
+    },
+
+    provider: {
+      type: String,
+      enum: ['local', 'google'],
+      default: 'local',
+    },
+
+    firebaseId: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
 
     role: {
@@ -47,9 +65,10 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String,
       default: '',
+      match: [/^https?:\/\/.+/, 'Avatar must be a valid URL'],
     },
 
-     resetPasswordToken: {
+    resetPasswordToken: {
       type: String,
     },
 
@@ -62,6 +81,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const users = mongoose.model('users', userSchema);
+const Users = mongoose.model('users', userSchema);
 
-export default users;
+export default Users;

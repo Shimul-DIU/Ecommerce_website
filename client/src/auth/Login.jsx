@@ -1,20 +1,21 @@
-import  { useContext, useRef, useState } from "react";
-import axios from "axios";
+import  { useContext, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faEye,faEyeSlash,} from "@fortawesome/free-solid-svg-icons";
 import {faGoogle,faFacebook,faGithub,} from "@fortawesome/free-brands-svg-icons";
 import axiosInstance from "../utils/axiosInstance";
 
-
-import SignWithGoogle from "./SignInWithGoogle";
 import SignWithFacebook from "./SignInWithFacebook";
 import { useNavigate } from "react-router-dom";
 import { authContext } from "../context/AuthContext";
+import useGoogleSignIn from "../hooks/useGoogleSignIn";
+
 
 const Login = () => {
- const refEmail= useRef(null)
+  const Navigate = useNavigate();
+
 const{login} = useContext(authContext)
-const Navigate=useNavigate();
+const googleSignIn=useGoogleSignIn()
+
 const [showPassword, setShowPassword] = useState(false);
 const[message,setMessage]=useState('')
 const [user,setUser]=useState({
@@ -24,7 +25,7 @@ const [user,setUser]=useState({
 
 
   const handleGoogleLogin=async()=>{
-        await SignWithGoogle();
+    await googleSignIn();
 
     }
   const handleFacebookLogin=async()=>{
@@ -35,10 +36,11 @@ const [user,setUser]=useState({
       ...prev,
       [e.target.name]:e.target.value
     }))
+    setMessage('')
   }
 
   const forgetPasswordHandler = async () => {
-  const email = refEmail.current.value;
+  const email = user.email
 
   if (!email) {
     setMessage("Please enter your email first");
@@ -101,7 +103,7 @@ const [user,setUser]=useState({
 
             <input
               type="email"
-              ref={refEmail}
+              value={user.email.value}
               name="email" required
               onChange={changeHandler}
               placeholder="Enter your email"
