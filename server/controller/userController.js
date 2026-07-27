@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import transporter from '../config/mail.js';
+import resend from '../config/mail.js';
 
 dotenv.config();
 
@@ -126,9 +126,9 @@ const forgotPassword = async (req, res) => {
 
     const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
-    await transporter.sendMail(
+    await resend.emails.send(
      {
-      from:process.env.EMAIL,
+      from:"onboarding@resend.dev",
       to:email,
       subject:"Password Reset Request",
       html:`
@@ -140,7 +140,7 @@ const forgotPassword = async (req, res) => {
      }
 
 
-      
+
     );
 
     return res.json({
