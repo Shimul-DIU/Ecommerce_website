@@ -1,9 +1,9 @@
-import Users from '../model/userModel.js';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import resend from '../config/mail.js';
+import Users from '../model/userModel.js';
 
 dotenv.config();
 
@@ -30,7 +30,7 @@ const createUser = async (req, res) => {
       });
     }
 
-    const existingUser = await users.findOne({ email });
+    const existingUser = await Users.findOne({ email });
 
     if (existingUser) {
       return res.status(400).json({
@@ -40,7 +40,7 @@ const createUser = async (req, res) => {
 
     const hashpassword = await bcrypt.hash(password, saltRounds);
 
-    const user = new users({
+    const user = new Users({
       fullname,
       email,
       password: hashpassword,
@@ -53,6 +53,7 @@ const createUser = async (req, res) => {
     });
 
   } catch (error) {
+    console.error('createUser error:', error);
     return res.status(500).json({
       message: 'Internal server error',
     });
@@ -70,7 +71,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    const user = await users.findOne({ email }).select('+password');
+    const user = await Users.findOne({ email }).select('+password');
 
     if (!user) {
       return res.status(400).json({
@@ -98,6 +99,7 @@ const loginUser = async (req, res) => {
     });
 
   } catch (error) {
+    console.error('loginUser error:', error);
     return res.status(500).json({
       message: 'Internal server error',
     });
@@ -109,7 +111,7 @@ const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
-    const user = await users.findOne({ email });
+    const user = await Users.findOne({ email });
 
     if (!user) {
       return res.status(404).json({
@@ -127,20 +129,17 @@ const forgotPassword = async (req, res) => {
     const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
     await resend.emails.send(
-     {
-      from:"onboarding@resend.dev",
-      to:email,
-      subject:"Password Reset Request",
-      html:`
+      {
+        from: "onboarding@resend.dev",
+        to: email,
+        subject: "Password Reset Request",
+        html: `
          <h2>Password Reset Request</h2>
         <p>Click the link below to reset your password:</p>
         <a href="${resetUrl}">Reset Password</a>
         <p>This link will expire in 15 minutes.</p>
       `
-     }
-
-
-
+      }
     );
 
     return res.json({
@@ -149,8 +148,9 @@ const forgotPassword = async (req, res) => {
     });
 
   } catch (error) {
+    console.error('forgotPassword error:', error);
     return res.status(500).json({
-      message: error.message,
+      message: "Something went wrong. Please try again later.",
     });
   }
 };
@@ -161,7 +161,7 @@ const resetPassword = async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
 
-    const user = await users.findOne({
+    const user = await Users.findOne({
       resetPasswordToken: token,
       resetPasswordExpire: { $gt: Date.now() },
     });
@@ -186,12 +186,14 @@ const resetPassword = async (req, res) => {
     });
 
   } catch (error) {
+    console.error('resetPassword error:', error);
     return res.status(500).json({
-      message: error.message,
+      message: "Something went wrong. Please try again later.",
     });
   }
 };
 
+/* ================= GOOGLE LOGIN ================= */
 const GoogleLogin = async (req, res) => {
   try {
     const { fullname, email, photoURL, firebaseId } = req.body;
@@ -202,7 +204,7 @@ const GoogleLogin = async (req, res) => {
       });
     }
 
-    let user = await Users.findOne({email});
+    let user = await Users.findOne({ email });
 
     if (!user) {
       user = new Users({
@@ -210,6 +212,7 @@ const GoogleLogin = async (req, res) => {
         fullname,
         avatar: photoURL,
         firebaseId,
+        provider: 'google',
       });
       await user.save();
     }
@@ -225,11 +228,13 @@ const GoogleLogin = async (req, res) => {
       token: 'Bearer ' + token,
     });
   } catch (error) {
+    console.error('GoogleLogin error:', error);
     return res.status(500).json({
       message: 'Internal server error',
     });
   }
 };
+
 /* ================= EXPORT ================= */
 export {
   createUser,
@@ -238,5 +243,3 @@ export {
   resetPassword,
   GoogleLogin
 };
-
-

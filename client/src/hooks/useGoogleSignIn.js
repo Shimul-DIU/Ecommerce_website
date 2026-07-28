@@ -31,4 +31,4 @@ const useGoogleSignIn = () => {
   return signInWithGoogle;
 };
 
-export default useGoogleSignIn;
+export default  useGoogleSignIn ;
