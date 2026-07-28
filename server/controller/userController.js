@@ -200,7 +200,7 @@ const GoogleLogin = async (req, res) => {
 
     if (!email || !firebaseId) {
       return res.status(400).json({
-        message: 'Email and firebaseId are required',
+        message:'Email and firebaseId are required',
       });
     }
 
