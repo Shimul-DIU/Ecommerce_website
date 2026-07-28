@@ -203,7 +203,7 @@ const [user,setUser]=useState({
         <div className="space-y-2">
 
           {/* Google */}
-          <button onClick={handleGoogleLogin} className="w-full border border-gray-300 hover:bg-gray-100 transition py-2 lg:py-3 rounded-lg flex items-center justify-center gap-3 font-medium">
+          <button onClick={handleGoogleLogin} type="button" className="w-full border border-gray-300 hover:bg-gray-100 transition py-2 lg:py-3 rounded-lg flex items-center justify-center gap-3 font-medium">
             <FontAwesomeIcon
               icon={faGoogle}
               className="text-red-500 text-lg"
