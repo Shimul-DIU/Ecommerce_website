@@ -213,7 +213,7 @@ const Navbar = ({ onMenuClick }) => {
                   )}
                 </Link>
               <Link
-                to="/profile"
+                  to="/userDashboard"
                 onClick={() => setIsCategoryOpen(false)}
                 className="text-xl hover:text-blue-600 transition"
               >
@@ -234,7 +234,7 @@ const Navbar = ({ onMenuClick }) => {
               <button onClick={handleSearchOpen}>
                 <FontAwesomeIcon icon={faSearch} className="text-lg" />
               </button>
-              <Link to="/profile">
+                <Link to="/userDashboard">
                 <FontAwesomeIcon icon={faUser} className="text-lg" />
               </Link>
             </div>

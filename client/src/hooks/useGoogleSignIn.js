@@ -24,7 +24,7 @@ const useGoogleSignIn = () => {
       });
 
       login(res.data.token);
-      navigate("/profile");
+      navigate("/userDashboard");
     } catch (error) {
       console.log(error);
     }

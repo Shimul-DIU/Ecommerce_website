@@ -25,7 +25,7 @@ userRouter.post(
 userRouter.post('/google-login',GoogleLogin)
 
 // ========================
-userRouter.get('/profile',passport.authenticate('jwt', { session: false }),
+userRouter.get('/userDashboard',passport.authenticate('jwt', { session: false }),
   (req, res) => {
     res.status(200).json({
       id: req.user._id,

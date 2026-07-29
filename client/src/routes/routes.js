@@ -3,9 +3,6 @@ import Userlayout from "../layout/Userlayout";
 import Login from "../auth/Login";
 import Register from "../auth/Register";
 
-import Profile from "../auth/Profile";
-
-
 // admin
 
 import Adminlayout from "../layout/Adminlayout";
@@ -28,6 +25,12 @@ import Checkout from "../pages/client/Checkout.jsx";
 import MyOrders from "../components/common/MyOrder.jsx";
 import AdminLogin from "../auth/AdminLogin.jsx";
 import AdminProtectedRoute from "./AdminProtectedRoute.jsx";
+import Overview from "../pages/client/userDashboard/Overview.jsx";
+import Wishlist from "../pages/client/userDashboard/Wishlist.jsx";
+import Addresses from "../pages/client/userDashboard/Addresses.jsx";
+import UserProfile from "../pages/client/userDashboard/UserProfile.jsx";
+import UserOrders from "../pages/client/userDashboard/userOrders.jsx";
+import UserDashboard from "../pages/client/userDashboard/UserDashboard.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -44,9 +47,16 @@ const Router = createBrowserRouter([
       { path: "orders", Component: MyOrders },
       { path: "reset-password/:token", Component: ResetPassword },
       {
-        path: "profile",
+        path: "UserDashboard",
         Component: UserProtectedRoute,
-        children: [{ index: true, Component: Profile }],
+        children: [
+          { index: true, Component: UserDashboard },
+          { path: 'user-overview', Component: Overview },
+          { path: 'user-orders', Component: UserOrders },
+          { path: 'user-wishlist', Component: Wishlist },
+          { path: 'user-addresses', Component: Addresses },
+          { path: 'user-profile', Component: UserProfile }
+        ],
       },
     ],
   },

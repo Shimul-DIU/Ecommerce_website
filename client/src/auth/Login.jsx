@@ -68,7 +68,7 @@ const Login = () => {
       const response = await axiosInstance.post("/api/user/login", user);
       setMessage(response.data.message);
       login(response.data.token);
-      navigate("/profile", { replace: true });
+      navigate("/userDashboard", { replace: true });
     } catch (error) {
       setMessage(error.response?.data?.message || "An error occurred");
     }
