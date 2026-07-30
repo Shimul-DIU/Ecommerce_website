@@ -1,43 +1,54 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Heart, Trash2 } from "lucide-react";
 
-// ---- Local design tokens ----
-const C = {
-  ink: "#14213D",
-  kraftDark: "#E1D3AC",
-  card: "#FBF8F0",
-  stamp: "#B23A48",
-  sage: "#4F7A57",
-  muted: "#7A7266",
-  line: "#D8C9A3",
-};
+export default function Wishlist() {
+  const [wishlist, setWishlist] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-export default function Wishlist({ wishlist = [], removeFromWishlist }) {
+  useEffect(() => {
+    // TODO: api call diye wishlist fetch koro
+    // fetch("/api/wishlist")
+    //   .then((res) => res.json())
+    //   .then((data) => setWishlist(data.items))
+    //   .finally(() => setLoading(false));
+
+    setLoading(false); // remove this once the api call above is wired up
+  }, []);
+
+  const removeFromWishlist = (id) => {
+    // TODO: api call diye wishlist theke item delete koro, tarpor state update koro
+    // fetch(`/api/wishlist/${id}`, { method: "DELETE" }).then(() => {
+    //   setWishlist((prev) => prev.filter((w) => w.id !== id));
+    // });
+
+    setWishlist((prev) => prev.filter((w) => w.id !== id));
+  };
+
   return (
     <>
-      <h2 style={{ color: C.ink, fontWeight: 700 }} className="mb-4 text-lg">
-        Your Wishlist
-      </h2>
-      {wishlist.length === 0 ? (
-        <p style={{ color: C.muted }}>Nothing saved yet. Items you love will show up here.</p>
+      <h2 className="mb-4 text-lg font-bold text-slate-900">Your Wishlist</h2>
+
+      {loading ? (
+        <p className="text-sm text-slate-500">Loading...</p>
+      ) : wishlist.length === 0 ? (
+        <p className="text-slate-500">Nothing saved yet. Items you love will show up here.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {wishlist.map((w) => (
-            <div key={w.id} style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 10 }} className="p-4">
-              <div style={{ background: C.kraftDark }} className="w-full h-28 rounded-md mb-3 flex items-center justify-center">
-                <Heart size={22} color={C.stamp} />
+            <div key={w.id} className="rounded-lg border border-slate-200 bg-white p-4">
+              <div className="mb-3 flex h-28 w-full items-center justify-center rounded-md bg-slate-100">
+                <Heart size={22} className="text-rose-600" />
               </div>
-              <p style={{ color: C.ink, fontWeight: 600, fontSize: 14 }}>{w.name}</p>
-              <div className="flex items-center justify-between mt-2">
-                <p style={{ color: C.ink }}>&#2547;{w.price?.toLocaleString()}</p>
-                <span style={{ color: w.inStock ? C.sage : C.stamp, fontSize: 12 }}>
+              <p className="text-sm font-semibold text-slate-900">{w.name}</p>
+              <div className="mt-2 flex items-center justify-between">
+                <p className="text-slate-900">&#2547;{w.price.toLocaleString()}</p>
+                <span className={`text-xs ${w.inStock ? "text-emerald-600" : "text-rose-600"}`}>
                   {w.inStock ? "In stock" : "Out of stock"}
                 </span>
               </div>
               <button
                 onClick={() => removeFromWishlist(w.id)}
-                style={{ color: C.muted }}
-                className="mt-3 text-xs flex items-center gap-1"
+                className="mt-3 flex items-center gap-1 text-xs text-slate-500"
               >
                 <Trash2 size={13} /> Remove
               </button>

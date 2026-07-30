@@ -1,71 +1,67 @@
 import React, { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 
-// ---- Local design tokens ----
-const C = {
-  ink: "#14213D",
-  card: "#FBF8F0",
-  stamp: "#B23A48",
-  sage: "#4F7A57",
-  muted: "#7A7266",
-  line: "#D8C9A3",
-};
-
-export default function UserProfile({ profile, setProfile }) {
+export default function UserProfile() {
+  // profile/setProfile UserDashboardLayout theke Outlet context er madhome ashche,
+  // tai topbar-e (Welcome back, ...) update ta reflect hoye jabe
+  const { profile, setProfile } = useOutletContext();
   const [savedMsg, setSavedMsg] = useState("");
 
   const saveProfile = (e) => {
     e.preventDefault();
+
+    // TODO: api call diye profile update koro
+    // fetch("/api/user/me", {
+    //   method: "PUT",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(profile),
+    // }).then(() => {
+    //   setSavedMsg("Profile updated");
+    //   setTimeout(() => setSavedMsg(""), 2000);
+    // });
+
     setSavedMsg("Profile updated");
     setTimeout(() => setSavedMsg(""), 2000);
   };
 
-  if (!profile) return null;
-
   return (
     <>
-      <h2 style={{ color: C.ink, fontWeight: 700 }} className="mb-4 text-lg">
-        Profile Settings
-      </h2>
+      <h2 className="mb-4 text-lg font-bold text-slate-900">Profile Settings</h2>
       <form
         onSubmit={saveProfile}
-        style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 10, maxWidth: 480 }}
-        className="p-6 flex flex-col gap-4"
+        className="flex max-w-md flex-col gap-4 rounded-lg border border-slate-200 bg-white p-6"
       >
         <div>
-          <label style={{ color: C.muted, fontSize: 12 }}>Full name</label>
+          <label className="text-xs text-slate-500">Full name</label>
           <input
-            value={profile.name || ""}
+            value={profile.name}
             onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-            style={{ border: `1px solid ${C.line}`, background: "#fff" }}
-            className="w-full mt-1 px-3 py-2 rounded-md text-sm outline-none"
+            className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm outline-none"
           />
         </div>
         <div>
-          <label style={{ color: C.muted, fontSize: 12 }}>Email</label>
+          <label className="text-xs text-slate-500">Email</label>
           <input
-            value={profile.email || ""}
+            value={profile.email}
             onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-            style={{ border: `1px solid ${C.line}`, background: "#fff" }}
-            className="w-full mt-1 px-3 py-2 rounded-md text-sm outline-none"
+            className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm outline-none"
           />
         </div>
         <div>
-          <label style={{ color: C.muted, fontSize: 12 }}>Phone</label>
+          <label className="text-xs text-slate-500">Phone</label>
           <input
-            value={profile.phone || ""}
+            value={profile.phone}
             onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-            style={{ border: `1px solid ${C.line}`, background: "#fff" }}
-            className="w-full mt-1 px-3 py-2 rounded-md text-sm outline-none"
+            className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm outline-none"
           />
         </div>
         <button
           type="submit"
-          style={{ background: C.stamp, color: "#fff" }}
-          className="px-4 py-2 rounded-md text-sm font-semibold w-fit"
+          className="w-fit rounded-md bg-rose-600 px-4 py-2 text-sm font-semibold text-white"
         >
           Save changes
         </button>
-        {savedMsg && <p style={{ color: C.sage, fontSize: 13 }}>{savedMsg}</p>}
+        {savedMsg && <p className="text-sm text-emerald-600">{savedMsg}</p>}
       </form>
     </>
   );

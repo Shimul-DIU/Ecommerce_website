@@ -30,7 +30,7 @@ import Wishlist from "../pages/client/userDashboard/Wishlist.jsx";
 import Addresses from "../pages/client/userDashboard/Addresses.jsx";
 import UserProfile from "../pages/client/userDashboard/UserProfile.jsx";
 import UserOrders from "../pages/client/userDashboard/userOrders.jsx";
-import UserDashboard from "../pages/client/userDashboard/UserDashboard.jsx";
+import UserDashboardLayout from "../pages/client/userDashboard/UserDashboardLayout.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -47,15 +47,22 @@ const Router = createBrowserRouter([
       { path: "orders", Component: MyOrders },
       { path: "reset-password/:token", Component: ResetPassword },
       {
-        path: "UserDashboard",
+        path: "userDashboard",
         Component: UserProtectedRoute,
         children: [
-          { index: true, Component: UserDashboard },
-          { path: 'user-overview', Component: Overview },
-          { path: 'user-orders', Component: UserOrders },
-          { path: 'user-wishlist', Component: Wishlist },
-          { path: 'user-addresses', Component: Addresses },
-          { path: 'user-profile', Component: UserProfile }
+          {
+            Component: UserDashboardLayout,
+            children: [
+              { index: true, Component: Overview },
+              {path: "user-overview",Component: Overview},
+              { path: 'user-orders', Component: UserOrders },
+              { path: 'user-wishlist', Component: Wishlist },
+              { path: 'user-addresses', Component: Addresses },
+              { path: 'user-profile', Component: UserProfile }
+            ]
+          },
+
+
         ],
       },
     ],

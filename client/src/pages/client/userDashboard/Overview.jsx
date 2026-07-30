@@ -1,124 +1,75 @@
-import React, { useState } from "react";
-import { Package, Truck, Heart, Star, Clock, CheckCircle2, ChevronRight } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Package, Truck, Heart, Star } from "lucide-react";
+import StatCard from "./StatCard";
+import OrderCard from "./OrderCard";
 
-// ---- Local design tokens ----
-const C = {
-  ink: "#14213D",
-  inkLight: "#28365B",
-  kraft: "#EFE6CF",
-  card: "#FBF8F0",
-  stamp: "#B23A48",
-  sage: "#4F7A57",
-  mustard: "#C98A2B",
-  text: "#231F20",
-  muted: "#7A7266",
-  line: "#D8C9A3",
-};
+export default function Overview() {
+  const [orders, setOrders] = useState([]);
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [rewardPoints, setRewardPoints] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-const STATUS_STYLES = {
-  Delivered: { color: C.sage, Icon: CheckCircle2 },
-  "In Transit": { color: C.mustard, Icon: Truck },
-  Processing: { color: C.inkLight, Icon: Clock },
-};
+  useEffect(() => {
+    // TODO: api call diye overview data fetch koro (recent orders, wishlist count, reward points)
+    // Promise.all([
+    //   fetch("/api/orders?limit=2").then(r => r.json()),
+    //   fetch("/api/wishlist/count").then(r => r.json()),
+    //   fetch("/api/rewards").then(r => r.json()),
+    // ]).then(([orderData, wishlistData, rewardData]) => {
+    //   setOrders(orderData.orders);
+    //   setWishlistCount(wishlistData.count);
+    //   setRewardPoints(rewardData.points);
+    //   setLoading(false);
+    // });
 
-function Barcode({ seed = 1 }) {
-  const bars = Array.from({ length: 24 }, (_, i) => ((i * 37 + seed * 13) % 5) + 1);
-  return (
-    <div style={{ display: "flex", alignItems: "flex-end", gap: 2, height: 28 }}>
-      {bars.map((w, i) => (
-        <div
-          key={i}
-          style={{ width: w % 2 === 0 ? 2 : 1, height: 10 + w * 3, background: C.ink, opacity: 0.75 }}
-        />
-      ))}
-    </div>
-  );
-}
+    setLoading(false); // remove this once the api call above is wired up
+  }, []);
 
-function StatCard({ label, value, Icon, color }) {
-  return (
-    <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 10 }} className="p-5 flex items-center gap-4">
-      <div style={{ background: `${color}1A`, color }} className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0">
-        <Icon size={20} />
-      </div>
-      <div>
-        <p style={{ color: C.muted, fontSize: 12 }}>{label}</p>
-        <p style={{ color: C.ink, fontSize: 22, fontWeight: 700 }}>{value}</p>
-      </div>
-    </div>
-  );
-}
+  const inTransitCount = orders.filter((o) => o.status === "In Transit").length;
 
-function TicketCard({ order }) {
-  const [open, setOpen] = useState(false);
-  const { color, Icon } = STATUS_STYLES[order.status] || STATUS_STYLES.Processing;
+  if (loading) {
+    return <p className="text-sm text-slate-500">Loading...</p>;
+  }
 
-  return (
-    <div
-      style={{ background: C.card, border: `1.5px dashed ${C.line}`, borderRadius: 10, position: "relative", overflow: "visible" }}
-      className="mb-4"
-    >
-      <div style={{ position: "absolute", top: "50%", left: -10, width: 20, height: 20, borderRadius: "50%", background: C.kraft, transform: "translateY(-50%)" }} />
-      <div style={{ position: "absolute", top: "50%", right: -10, width: 20, height: 20, borderRadius: "50%", background: C.kraft, transform: "translateY(-50%)" }} />
-
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 gap-4">
-        <div className="flex items-start gap-4">
-          <div style={{ color: C.ink }}>
-            <Package size={28} strokeWidth={1.5} />
-          </div>
-          <div>
-            <p style={{ color: C.ink, fontSize: 14, letterSpacing: 0.5 }}>{order.id}</p>
-            <p style={{ color: C.muted, fontSize: 13 }}>{order.date}</p>
-            <p style={{ color: C.text, fontSize: 14, marginTop: 4 }}>{order.items?.join(", ")}</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full" style={{ background: `${color}1A`, color }}>
-            <Icon size={14} />
-            <span style={{ fontSize: 12, fontWeight: 600 }}>{order.status}</span>
-          </div>
-          <p style={{ color: C.ink, fontWeight: 700 }}>&#2547;{order.total?.toLocaleString()}</p>
-          <button onClick={() => setOpen(!open)} style={{ color: C.inkLight }} className="flex items-center gap-1 text-sm">
-            Details
-            <ChevronRight size={16} style={{ transform: open ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
-          </button>
-        </div>
-      </div>
-
-      {open && (
-        <div style={{ borderTop: `1px dashed ${C.line}` }} className="px-5 py-4 flex items-center justify-between flex-wrap gap-3">
-          <div>
-            <p style={{ color: C.muted, fontSize: 11, textTransform: "uppercase", letterSpacing: 1 }}>Tracking Number</p>
-            <p style={{ color: C.ink, fontSize: 15 }}>{order.tracking}</p>
-          </div>
-          <Barcode seed={order.id?.length} />
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function Overview({ orders = [], wishlist = [] }) {
   return (
     <>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard label="Total Orders" value={orders.length} Icon={Package} color={C.inkLight} />
+      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard
+          label="Total Orders"
+          value={orders.length}
+          Icon={Package}
+          iconBg="bg-indigo-50"
+          iconColor="text-indigo-600"
+        />
         <StatCard
           label="In Transit"
-          value={orders.filter((o) => o.status === "In Transit").length}
+          value={inTransitCount}
           Icon={Truck}
-          color={C.mustard}
+          iconBg="bg-amber-50"
+          iconColor="text-amber-600"
         />
-        <StatCard label="Wishlist Items" value={wishlist.length} Icon={Heart} color={C.stamp} />
-        <StatCard label="Reward Points" value="1,240" Icon={Star} color={C.sage} />
+        <StatCard
+          label="Wishlist Items"
+          value={wishlistCount}
+          Icon={Heart}
+          iconBg="bg-rose-50"
+          iconColor="text-rose-600"
+        />
+        <StatCard
+          label="Reward Points"
+          value={rewardPoints.toLocaleString()}
+          Icon={Star}
+          iconBg="bg-emerald-50"
+          iconColor="text-emerald-600"
+        />
       </div>
-      <h2 style={{ color: C.ink, fontWeight: 700 }} className="mb-4 text-lg">
-        Recent Orders
-      </h2>
-      {orders.slice(0, 2).map((o) => (
-        <TicketCard key={o.id} order={o} />
-      ))}
+
+      <h2 className="mb-4 text-lg font-bold text-slate-900">Recent Orders</h2>
+      {orders.length === 0 ? (
+        <p className="text-sm text-slate-500">No recent orders yet.</p>
+      ) : (
+        orders.slice(0, 2).map((o) => <OrderCard key={o.id} order={o} />)
+      )}
     </>
   );
 }
