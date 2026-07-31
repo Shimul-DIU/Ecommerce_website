@@ -5,10 +5,10 @@ import { Outlet } from "react-router-dom";
 
 export default function UserDashboardLayout() {
   const [profile, setProfile] = useState({ name: "User", email: "", phone: "" });
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     // TODO: api call diye logged-in user er profile fetch koro
-    // fetch("/api/user/me").then(res => res.json()).then(data => setProfile(data));
   }, []);
 
   const initials = profile.name
@@ -17,15 +17,19 @@ export default function UserDashboardLayout() {
     .join("");
 
   return (
-    <div className="relative flex justify-between gap-3 min-h-screen bg-gray-100">
-      <div className="hover:absolute">
-        <UserDashboardNavbar />
-      </div>
+    <div className="flex h-screen bg-gray-100">
+      <UserDashboardNavbar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
 
       {/* Main Content */}
-      <main className=" flex-1 min-h-screen min-w-0 p-4 md:p-6 lg:p-8">
+      <main
+        onClick={() => {
+          if (isExpanded) setIsExpanded(false);
+        }}
+        className={`flex-1 min-h-screen min-w-0 overflow-y-auto p-4 md:p-6 lg:p-8 transition-all duration-300
+        ${isExpanded ? "blur-sm pointer-events-none lg:blur-0 lg:pointer-events-auto" : ""}`}
+      >
         {/* Topbar */}
-        <div className="mb-6 md:mb-8 flex flex-wrap items-center justify-between gap-4">
+        <div className="mb-6 md:mb-8 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-xl md:text-2xl font-bold text-slate-900">
               Welcome back, {profile.name.split(" ")[0]}
@@ -57,7 +61,6 @@ export default function UserDashboardLayout() {
           </div>
         </div>
 
-        {/* Child route renders here: Overview / UserOrders / Wishlist / Addresses / UserProfile */}
         <Outlet context={{ profile, setProfile }} />
       </main>
     </div>

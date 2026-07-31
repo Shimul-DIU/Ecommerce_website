@@ -11,6 +11,7 @@ import './config/passport/adminJwtStrategy.js';
 import userRouter from './routes/userRoute.js';
 import adminRouter from './routes/adminRoute.js';
 import productRouter from './routes/product.route.js';
+import orderRouter from './routes/orderRoute/clientOrderRoute.js';
 
 dotenv.config();
 
@@ -44,5 +45,5 @@ app.get('/',(req,res)=>{
 app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/products',productRouter)
-
+app.use('/api/orders', orderRouter)
 export default app;
