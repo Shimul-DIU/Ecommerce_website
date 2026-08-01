@@ -1,7 +1,8 @@
 // controllers/orderController.js
 import mongoose from "mongoose";
-import Order from "../models/orderModel.js";
+
 import Product from "../models/productModel.js";
+import Order from "../model/order/order.js";
 
 export const createOrder = async (req, res) => {
   try {
