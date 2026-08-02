@@ -1,6 +1,6 @@
 import express from 'express';
 import { createOrder } from '../../controller/orderController.js';
-import ordersDetails from '../../controller/orders/OrdersDetails.js';
+import ordersDetails from '../../controller/orders/ordersDetails.js';
 import passport from 'passport';
 
 const orderRouter = express.Router();
