@@ -1,8 +1,9 @@
 // controllers/orderController.js
 import mongoose from "mongoose";
 
-import Product from "../models/productModel.js";
+
 import Order from "../model/order/order.js";
+import Product from "../model/products.js";
 
 export const createOrder = async (req, res) => {
   try {
@@ -65,6 +66,7 @@ export const createOrder = async (req, res) => {
         mobileNumber: payment.mobileNumber || null,
         transactionId: payment.transactionId || null,
       },
+      
       user: req.user?._id || null,
     });
 

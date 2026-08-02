@@ -7,27 +7,23 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import axiosInstance from "../../../utils/axiosInstance";
 
 const AdminProducts = () => {
-  const [message,setMessage]=useState('')
-  const [products,setProducts]=useState([])
-  useEffect(()=>{
-    const fetchProducts=async()=>{
-           try {
-        const response = await axiosInstance.get("/api/products",
-        );
-    await setProducts(response.data.data)
+  const [message, setMessage] = useState('');
+  const [products, setProducts] = useState([]);
 
-    }catch (error) {
-      setMessage(error.response.message)
-    }
-
-    }
-     fetchProducts()
-
-  },[])
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axiosInstance.get("/api/products");
+        setProducts(response.data.data);
+      } catch (error) {
+        setMessage(error.response?.data?.message || "Failed to load products");
+      }
+    };
+    fetchProducts();
+  }, []);
 
   return (
     <div className="px-2">
@@ -96,27 +92,23 @@ const AdminProducts = () => {
               <tr key={item._id} className="border-t hover:bg-gray-50">
                 <td className="p-2">
                   <img
-                    src={`${import.meta.env.process.env.VITE_API_URL}/uploads/${item.image}`}
+                    src={item.image}
                     alt={item.name}
                     className="w-14 h-14 rounded-lg object-cover"
                   />
                 </td>
 
-                <td className=" font-medium">{item.name}</td>
+                <td className="font-medium">{item.name}</td>
+                <td>{item.category}</td>
+                <td>${item.price}</td>
+                <td>{item.stock}</td>
 
-                <td className="">{item.category}</td>
-
-                <td className="">${item.price}</td>
-
-                <td className="">{item.stock}</td>
-
-                <td className="">
+                <td>
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      item.status === "Active"
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${item.status === "Active"
                         ? "bg-green-100 text-green-700"
                         : "bg-red-100 text-red-700"
-                    }`}
+                      }`}
                   >
                     {item.status}
                   </span>
@@ -137,7 +129,8 @@ const AdminProducts = () => {
             ))}
           </tbody>
         </table>
-        {message && <p className="text-red-500">{message}</p>}
+
+        {message && <p className="text-red-500 p-3">{message}</p>}
 
         {/* Pagination */}
         <div className="flex justify-between mt-3 items-center p-3 border-t">
@@ -147,11 +140,9 @@ const AdminProducts = () => {
             <button className="border px-3 py-1 rounded-lg hover:bg-gray-100">
               Previous
             </button>
-
             <button className="bg-blue-600 text-white px-4 py-1 rounded-lg">
               1
             </button>
-
             <button className="border px-4 py-1 rounded-lg hover:bg-gray-100">
               Next
             </button>

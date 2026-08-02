@@ -2,8 +2,8 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import passport from 'passport';
 import  {ResetPassword, ForgotPassword, loginAdmin } from '../controller/adminController.js';
-import upload from '../middleware/upload.middleware.js';
 import {productController} from '../controller/productController.js';
+import { upload } from '../middleware/upload.js';
 
 const adminRouter = express.Router();
 

@@ -1,5 +1,7 @@
-import express from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
+
+import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import passport from 'passport';
@@ -12,8 +14,6 @@ import userRouter from './routes/userRoute.js';
 import adminRouter from './routes/adminRoute.js';
 import productRouter from './routes/product.route.js';
 import orderRouter from './routes/orderRoute/clientOrderRoute.js';
-
-dotenv.config();
 
 const app = express();
 
@@ -39,11 +39,18 @@ app.use("/uploads", express.static("uploads"));
 app.use(passport.initialize());
 
 /* ================= ROUTES ================= */
-app.get('/',(req,res)=>{
-  res.json({message:'wellcome to the server'})
-})
+app.get('/', (req, res) => {
+  res.json({ message: 'wellcome to the server' });
+});
+
 app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
-app.use('/api/products',productRouter)
-app.use('/api/orders', orderRouter)
+app.use('/api/products', productRouter);
+app.use('/api/orders', orderRouter);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
 export default app;

@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faRightFromBracket,
   faEnvelope,
-  faUser,
+  
   faShoppingCart,
   faHeart,
   faHistory,

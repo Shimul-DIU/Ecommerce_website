@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema(
       },
       name: { type: String, required: true },
       image: { type: String },
-      price: { type: Number, required: true }, 
+      price: { type: Number, required: true },
     },
     quantity: {
       type: Number,
@@ -55,8 +55,20 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
       required: false,
     },
-  },
-  { timestamps: true }
+    estimatedDelivery: {
+        type: Date,
+        default:()=>{
+          const date = new Date();
+          date.setDate(date.getDate() + 3);
+          return date;
+        }
+      },
+    },
+
+
+  {timestamps: true}
+
+
 );
 
 const Order = mongoose.model("Order", orderSchema);

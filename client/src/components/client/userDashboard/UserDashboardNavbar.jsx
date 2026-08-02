@@ -13,7 +13,7 @@ import {
 const UserDashboardNavbar = ({ isExpanded, setIsExpanded }) => {
   const navItems = [
     { to: "user-overview", icon: Home, label: "Overview" },
-    { to: "user-orders", icon: ShoppingBag, label: "Orders" },
+    { to: "/userDashboard/user-orders", icon: ShoppingBag, label: "Orders" },
     { to: "user-wishlist", icon: Heart, label: "Wishlist" },
     { to: "user-addresses", icon: MapPin, label: "Addresses" },
     { to: "user-profile", icon: User, label: "Profile" },

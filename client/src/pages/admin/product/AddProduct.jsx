@@ -5,7 +5,7 @@ import {
   faCloudArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
+
 import axiosInstance from "../../../utils/axiosInstance";
 const AddProduct = () => {
   const navigate = useNavigate();

@@ -29,8 +29,9 @@ import Overview from "../pages/client/userDashboard/Overview.jsx";
 import Wishlist from "../pages/client/userDashboard/Wishlist.jsx";
 import Addresses from "../pages/client/userDashboard/Addresses.jsx";
 import UserProfile from "../pages/client/userDashboard/UserProfile.jsx";
-import UserOrders from "../pages/client/userDashboard/userOrders.jsx";
 import UserDashboardLayout from "../pages/client/userDashboard/UserDashboardLayout.jsx";
+import OrderSuccess from "../components/common/OrderSuccess.jsx";
+import UserOrders from "../components/client/userDashboard/UserOrders.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -45,6 +46,7 @@ const Router = createBrowserRouter([
       { path: "register", Component: Register },
       { path: "checkout", Component: Checkout },
       { path: "orders", Component: MyOrders },
+      { path: "order-success", Component: OrderSuccess },
       { path: "reset-password/:token", Component: ResetPassword },
       {
         path: "userDashboard",

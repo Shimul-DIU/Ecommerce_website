@@ -12,6 +12,7 @@ import {
   faExclamationCircle,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
+import axiosInstance from "../../utils/axiosInstance";
 
 const Checkout = () => {
   const [formdata, setFormdata] = useState({
@@ -115,29 +116,45 @@ const Checkout = () => {
         },
       };
 
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/orders`,
+      const token = localStorage.getItem("token");
+
+      console.log("Token:", token);
+
+      const res = await axiosInstance.post(
+        "/api/orders",
         payload,
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
       );
+
+      console.log(res.data);
 
       setMessage("Order placed successfully!");
       setMessageType("success");
 
-      // 1.5 sec por order confirmation page e navigate
       setTimeout(() => {
-        navigate("/order-success", { state: { order: res.data } });
+        navigate("/order-success", {
+          state: {
+            order: res.data.order,
+          },
+        });
       }, 1500);
     } catch (err) {
+      console.log(err);
+
       const errMsg =
-        err.response?.data?.message || "অর্ডার প্লেস করা যায়নি। আবার চেষ্টা করুন।";
+        err.response?.data?.message ||
+        "অর্ডার প্লেস করা যায়নি। আবার চেষ্টা করুন।";
+
       setMessage(errMsg);
       setMessageType("error");
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen bg-[#FAF6EF] py-10 px-4">
       <div className="max-w-6xl mx-auto">
@@ -452,7 +469,7 @@ const Checkout = () => {
 
                 <div className="flex gap-4">
                   <img
-                    src={`${import.meta.env.VITE_API_URL}/uploads/${image}`}
+                    src={image}
                     alt={name}
                     className="w-20 h-20 object-cover rounded-lg border border-[#E4DDCE]"
                   />
