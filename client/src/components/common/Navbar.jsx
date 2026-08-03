@@ -91,7 +91,7 @@ const Navbar = ({ onMenuClick }) => {
       ) : (
         <>
           {/* ================= DESKTOP NAVBAR ================= */}
-          <nav className="hidden md:flex sticky top-0 z-50 bg-white shadow-md h-16 items-center px-8 gap-6">
+            <nav className="hidden lg:max-w-7xl lg:mx-auto px-4 md:flex sticky top-0 z-50 bg-white shadow-md h-16 items-center  gap-6">
 
             {/* Left — Logo (always visible) */}
             <Link to="/" className="shrink-0">

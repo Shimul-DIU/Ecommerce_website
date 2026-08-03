@@ -4,6 +4,7 @@ import Sidebar from "../components/common/Sidebar";
 import { useState } from "react";
 import Navbar from './../components/common/Navbar';
 import FooterNav from './../components/common/FooterNav';
+import Footer from "../components/client/footer/Footer";
 
 const Userlayout = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,6 +35,7 @@ const Userlayout = () => {
       </main>
 
       <FooterNav />
+      <Footer/>
     </div>
   );
 };

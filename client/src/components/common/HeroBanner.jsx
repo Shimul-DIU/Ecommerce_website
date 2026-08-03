@@ -106,7 +106,7 @@ const BannerItem = ({ banner }) => {
   return (
     <div
       style={{ background: banner.bg }}
-      className="w-full rounded-xl overflow-hidden flex items-center h-40 sm:h-52 md:h-60 lg:h-72"
+      className="max-w-7xl mx-auto px-4 rounded-xl overflow-hidden flex items-center h-40 sm:h-52 md:h-60 lg:h-72"
     >
       <div
         className="flex items-center justify-between w-full px-5 py-5 md:px-10 gap-4 h-full"
