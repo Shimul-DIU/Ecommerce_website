@@ -2,11 +2,9 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart, faBolt } from "@fortawesome/free-solid-svg-icons";
 
-
 const FONT_DISPLAY = "'Fraunces', serif";
 const FONT_MONO = "'IBM Plex Mono', monospace";
 
-// Replace with deals fetched from your API / Firebase.
 const deals = [
   {
     id: "d1",
@@ -19,7 +17,7 @@ const deals = [
     oldPrice: 200,
     sold: 20,
     available: 40,
-    endsAt: Date.now() + 1000 * 60 * 60 * 27, 
+    endsAt: Date.now() + 1000 * 60 * 60 * 27,
   },
   {
     id: "d2",
@@ -32,7 +30,7 @@ const deals = [
     oldPrice: 2200,
     sold: 15,
     available: 40,
-    endsAt: Date.now() + 1000 * 60 * 60 * 51, // demo: 51 hours from now
+    endsAt: Date.now() + 1000 * 60 * 60 * 51,
   },
 ];
 
@@ -58,12 +56,12 @@ function TimeBox({ value, label }) {
   return (
     <div className="flex flex-col items-center">
       <div
-        className="w-11 h-11 rounded-lg bg-[#16241F] text-[#FAF6EF] flex items-center justify-center text-base"
-        style={{ fontFamily: FONT_MONO, fontWeight: 500 }}
+        className="w-7 h-7 sm:w-10 sm:h-10 rounded-md sm:rounded-lg bg-[#16241F] text-[#FAF6EF] flex items-center justify-center text-[11px] sm:text-sm font-medium"
+        style={{ fontFamily: FONT_MONO }}
       >
         {String(value).padStart(2, "0")}
       </div>
-      <span className="text-[10px] text-[#16241F]/45 mt-1 uppercase tracking-wide">
+      <span className="text-[8px] sm:text-[10px] text-[#16241F]/45 mt-0.5 uppercase tracking-wide">
         {label}
       </span>
     </div>
@@ -76,75 +74,82 @@ function DealCard({ deal }) {
   const soldPercent = Math.min((sold / (sold + available)) * 100, 100);
 
   return (
-    <div className="bg-white rounded-2xl border border-[#E4DDCE] overflow-hidden flex flex-col sm:flex-row">
-      <img
-        src={image}
-        alt={name}
-        className="w-full sm:w-48 h-48 sm:h-auto object-cover"
-      />
+    <div className="bg-white  rounded-lg sm:rounded-2xl border border-[#E4DDCE] overflow-hidden flex flex-col sm:flex-row transition-all hover:shadow-md">
+      {/* Image Container */}
+      <div className="w-full sm:w-44 lg:w-48 h-32 sm:h-auto bg-[#F4F1EA] flex items-center justify-center p-1 sm:p-2 shrink-0">
+        <img
+          src={image}
+          alt={name}
+          className="w-full h-full object-contain sm:object-cover rounded-lg sm:rounded-none"
+        />
+      </div>
 
-      <div className="p-6 flex-1 flex flex-col">
-        <h3
-          className="text-xl text-[#16241F] leading-snug"
-          style={{ fontFamily: FONT_DISPLAY, fontWeight: 600 }}
-        >
-          {name}
-        </h3>
-        <p className="text-sm text-[#16241F]/50 mt-2 leading-relaxed line-clamp-2">
-          {description}
-        </p>
-
-        <div className="flex items-baseline gap-2 mt-3">
-          <span
-            className="text-2xl text-[#16241F]"
-            style={{ fontFamily: FONT_MONO, fontWeight: 500 }}
+      {/* Content Container */}
+      <div className="p-2.5 sm:p-5 flex-1 flex flex-col justify-between">
+        <div>
+          <h3
+            className="text-xs sm:text-xl text-[#16241F] leading-snug line-clamp-1 sm:line-clamp-2"
+            style={{ fontFamily: FONT_DISPLAY, fontWeight: 600 }}
           >
-            ৳{price}
-          </span>
-          <span className="text-sm text-[#16241F]/35 line-through">
-            ৳{oldPrice}
-          </span>
-        </div>
-
-        {/* Stock progress */}
-        <div className="mt-4">
-          <div className="flex justify-between text-xs text-[#16241F]/50 mb-1.5">
-            <span>
-              Sold: <b className="text-[#16241F]">{sold}</b>
-            </span>
-            <span>
-              Available: <b className="text-[#16241F]">{available}</b>
-            </span>
-          </div>
-          <div className="h-1.5 w-full rounded-full bg-[#EFE9DC] overflow-hidden">
-            <div
-              className="h-full bg-[#B08946] rounded-full transition-all"
-              style={{ width: `${soldPercent}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Countdown */}
-        <div className="mt-5">
-          <p className="flex items-center gap-1.5 text-xs font-medium text-[#16241F]/60 mb-2">
-            <FontAwesomeIcon icon={faBolt} className="text-[#B08946]" />
-            {expired ? "This deal has ended" : "Hurry! Offer ends in"}
+            {name}
+          </h3>
+          <p className="hidden sm:block text-xs sm:text-sm text-[#16241F]/50 mt-1 sm:mt-2 leading-relaxed line-clamp-2">
+            {description}
           </p>
-          {!expired && (
-            <div className="flex gap-2">
-              <TimeBox value={days} label="Days" />
-              <TimeBox value={hours} label="Hrs" />
-              <TimeBox value={minutes} label="Min" />
-              <TimeBox value={seconds} label="Sec" />
+
+          <div className="flex items-baseline gap-1.5 sm:gap-2 mt-1 sm:mt-3">
+            <span
+              className="text-sm sm:text-2xl text-[#16241F]"
+              style={{ fontFamily: FONT_MONO, fontWeight: 600 }}
+            >
+              ৳{price}
+            </span>
+            <span className="text-[10px] sm:text-sm text-[#16241F]/35 line-through">
+              ৳{oldPrice}
+            </span>
+          </div>
+
+          {/* Stock progress */}
+          <div className="mt-1.5 sm:mt-4">
+            <div className="flex justify-between text-[10px] sm:text-xs text-[#16241F]/50 mb-0.5 sm:mb-1">
+              <span>
+                Sold: <b className="text-[#16241F]">{sold}</b>
+              </span>
+              <span>
+                Available: <b className="text-[#16241F]">{available}</b>
+              </span>
             </div>
-          )}
+            <div className="h-1 sm:h-1.5 w-full rounded-full bg-[#EFE9DC] overflow-hidden">
+              <div
+                className="h-full bg-[#B08946] rounded-full transition-all duration-300"
+                style={{ width: `${soldPercent}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Countdown */}
+          <div className="mt-2 sm:mt-5">
+            <p className="flex items-center gap-1 text-[10px] sm:text-xs font-medium text-[#16241F]/60 mb-1 sm:mb-2">
+              <FontAwesomeIcon icon={faBolt} className="text-[#B08946] text-[10px] sm:text-xs" />
+              {expired ? "Ended" : "Ends in"}
+            </p>
+            {!expired && (
+              <div className="flex gap-1 sm:gap-2">
+                <TimeBox value={days} label="Days" />
+                <TimeBox value={hours} label="Hrs" />
+                <TimeBox value={minutes} label="Min" />
+                <TimeBox value={seconds} label="Sec" />
+              </div>
+            )}
+          </div>
         </div>
 
+        {/* Action Button */}
         <button
           disabled={expired}
-          className="mt-6 w-full sm:w-auto self-start flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#16241F] hover:bg-[#0F1A16] disabled:bg-[#16241F]/30 disabled:cursor-not-allowed text-[#FAF6EF] text-sm font-medium transition"
+          className="mt-2.5 sm:mt-6 w-full sm:w-auto self-start flex items-center justify-center gap-1.5 px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-md sm:rounded-lg bg-[#16241F] hover:bg-[#0F1A16] disabled:bg-[#16241F]/30 disabled:cursor-not-allowed text-[#FAF6EF] text-[11px] sm:text-sm font-medium transition"
         >
-          <FontAwesomeIcon icon={faShoppingCart} size="sm" />
+          <FontAwesomeIcon icon={faShoppingCart} className="text-[10px] sm:text-xs" />
           Add to cart
         </button>
       </div>
@@ -154,24 +159,24 @@ function DealCard({ deal }) {
 
 const DealOfTheDay = () => {
   return (
-    <section className="bg-[#FAF6EF] py-12">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex items-baseline justify-between mb-8">
+    <section className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-12">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex items-baseline justify-between mb-3 sm:mb-8">
           <h2
-            className="text-3xl text-[#16241F]"
+            className="text-lg sm:text-3xl text-[#16241F]"
             style={{ fontFamily: FONT_DISPLAY, fontWeight: 600 }}
           >
             Deal of the Day
           </h2>
           <span
-            className="text-sm text-[#16241F]/40"
+            className="text-xs sm:text-sm text-[#16241F]/40"
             style={{ fontFamily: FONT_MONO }}
           >
             {deals.length} deals
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 sm:gap-6">
           {deals.map((deal) => (
             <DealCard key={deal.id} deal={deal} />
           ))}
