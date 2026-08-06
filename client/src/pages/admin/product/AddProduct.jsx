@@ -137,18 +137,28 @@ const AddProduct = () => {
                   }`}
                 >
                   <option value="">
-                    Select Category
+                    Select a category
+                  </option>
+                  <option value="deal">
+                    Deal of the Day
                   </option>
 
-                  <option value="Shoes">
-                    Shoes
+                  <option value="new-arrival">
+                    New Arrival
                   </option>
 
-                  <option value="Men Fashion">
+                  <option value="men">
                     Men Fashion
                   </option>
+                  <option value="women">
+                    Women Fashion
+                  </option>
 
-                  <option value="Electronics">
+                  <option value="fishing">
+                    Fishing
+                  </option>
+
+                  <option value="electronics">
                     Electronics
                   </option>
                 </select>

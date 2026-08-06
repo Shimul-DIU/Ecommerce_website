@@ -83,7 +83,7 @@ const NewArrivals = () => {
                 {/* See All link/icon - Products page-এ গিয়ে সব New Arrival product দেখাবে */}
                 <Link
                   to="/products"
-                  state={{ filter: "new-arrival" }}
+                  state={{ filter: "new-arrival"}}
                   className="flex items-center gap-1 text-[#16241F] hover:text-[#B08946] transition text-xs sm:text-sm font-medium"
                   style={{ fontFamily: FONT_MONO }}
                 >

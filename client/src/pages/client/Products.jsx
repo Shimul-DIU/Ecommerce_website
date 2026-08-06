@@ -1,4 +1,4 @@
-import useProducts from "../../hooks/useProducts";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeart,
@@ -14,14 +14,18 @@ import {
 import { useContext, useEffect, useMemo, useState } from "react";
 import { CountContext } from "../../context/countContext";
 import { Link, useLocation } from "react-router-dom";
+import useProducts from "../../hooks/useProducts";
 
+// "all" যোগ করা হলো - এটা সিলেক্ট থাকলে সব product দেখাবে
 const CATEGORY_OPTIONS = [
+  { key: "all", label: "All Categories" },
   { key: "deal", label: "Deal of the Day" },
   { key: "new-arrival", label: "New Arrival" },
   { key: "men", label: "Men's" },
   { key: "women", label: "Women's" },
   { key: "jewellery", label: "Jewellery" },
-  { key: "perfume", label: "Perfume" },
+  { key: "fishing", label: "Fishing" },
+  { key: "electronics", label: "Electronics" },
 ];
 
 const Products = () => {
@@ -30,7 +34,9 @@ const Products = () => {
   const [products, loading, error] = useProducts();
   const location = useLocation();
 
-  const initialFilter = location.state?.filter || "new-arrival";
+  // location.state দিয়ে filter না আসলে default "all" থাকবে (আগে '' ছিল, যেটার জন্য
+  // কোনো product-এর category '' না হওয়ায় list খালি দেখাচ্ছিল)
+  const initialFilter = location.state?.filter || "all";
 
   const [activeCategory, setActiveCategory] = useState(initialFilter);
   const [sortBy, setSortBy] = useState("default");
@@ -53,7 +59,11 @@ const Products = () => {
   const filteredProducts = useMemo(() => {
     if (!products) return [];
 
-    let result = products.filter((item) => item.category === activeCategory);
+    // "all" হলে category দিয়ে filter করবে না, বাকি সব product দেখাবে
+    let result =
+      activeCategory === "all"
+        ? [...products]
+        : products.filter((item) => item.category === activeCategory);
 
     if (inStockOnly) {
       result = result.filter((item) => item.stock > 0);
@@ -71,6 +81,7 @@ const Products = () => {
   }, [products, activeCategory, inStockOnly, priceRange, sortBy]);
 
   const resetFilters = () => {
+    setActiveCategory("all");
     setSortBy("default");
     setPriceRange(productPrices.max);
     setInStockOnly(false);
@@ -99,7 +110,7 @@ const Products = () => {
           onChange={(e) => setActiveCategory(e.target.value)}
           className="w-full text-sm border border-[#E4DDCE] rounded-md px-3 py-2 bg-[#FAF6EF] text-[#16241F] focus:outline-none focus:ring-1 focus:ring-blue-600"
         >
-          {CATEGORY_OPTIONS.map((cat) => (
+          {CATEGORY_OPTIONS.map((cat,index) => (
             <option key={cat.key} value={cat.key}>
               {cat.label}
             </option>
