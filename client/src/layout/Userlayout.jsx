@@ -3,7 +3,6 @@ import ScrollToTop from "../components/common/ScrollToTop";
 import Sidebar from "../components/common/Sidebar";
 import { useState } from "react";
 import Navbar from './../components/common/Navbar';
-import FooterNav from './../components/common/FooterNav';
 import Footer from "../components/client/footer/Footer";
 
 const Userlayout = () => {
@@ -34,7 +33,7 @@ const Userlayout = () => {
         <Outlet />
       </main>
 
-      <FooterNav />
+    
       <Footer/>
     </div>
   );

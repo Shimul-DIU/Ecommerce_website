@@ -78,10 +78,10 @@ const Footer = () => {
 
             <li>
               <Link
-                to="/shop"
+                to="/products"
                 className="hover:text-white transition duration-300"
               >
-                Shop
+                Products
               </Link>
             </li>
 

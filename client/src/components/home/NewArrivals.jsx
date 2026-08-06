@@ -1,17 +1,41 @@
 import useProducts from "../../hooks/useProducts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
-import { useContext } from "react";
+import { faHeart, faShoppingCart, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { useContext, useEffect, useState } from "react";
 import { CountContext } from "../../context/countContext";
 import { Link } from "react-router-dom";
 
 const FONT_DISPLAY = "'Fraunces', serif";
 const FONT_MONO = "'IBM Plex Mono', monospace";
 
+// grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 এর সাথে মিলিয়ে
+// শুধু ১ row-এর সমান product দেখানোর জন্য এই সংখ্যাগুলো grid-cols-এর সাথে exact match করবে
+const getVisibleCount = (width) => {
+  if (width >= 1024) return 5; // lg -> grid-cols-5 -> 1 row = 5 item
+  if (width >= 768) return 4;  // md -> grid-cols-4 -> 1 row = 4 item
+  if (width >= 640) return 3;  // sm -> grid-cols-3 -> 1 row = 3 item
+  return 2;                    // mobile -> grid-cols-2 -> 1 row = 2 item
+};
+
 const NewArrivals = () => {
   const { wishlist, cart, toggleWishlist, toggleCart } =
     useContext(CountContext);
   const [products, loading, error] = useProducts();
+
+  const [visibleCount, setVisibleCount] = useState(
+    typeof window !== "undefined" ? getVisibleCount(window.innerWidth) : 5
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setVisibleCount(getVisibleCount(window.innerWidth));
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // mount হওয়ার সময় একবার সেট করে নেয়
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   if (error) {
     return (
@@ -20,6 +44,8 @@ const NewArrivals = () => {
       </div>
     );
   }
+
+  const visibleProducts = products?.slice(0, visibleCount);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-4 min-h-screen">
@@ -38,24 +64,38 @@ const NewArrivals = () => {
 
         {!loading && (
           <>
-            <div className=" max-w-7xl mx-auto px-4 flex items-baseline justify-between mb-4 sm:mb-6">
+            <div className="max-w-7xl mx-auto px-4 flex items-baseline justify-between mb-4 sm:mb-6">
               <h2
                 className="text-xl sm:text-2xl md:text-3xl text-[#16241F]"
                 style={{ fontFamily: FONT_DISPLAY, fontWeight: 600 }}
               >
                 New Arrivals
               </h2>
-              <span
-                className="text-xs sm:text-sm text-[#16241F]/40"
-                style={{ fontFamily: FONT_MONO }}
-              >
-                {products?.length || 0} items
-              </span>
+
+              <div className="flex items-center gap-3">
+                <span
+                  className="text-xs sm:text-sm text-[#16241F]/40"
+                  style={{ fontFamily: FONT_MONO }}
+                >
+                  {products?.length || 0} items
+                </span>
+
+                {/* See All link/icon - Products page-এ গিয়ে সব New Arrival product দেখাবে */}
+                <Link
+                  to="/products"
+                  state={{ filter: "new-arrival" }}
+                  className="flex items-center gap-1 text-[#16241F] hover:text-[#B08946] transition text-xs sm:text-sm font-medium"
+                  style={{ fontFamily: FONT_MONO }}
+                >
+                  <span className="hidden sm:inline">See All</span>
+                  <FontAwesomeIcon icon={faArrowRight} className="text-[10px] sm:text-xs" />
+                </Link>
+              </div>
             </div>
 
             {/* Grid layout with tight gap */}
             <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
-              {products?.map((item) => {
+              {visibleProducts?.map((item) => {
                 const inWishlist = wishlist?.includes(item._id);
                 const inCart = cart?.includes(item._id);
 

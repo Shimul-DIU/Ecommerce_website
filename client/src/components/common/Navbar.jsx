@@ -28,7 +28,7 @@ const Navbar = ({ onMenuClick }) => {
 
   const navItems = [
     { name: "Home", path: "/" },
-    { name: "Shop", path: "/shop" },
+    { name: "Products", path: "/products" },
     {
       name: "Categories",
       path: "/categories",
@@ -91,21 +91,17 @@ const Navbar = ({ onMenuClick }) => {
       ) : (
         <>
           {/* ================= DESKTOP NAVBAR ================= */}
-            <nav className="hidden lg:max-w-7xl lg:mx-auto px-4 md:flex sticky top-0 z-50 bg-white shadow-md h-16 items-center  gap-6">
-
-            {/* Left — Logo (always visible) */}
+          <nav className="hidden lg:max-w-7xl lg:mx-auto px-4 md:flex sticky top-0 z-50 bg-white shadow-md h-16 items-center gap-6">
             <Link to="/" className="shrink-0">
               <img src={logo} alt="logo" className="h-11 mix-blend-darken" />
             </Link>
 
-            {/* Center — Search Bar */}
             <div className="flex-1 flex justify-center">
               <div
-                className={`flex items-center border rounded-full px-4 w-80 transition-all duration-200 ${
-                  searchFocused
+                className={`flex items-center border rounded-full px-4 w-80 transition-all duration-200 ${searchFocused
                     ? "ring-2 ring-blue-500 border-blue-500"
                     : "hover:ring-2 hover:ring-blue-300 hover:border-blue-300"
-                }`}
+                  }`}
               >
                 <FontAwesomeIcon icon={faSearch} className="text-gray-400 mr-2" />
                 <input
@@ -118,7 +114,6 @@ const Navbar = ({ onMenuClick }) => {
               </div>
             </div>
 
-            {/* Right — Nav Items + Icons */}
             <div className="flex items-center gap-6 font-medium shrink-0">
               {navItems.map((item) => (
                 <div
@@ -133,13 +128,11 @@ const Navbar = ({ onMenuClick }) => {
                         {item.name}
                         <FontAwesomeIcon
                           icon={faChevronDown}
-                          className={`text-xs transition-transform duration-200 ${
-                            isCategoryOpen ? "rotate-180" : ""
-                          }`}
+                          className={`text-xs transition-transform duration-200 ${isCategoryOpen ? "rotate-180" : ""
+                            }`}
                         />
                       </button>
 
-                      {/* Dropdown Menu */}
                       {isCategoryOpen && (
                         <div
                           className="absolute top-full left-0 mt-2 bg-white shadow-lg rounded-lg py-2 border z-50"
@@ -187,42 +180,29 @@ const Navbar = ({ onMenuClick }) => {
                 </div>
               ))}
 
-              {/* Cart & Profile */}
-              <Link
-                  to="/wishlist"
-                  className="relative text-xl hover:text-blue-600 transition"
-                >
-                  <FontAwesomeIcon icon={faHeart} />
-
-                  {wishlist.length> 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
-                      {wishlist.length}
-                    </span>
-                  )}
-                </Link>
-              <Link
-                  to="/cart"
-                  className="relative text-xl hover:text-blue-600 transition"
-                >
-                  <FontAwesomeIcon icon={faCartShopping} />
-
-                  {cart.length> 0 && (
-                    <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
-                      {cart.length}
-                    </span>
-                  )}
-                </Link>
-              <Link
-                  to="/userDashboard"
-                onClick={() => setIsCategoryOpen(false)}
-                className="text-xl hover:text-blue-600 transition"
-              >
+              <Link to="/wishlist" className="relative text-xl hover:text-blue-600 transition">
+                <FontAwesomeIcon icon={faHeart} />
+                {wishlist.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
+                    {wishlist.length}
+                  </span>
+                )}
+              </Link>
+              <Link to="/cart" className="relative text-xl hover:text-blue-600 transition">
+                <FontAwesomeIcon icon={faCartShopping} />
+                {cart.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
+                    {cart.length}
+                  </span>
+                )}
+              </Link>
+              <Link to="/userDashboard" onClick={() => setIsCategoryOpen(false)} className="text-xl hover:text-blue-600 transition">
                 <FontAwesomeIcon icon={faUser} />
               </Link>
             </div>
           </nav>
 
-          {/* ================= MOBILE NAVBAR ================= */}
+          {/* ================= MOBILE TOP NAVBAR (only this remains) ================= */}
           <nav className="md:hidden sticky top-0 z-50 bg-white shadow-md flex items-center justify-between px-3 py-3">
             <button onClick={onMenuClick}>
               <FontAwesomeIcon icon={faBars} className="text-xl" />
@@ -234,7 +214,7 @@ const Navbar = ({ onMenuClick }) => {
               <button onClick={handleSearchOpen}>
                 <FontAwesomeIcon icon={faSearch} className="text-lg" />
               </button>
-                <Link to="/userDashboard">
+              <Link to="/userDashboard">
                 <FontAwesomeIcon icon={faUser} className="text-lg" />
               </Link>
             </div>
@@ -242,56 +222,8 @@ const Navbar = ({ onMenuClick }) => {
         </>
       )}
 
-      {/* ================= MOBILE BOTTOM NAV ================= */}
-      <footer className="md:hidden fixed bottom-0 left-0 z-50 w-full bg-white border-t shadow-lg flex justify-around py-3">
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            `flex flex-col items-center text-xs ${
-              isActive ? "text-blue-600" : "text-gray-600"
-            }`
-          }
-        >
-          <FontAwesomeIcon icon={faHouse} />
-          <span className="mt-1">Home</span>
-        </NavLink>
-
-        <NavLink
-          to="/shop"
-          className={({ isActive }) =>
-            `flex flex-col items-center text-xs ${
-              isActive ? "text-blue-600" : "text-gray-600"
-            }`
-          }
-        >
-          <FontAwesomeIcon icon={faBagShopping} />
-          <span className="mt-1">Shop</span>
-        </NavLink>
-
-        <NavLink
-          to="/offers"
-          className={({ isActive }) =>
-            `flex flex-col items-center text-xs ${
-              isActive ? "text-blue-600" : "text-gray-600"
-            }`
-          }
-        >
-          <FontAwesomeIcon icon={faTag} />
-          <span className="mt-1">Offers</span>
-        </NavLink>
-
-        <NavLink
-          to="/cart"
-          className={({ isActive }) =>
-            `flex flex-col items-center text-xs ${
-              isActive ? "text-blue-600" : "text-gray-600"
-            }`
-          }
-        >
-          <FontAwesomeIcon icon={faCartShopping} />
-          <span className="mt-1">Cart</span>
-        </NavLink>
-      </footer>
+      {/* ================= BOTTOM FOOTER AND LEFT SIDE NAV REMOVED ================= */}
+      {/* No footer, no left side bar */}
     </>
   );
 };
