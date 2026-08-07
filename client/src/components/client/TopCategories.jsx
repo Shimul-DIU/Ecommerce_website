@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faTag } from "@fortawesome/free-solid-svg-icons";
+import { faTag } from "@fortawesome/free-solid-svg-icons";
 
 const CATEGORIES = [
   {
@@ -55,10 +55,10 @@ const CATEGORIES = [
 
 const TopCategories = () => {
   return (
-    <section className="py-6 px-4 max-w-7xl mx-auto">
+    <section className=" px-4 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl sm:text-2xl font-bold text-[#16241F]">
+        <h2 className="text-xl sm:text-2xl md:text-3xl text-[#16241F]]">
           Top Categories
         </h2>
         <Link
@@ -70,7 +70,7 @@ const TopCategories = () => {
       </div>
 
       {/* Grid container */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
         {CATEGORIES.map((cat) => (
           <Link
             key={cat.id}
@@ -80,8 +80,8 @@ const TopCategories = () => {
           >
             {/* Inner container */}
             <div className="flex h-16 sm:h-20 w-full">
-              {/* Left: Image */}
-              <div className={`${cat.bgColor} w-16 sm:w-20 shrink-0 flex items-center justify-center p-1.5`}>
+              {/* Left: Image (Width reduced for small screens) */}
+              <div className={`${cat.bgColor} w-14 sm:w-20 shrink-0 flex items-center justify-center p-1`}>
                 <img
                   src={cat.image}
                   alt={cat.name}
@@ -91,7 +91,7 @@ const TopCategories = () => {
               </div>
 
               {/* Right: Information */}
-              <div className="flex-1 flex flex-col justify-between p-2 min-w-0">
+              <div className="flex-1 flex flex-col justify-between p-1.5 sm:p-2 min-w-0">
                 <div>
                   <h3 className="text-xs sm:text-sm font-bold text-[#16241F] truncate">
                     {cat.name}
@@ -100,15 +100,13 @@ const TopCategories = () => {
                     {cat.itemsCount} items
                   </p>
                 </div>
-                <div className="flex items-center justify-between gap-1 text-[10px]">
-                  <span className="flex items-center gap-1 bg-blue-50 px-1.5 py-0.5 rounded-full text-blue-700 font-semibold truncate">
-                    <FontAwesomeIcon icon={faTag} className="text-[8px] shrink-0" />
-                    {cat.soldCount} sold
+
+                {/* Sold Badge Fix */}
+                <div className="flex items-center">
+                  <span className="inline-flex items-center gap-0.5 sm:gap-1 bg-blue-50 px-1 sm:px-1.5 py-0.5 rounded-full text-blue-700 font-semibold text-[9px] sm:text-[10px] whitespace-nowrap">
+                    <FontAwesomeIcon icon={faTag} className="text-[7px] sm:text-[8px] shrink-0" />
+                    <span>{cat.soldCount} sold</span>
                   </span>
-                  <FontAwesomeIcon
-                    icon={faArrowRight}
-                    className="text-[10px] text-blue-600 group-hover:translate-x-1 transition-transform shrink-0"
-                  />
                 </div>
               </div>
             </div>

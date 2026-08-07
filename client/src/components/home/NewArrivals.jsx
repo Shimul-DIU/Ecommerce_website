@@ -5,16 +5,11 @@ import { useContext, useEffect, useState } from "react";
 import { CountContext } from "../../context/countContext";
 import { Link } from "react-router-dom";
 
-const FONT_DISPLAY = "'Fraunces', serif";
-const FONT_MONO = "'IBM Plex Mono', monospace";
-
-// grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 এর সাথে মিলিয়ে
-// শুধু ১ row-এর সমান product দেখানোর জন্য এই সংখ্যাগুলো grid-cols-এর সাথে exact match করবে
 const getVisibleCount = (width) => {
-  if (width >= 1024) return 5; // lg -> grid-cols-5 -> 1 row = 5 item
-  if (width >= 768) return 4;  // md -> grid-cols-4 -> 1 row = 4 item
-  if (width >= 640) return 3;  // sm -> grid-cols-3 -> 1 row = 3 item
-  return 2;                    // mobile -> grid-cols-2 -> 1 row = 2 item
+  if (width >= 1024) return 10; // lg -> grid-cols-5 -> 1 row = 5 item
+  if (width >= 768) return 8;  // md -> grid-cols-4 -> 1 row = 4 item
+  if (width >= 640) return 6;  // sm -> grid-cols-3 -> 1 row = 3 item
+  return 4;                    // mobile -> grid-cols-2 -> 1 row = 2 item
 };
 
 const NewArrivals = () => {
@@ -32,7 +27,7 @@ const NewArrivals = () => {
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // mount হওয়ার সময় একবার সেট করে নেয়
+    handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -48,8 +43,8 @@ const NewArrivals = () => {
   const visibleProducts = products?.slice(0, visibleCount);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-4 min-h-screen">
-      <div className="py-4 sm:py-6">
+    <div className="max-w-7xl mx-auto min-h-screen">
+      <div >
         {loading && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3.5 animate-pulse">
             {[...Array(6)].map((_, index) => (
@@ -67,7 +62,7 @@ const NewArrivals = () => {
             <div className="max-w-7xl mx-auto px-4 flex items-baseline justify-between mb-4 sm:mb-6">
               <h2
                 className="text-xl sm:text-2xl md:text-3xl text-[#16241F]"
-                style={{ fontFamily: FONT_DISPLAY, fontWeight: 600 }}
+
               >
                 New Arrivals
               </h2>
@@ -75,7 +70,7 @@ const NewArrivals = () => {
               <div className="flex items-center gap-3">
                 <span
                   className="text-xs sm:text-sm text-[#16241F]/40"
-                  style={{ fontFamily: FONT_MONO }}
+
                 >
                   {products?.length || 0} items
                 </span>
@@ -85,7 +80,7 @@ const NewArrivals = () => {
                   to="/products"
                   state={{ filter: "new-arrival"}}
                   className="flex items-center gap-1 text-[#16241F] hover:text-[#B08946] transition text-xs sm:text-sm font-medium"
-                  style={{ fontFamily: FONT_MONO }}
+
                 >
                   <span className="hidden sm:inline">See All</span>
                   <FontAwesomeIcon icon={faArrowRight} className="text-[10px] sm:text-xs" />
@@ -151,7 +146,7 @@ const NewArrivals = () => {
                         <div className="absolute inset-0 bg-white/70 flex items-center justify-center p-1 z-10">
                           <span
                             className="text-[9px] sm:text-[10px] tracking-wide uppercase text-[#16241F]/70 bg-white px-2 py-0.5 rounded-full border border-[#E4DDCE] font-medium"
-                            style={{ fontFamily: FONT_MONO }}
+
                           >
                             Out of stock
                           </span>
@@ -164,7 +159,7 @@ const NewArrivals = () => {
                       <div>
                         <h3
                           className="text-[#16241F] text-xs sm:text-sm font-medium line-clamp-1 leading-tight"
-                          style={{ fontFamily: FONT_DISPLAY }}
+
                         >
                           {item.name}
                         </h3>
@@ -174,13 +169,13 @@ const NewArrivals = () => {
                         <div className="flex items-center justify-between mb-1.5 sm:mb-2">
                           <span
                             className="text-xs sm:text-sm md:text-base text-[#16241F]"
-                            style={{ fontFamily: FONT_MONO, fontWeight: 600 }}
+
                           >
                             ৳{item.price}
                           </span>
                           <span
                             className="text-[9px] sm:text-[10px] text-[#16241F]/40"
-                            style={{ fontFamily: FONT_MONO }}
+
                           >
                             Stock: {item.stock}
                           </span>

@@ -1,24 +1,28 @@
 import NewArrivals from '../../components/home/NewArrivals';
 import HeroBanner from '../../components/common/HeroBanner';
-// import Filter from './../../components/Filter';
 import DealOfTheDay from '../../components/home/DealOFTheDay';
 import DevelopmentPopup from '../../components/common/DevelopmentPopup';
 import TopCategories from '../../components/client/TopCategories';
+import SidebarCategories from '../../components/client/SidebarCategories';
 
 const Home = () => (
-  <div>
+  <div className="max-w-7xl mx-auto px-4 pt-24 md:pt-28 space-y-8">
+    <DevelopmentPopup />
+
     <HeroBanner />
 
-      {/* <div className='hidden md:block'>
-      <Filter/>
-      </div> */}
-      <div>
-        <DealOfTheDay />
-      </div>
-    <DevelopmentPopup></DevelopmentPopup>
-    <div >
-      <TopCategories/>
-      <NewArrivals />
+    <DealOfTheDay />
+
+    <TopCategories />
+
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <aside className="lg:col-span-3 w-full">
+        <SidebarCategories />
+      </aside>
+
+      <main className="lg:col-span-9 w-full">
+        <NewArrivals />
+      </main>
     </div>
   </div>
 );

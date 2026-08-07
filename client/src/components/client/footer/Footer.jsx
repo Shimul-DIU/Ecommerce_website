@@ -51,7 +51,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="w-full bg-slate-950 text-slate-300">
+    <footer className="max-w-7xl mx-auto  bg-slate-950 text-slate-300">
       {/* Trust strip */}
       <div className="border-b border-slate-800">
         <div className="max-w-6xl mx-auto px-6 py-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
