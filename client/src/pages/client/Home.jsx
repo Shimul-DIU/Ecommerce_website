@@ -15,8 +15,8 @@ const Home = () => (
 
     <TopCategories />
 
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      <aside className="lg:col-span-3 w-full">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4  items-start">
+      <aside className="lg:col-span-3 w-full ">
         <SidebarCategories />
       </aside>
 

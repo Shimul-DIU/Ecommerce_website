@@ -55,10 +55,10 @@ const CATEGORIES = [
 
 const TopCategories = () => {
   return (
-    <section className=" px-4 max-w-7xl mx-auto">
+    <section className="  max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl sm:text-2xl md:text-3xl text-[#16241F]]">
+        <h2 className="text-lg md:text-xl lg:text-2xl font-medium text-[#16241F]">
           Top Categories
         </h2>
         <Link

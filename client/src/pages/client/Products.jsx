@@ -3,12 +3,9 @@ import {
   faHeart,
   faShoppingCart,
   faSliders,
-  faTag,
-  faSort,
   faFilter,
-  faChevronDown,
   faTimes,
-  faBars
+  faTag,
 } from "@fortawesome/free-solid-svg-icons";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { CountContext } from "../../context/countContext";
@@ -26,9 +23,11 @@ const CATEGORY_OPTIONS = [
   { key: "Electronics", label: "Electronics" },
 ];
 
+const MIN_LIMIT = 100;
+const MAX_LIMIT = 3000;
+
 const Products = () => {
-  const { wishlist, cart, toggleWishlist, toggleCart } =
-    useContext(CountContext);
+  const { wishlist, cart, toggleWishlist, toggleCart } = useContext(CountContext);
   const [products, loading, error] = useProducts();
   const location = useLocation();
 
@@ -36,7 +35,11 @@ const Products = () => {
 
   const [activeCategory, setActiveCategory] = useState(initialFilter);
   const [sortBy, setSortBy] = useState("default");
-  const [priceRange, setPriceRange] = useState(10000);
+
+  // Dynamic Range Config (100 Tk - 3000 Tk)
+  const [minPrice, setMinPrice] = useState(MIN_LIMIT);
+  const [maxPrice, setMaxPrice] = useState(MAX_LIMIT);
+
   const [inStockOnly, setInStockOnly] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -46,12 +49,7 @@ const Products = () => {
     }
   }, [location.state]);
 
-  const productPrices = useMemo(() => {
-    if (!products) return { min: 0, max: 10000 };
-    const prices = products.map(p => p.price);
-    return { min: Math.min(...prices), max: Math.max(...prices) };
-  }, [products]);
-
+  // Dynamic Filtering Logic
   const filteredProducts = useMemo(() => {
     if (!products) return [];
 
@@ -64,7 +62,8 @@ const Products = () => {
       result = result.filter((item) => item.stock > 0);
     }
 
-    result = result.filter((item) => item.price <= priceRange);
+    // Dynamic Price Filter (Between minPrice and maxPrice)
+    result = result.filter((item) => item.price >= minPrice && item.price <= maxPrice);
 
     if (sortBy === "price-low") {
       result = [...result].sort((a, b) => a.price - b.price);
@@ -73,37 +72,37 @@ const Products = () => {
     }
 
     return result;
-  }, [products, activeCategory, inStockOnly, priceRange, sortBy]);
+  }, [products, activeCategory, inStockOnly, minPrice, maxPrice, sortBy]);
 
   const resetFilters = () => {
     setActiveCategory("all");
     setSortBy("default");
-    setPriceRange(productPrices.max);
+    setMinPrice(MIN_LIMIT);
+    setMaxPrice(MAX_LIMIT);
     setInStockOnly(false);
   };
 
-  useEffect(() => {
-    if (productPrices.max > 0) {
-      setPriceRange(productPrices.max);
-    }
-  }, [productPrices.max]);
+  // Dynamic Percentage Calculation for Active Track Line
+  const minPercent = ((minPrice - MIN_LIMIT) / (MAX_LIMIT - MIN_LIMIT)) * 100;
+  const maxPercent = ((maxPrice - MIN_LIMIT) / (MAX_LIMIT - MIN_LIMIT)) * 100;
 
-  // Filter content (shared between desktop sidebar and mobile drawer)
-  const FilterContent = () => (
-    <div className="">
-      <div className="flex items-center gap-2">
-        <FontAwesomeIcon icon={faSliders} className="text-[#16241F] text-base" />
-        <h3 className="text-lg font-bold text-[#16241F]">Filters</h3>
+  // Render Filter Section Body
+  const renderFilterContent = () => (
+    <div className="space-y-5">
+      <div className="flex items-center gap-2 pb-3 border-b border-[#E4DDCE]">
+        <FontAwesomeIcon icon={faSliders} className="text-[#16241F] text-lg" />
+        <h3 className="text-lg font-bold text-[#16241F]">Filter Products</h3>
       </div>
 
+      {/* Category Selection */}
       <div>
-        <label className="block text-[10px] sm:text-xs uppercase tracking-wide text-[#16241F]/70 mb-1.5 font-semibold">
+        <label className="block text-xs uppercase tracking-wider text-[#16241F]/70 mb-2 font-bold">
           Category
         </label>
         <select
           value={activeCategory}
           onChange={(e) => setActiveCategory(e.target.value)}
-          className="w-full text-sm border border-[#E4DDCE] rounded-md px-3 py-2 bg-[#FAF6EF] text-[#16241F] focus:outline-none focus:ring-1 focus:ring-blue-600"
+          className="w-full text-sm border border-[#E4DDCE] rounded-lg px-3 py-2 bg-[#FAF6EF] text-[#16241F] focus:outline-none focus:ring-2 focus:ring-[#B08946] transition"
         >
           {CATEGORY_OPTIONS.map((cat) => (
             <option key={cat.key} value={cat.key}>
@@ -113,14 +112,15 @@ const Products = () => {
         </select>
       </div>
 
+      {/* Sorting */}
       <div>
-        <label className="block text-[10px] sm:text-xs uppercase tracking-wide text-[#16241F]/70 mb-1.5 font-semibold">
+        <label className="block text-xs uppercase tracking-wider text-[#16241F]/70 mb-2 font-bold">
           Sort by
         </label>
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="w-full text-sm border border-[#E4DDCE] rounded-md px-3 py-2 bg-[#FAF6EF] text-[#16241F] focus:outline-none focus:ring-1 focus:ring-blue-600"
+          className="w-full text-sm border border-[#E4DDCE] rounded-lg px-3 py-2 bg-[#FAF6EF] text-[#16241F] focus:outline-none focus:ring-2 focus:ring-[#B08946] transition"
         >
           <option value="default">Default</option>
           <option value="price-low">Price: Low → High</option>
@@ -128,41 +128,82 @@ const Products = () => {
         </select>
       </div>
 
+      {/* Dual Price Range Slider */}
       <div>
-        <div className="flex items-center justify-between">
-          <label className="block text-[10px] sm:text-xs uppercase tracking-wide text-[#16241F]/70 font-semibold">
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-xs uppercase tracking-wider text-[#16241F]/70 font-bold">
             Price Range
           </label>
-          <span className="text-sm font-bold text-[#16241F]">৳{priceRange}</span>
+          <span className="text-xs font-bold text-[#B08946] bg-[#FAF6EF] px-2.5 py-1 rounded-md border border-[#E4DDCE]">
+            ৳{minPrice} - ৳{maxPrice}
+          </span>
         </div>
-        <input
-          type="range"
-          min={productPrices.min}
-          max={productPrices.max}
-          value={priceRange}
-          onChange={(e) => setPriceRange(Number(e.target.value))}
-          className="w-full mt-1 accent-blue-600"
-        />
-        <div className="flex justify-between text-[10px] text-[#16241F]/50 font-medium">
-          <span>৳{productPrices.min}</span>
-          <span>৳{productPrices.max}</span>
+
+        {/* Range Slider Track */}
+        <div className="relative w-full h-8 flex items-center">
+          {/* Base Background Bar */}
+          <div className="absolute w-full h-2 bg-[#E4DDCE] rounded-lg pointer-events-none"></div>
+
+          {/* Dynamic Active Gold Bar */}
+          <div
+            className="absolute h-2 bg-[#B08946] rounded-lg pointer-events-none"
+            style={{
+              left: `${minPercent}%`,
+              width: `${maxPercent - minPercent}%`,
+            }}
+          ></div>
+
+          {/* MIN Price Input Slider (Left Circle) */}
+          <input
+            type="range"
+            min={MIN_LIMIT}
+            max={MAX_LIMIT}
+            step="10"
+            value={minPrice}
+            onChange={(e) => {
+              const val = Math.min(Number(e.target.value), maxPrice - 50);
+              setMinPrice(val);
+            }}
+            className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none accent-[#B08946] z-30 focus:outline-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto"
+          />
+
+          {/* MAX Price Input Slider (Right Circle) */}
+          <input
+            type="range"
+            min={MIN_LIMIT}
+            max={MAX_LIMIT}
+            step="10"
+            value={maxPrice}
+            onChange={(e) => {
+              const val = Math.max(Number(e.target.value), minPrice + 50);
+              setMaxPrice(val);
+            }}
+            className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none accent-[#B08946] z-40 focus:outline-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto"
+          />
+        </div>
+
+        <div className="flex justify-between text-[11px] text-[#16241F]/60 font-medium mt-1">
+          <span>Min: ৳{MIN_LIMIT}</span>
+          <span>Max: ৳{MAX_LIMIT}</span>
         </div>
       </div>
 
-      <label className="flex items-center gap-2 cursor-pointer select-none">
+      {/* Stock Checkbox */}
+      <label className="flex items-center gap-2 cursor-pointer select-none py-1">
         <input
           type="checkbox"
           checked={inStockOnly}
           onChange={(e) => setInStockOnly(e.target.checked)}
-          className="w-3.5 h-3.5 accent-blue-600"
+          className="w-4 h-4 accent-[#B08946] rounded cursor-pointer"
         />
         <span className="text-sm text-[#16241F] font-medium">In stock only</span>
       </label>
 
+      {/* Reset Button */}
       <button
         type="button"
         onClick={resetFilters}
-        className="w-full h-8 rounded-md border border-[#16241F]/20 text-[#16241F] text-sm font-semibold hover:bg-[#16241F] hover:text-white transition"
+        className="w-full py-2 rounded-lg border border-[#16241F]/20 text-[#16241F] text-xs font-bold uppercase tracking-wider hover:bg-[#16241F] hover:text-white transition shadow-sm"
       >
         Reset Filters
       </button>
@@ -171,182 +212,234 @@ const Products = () => {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <h2 className="text-red-500 text-lg">{error}</h2>
+      <div className="flex justify-center items-center py-20 min-h-screen bg-[#FAF6EF]">
+        <h2 className="text-red-500 font-semibold text-lg">{error}</h2>
       </div>
     );
   }
 
   return (
-    // Outer wrapper: full viewport height, top padding for navbar (adjust pt-16 if your navbar is different)
-    <div className="h-screen  overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 h-full flex flex-col lg:flex-row gap-6">
-        {/* Mobile Filter Toggle Button */}
-        <div className="lg:hidden flex items-center gap-3 ">
-          <button
-            onClick={() => setIsDrawerOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 border border-[#E4DDCE] rounded-md text-[#16241F] text-sm font-semibold hover:bg-[#FAF6EF] transition"
-          >
-            <FontAwesomeIcon icon={faFilter} />
-            <span>Filters</span>
-          </button>
-          <span className="text-sm text-[#16241F]/60 font-medium">
-            {filteredProducts.length} items
-          </span>
+    <div className="min-h-screen mt-[99px] pb-10 px-4 md:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Top Header Section */}
+        <div className="flex justify-between mb-3">
+          <h2 className="text-lg sm:text-2xl lg:hidden font-bold">Products</h2>
+          <div className="lg:hidden flex items-center sm:w-auto">
+            <button
+              onClick={() => setIsDrawerOpen(true)}
+              className="flex items-center gap-1 px-2 sm:px-4 py-0.5 sm:py-2 bg-white border border-[#E4DDCE] rounded-lg text-[#16241F] text-sm font-semibold hover:bg-gray-50 transition shadow-sm"
+            >
+              <FontAwesomeIcon icon={faFilter} className="text-[#B08946]" />
+              <span>Filters</span>
+            </button>
+          </div>
         </div>
 
-        {/* Mobile Drawer (left side) */}
+        {/* Mobile Filter Drawer */}
         {isDrawerOpen && (
           <div className="lg:hidden fixed inset-0 z-50 flex">
             <div
-              className="fixed inset-0 bg-black/30"
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
               onClick={() => setIsDrawerOpen(false)}
             />
-            <div className="relative w-72 max-w-[85%] bg-white shadow-xl overflow-y-auto p-5 animate-slide-in-left">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-[#16241F]">Filter</h2>
+            <div className="relative w-80 max-w-[85%] bg-white h-full shadow-2xl p-6 overflow-y-auto z-10">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-[#16241F]">Filters</h2>
                 <button
                   onClick={() => setIsDrawerOpen(false)}
-                  className="p-1 hover:bg-[#F4F1EA] rounded-full transition"
+                  className="p-1.5 hover:bg-[#FAF6EF] rounded-full transition"
                 >
                   <FontAwesomeIcon icon={faTimes} className="text-[#16241F] text-lg" />
                 </button>
               </div>
-              <FilterContent />
+              {renderFilterContent()}
             </div>
           </div>
         )}
 
-        {/* ---------- Left Sidebar (desktop) ---------- */}
-        <aside className="hidden lg:block w-64 shrink-0">
-          <div className="lg:sticky lg:top-4 bg-white border border-[#E4DDCE] rounded-xl p-4">
-            <FilterContent />
-          </div>
-        </aside>
+        {/* Main Content Layout */}
+        <div className="flex gap-8 items-start">
+          {/* Desktop Sidebar Filter */}
+          <aside className="hidden lg:block w-64 shrink-0 bg-white border border-[#E4DDCE] rounded-2xl p-5 shadow-sm sticky top-[100px]">
+            {renderFilterContent()}
+          </aside>
 
-        {/* ---------- Right Side: Products ---------- */}
-        <div className="flex-1 min-w-0 h-full flex flex-col">
-          {/* Header (title + count) – visible only on desktop */}
-          <div className="hidden lg:flex items-center justify-between mb-4">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#16241F]">
-              {CATEGORY_OPTIONS.find((c) => c.key === activeCategory)?.label}
-            </h2>
-            <span className="text-xs sm:text-sm text-[#16241F]/60 font-medium">
-              {filteredProducts.length} items
-            </span>
-          </div>
-
-          {/* Grid container – takes remaining height and scrolls internally */}
-          <div className="flex-1 overflow-y-auto">
+          {/* Products Grid */}
+          <main className="flex-1 min-w-0">
             {loading && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-3.5 grid-rows-2 auto-rows-[1fr] h-full animate-pulse">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4.5">
                 {[...Array(8)].map((_, index) => (
-                  <div key={index} className="space-y-2 h-full">
-                    <div className="aspect-square rounded-xl bg-[#E4DDCE]" />
-                    <div className="h-3 w-3/4 rounded bg-[#E4DDCE]" />
-                    <div className="h-3 w-1/2 rounded bg-[#E4DDCE]" />
+                  <div
+                    key={index}
+                    className="bg-white border border-[#E4DDCE]/60 rounded-2xl p-2"
+                  >
+                    <div className="aspect-square rounded-xl bg-[#E4DDCE]/50" />
+                    <div className="h-3.5 w-3/4 rounded-md bg-[#E4DDCE]/50 mt-2" />
+                    <div className="h-3 w-1/2 rounded-md bg-[#E4DDCE]/40 mt-1" />
+                    <div className="h-8 rounded-xl bg-[#E4DDCE]/50 mt-2" />
                   </div>
                 ))}
               </div>
             )}
 
             {!loading && filteredProducts.length === 0 && (
-              <div className="flex flex-col items-center justify-center h-full text-center">
-                <p className="text-sm sm:text-base text-[#16241F]/60 font-medium">
-                  No products found matching your filters.
+              <div className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl border border-[#E4DDCE] text-center p-6">
+                <FontAwesomeIcon icon={faTag} className="text-4xl text-[#16241F]/30 mb-3" />
+                <p className="text-base text-[#16241F] font-semibold">No products found!</p>
+                <p className="text-xs text-[#16241F]/60 mt-1">
+                  Try resetting your filters or adjusting your price range.
                 </p>
+                <button
+                  onClick={resetFilters}
+                  className="mt-4 px-4 py-2 bg-[#16241F] text-white text-xs font-semibold rounded-lg hover:bg-[#0F1A16] transition"
+                >
+                  Reset Filters
+                </button>
               </div>
             )}
 
             {!loading && filteredProducts.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5  justify-between ">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4.5">
                 {filteredProducts.map((item) => {
                   const inWishlist = wishlist?.includes(item._id);
                   const inCart = cart?.includes(item._id);
+                  const isOutOfStock = item.stock <= 0;
+
+                  const originalPrice =
+                    item.originalPrice || Math.round(item.price * 1.25);
+                  const discountPercent =
+                    item.discountPercent ||
+                    (originalPrice > item.price
+                      ? Math.round(((originalPrice - item.price) / originalPrice) * 100)
+                      : 0);
+
+                  const savingsAmount = originalPrice - item.price;
 
                   return (
-                    <div
+                    <Link
+                      to={'/checkout'}
+                      state={{ product: item }}
                       key={item._id}
-                      className="group flex flex-col bg-white border border-[#E4DDCE] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-md h-full"
+                      className="group relative flex flex-col bg-white border border-[#E4DDCE] hover:border-[#B08946]/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
                     >
-                      <div className="relative w-full aspect-square bg-[#F4F1EA] overflow-hidden flex items-center justify-center p-1 sm:p-2">
-
+                      {/* Image Container */}
+                      <div className="relative w-full aspect-square bg-[#FAF6EF]/60 overflow-hidden flex items-center justify-center p-1 sm:p-2">
                         <img
                           src={item.image}
                           alt={item.name}
-                          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                          loading="lazy"
+                          className="w-full rounded-lg h-full object-contain transition-transform duration-500 group-hover:scale-105"
                         />
 
-                        <div className="absolute top-1.5 right-1.5 flex flex-col gap-1 z-10">
+                        {/* Top Left Discount Badge */}
+                        {discountPercent > 0 && !isOutOfStock && (
+                          <div className="absolute top-2 left-2 z-10 bg-red-600 text-white text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-md flex items-center gap-1">
+                            <FontAwesomeIcon icon={faTag} className="text-[8px] sm:text-[9px]" />
+                            <span>{discountPercent}% OFF</span>
+                          </div>
+                        )}
+
+                        {/* Floating Action Buttons */}
+                        <div className="absolute top-2 right-2 flex flex-col gap-1.5 z-20">
                           <button
                             type="button"
-                            onClick={() => toggleWishlist(item._id)}
-                            aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-                            className={`w-4 h-4 sm:w-7 sm:h-7 rounded-full flex items-center justify-center shadow-sm transition
-                              ${inWishlist
-                                ? "bg-blue-600 text-white"
-                                : "bg-white/90 text-[#16241F]/50 hover:text-blue-600"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              toggleWishlist(item._id);
+                            }}
+                            aria-label={
+                              inWishlist ? "Remove from wishlist" : "Add to wishlist"
+                            }
+                            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inWishlist
+                                ? "bg-red-500 text-white"
+                                : "bg-white/90 text-[#16241F]/60 hover:text-red-500 hover:bg-white"
                               }`}
                           >
-                            <FontAwesomeIcon icon={faHeart} className="text-xs" />
+                            <FontAwesomeIcon
+                              icon={faHeart}
+                              className="text-[11px] sm:text-xs"
+                            />
                           </button>
 
                           <button
                             type="button"
-                            onClick={() => toggleCart(item._id)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              toggleCart(item._id);
+                            }}
                             aria-label={inCart ? "Remove from cart" : "Add to cart"}
-                            className={`w-4 h-4 sm:w-7 sm:h-7 rounded-full flex items-center justify-center shadow-sm transition
-                              ${inCart
-                                ? "bg-blue-600 text-white"
-                                : "bg-white/90 text-[#16241F]/50 hover:text-blue-600"
+                            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inCart
+                                ? "bg-[#16241F] text-[#B08946]"
+                                : "bg-white/90 text-[#16241F]/60 hover:text-[#16241F] hover:bg-white"
                               }`}
                           >
-                            <FontAwesomeIcon icon={faShoppingCart} className=" text-xs" />
+                            <FontAwesomeIcon
+                              icon={faShoppingCart}
+                              className="text-[11px] sm:text-xs"
+                            />
                           </button>
                         </div>
 
-                        {item.stock <= 0 && (
-                          <div className="absolute inset-0 bg-white/70 flex items-center justify-center p-1 z-10">
-                            <span className="text-[9px] sm:text-[10px] tracking-wide uppercase text-[#16241F]/70 bg-white px-2 py-0.5 rounded-full border border-[#E4DDCE] font-bold">
-                              Out of stock
+                        {/* Out of Stock Overlay */}
+                        {isOutOfStock && (
+                          <div className="absolute inset-0 bg-[#16241F]/40 backdrop-blur-[2px] flex items-center justify-center p-2 z-10">
+                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-red-600 bg-white px-3 py-1 rounded-full shadow-lg border border-red-100">
+                              Out of Stock
                             </span>
                           </div>
                         )}
                       </div>
 
-                      <div className="p-1.5 flex flex-col flex-grow justify-between">
+                      {/* Details Section */}
+                      <div className="pl-2.5 pb-2.5 pr-1 sm:p-3.5 flex flex-col justify-between flex-1">
                         <div>
-                          <h3 className="text-[#16241F] text-sm sm:text-base font-bold line-clamp-1 leading-tight">
+                          <h3
+                            title={item.name}
+                            className="text-[#16241F] text-xs sm:text-sm font-semibold line-clamp-1 leading-snug group-hover:text-[#B08946] transition-colors"
+                          >
                             {item.name}
                           </h3>
                         </div>
 
-                        <div>
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-sm sm:text-base md:text-lg text-[#16241F] font-bold">
-                              ৳{item.price}
-                            </span>
-                            <span className="text-[9px] sm:text-[10px] text-[#16241F]/50 font-medium">
-                              Stock: {item.stock}
-                            </span>
+                        <div className="mt-2">
+                          <div className="space-y-0.5 mb-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1">
+                                <span className="text-sm sm:text-base font-extrabold text-[#16241F]">
+                                  ৳{item.price}
+                                </span>
+                                {originalPrice > item.price && (
+                                  <span className="text-[10px] sm:text-xs text-[#16241F]/40 line-through font-medium">
+                                    ৳{originalPrice}
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-[9px] sm:text-[10px] font-medium text-[#16241F]/50 bg-[#FAF6EF] px-1 py-0.5 rounded border border-[#E4DDCE]/60">
+                                Stock: {item.stock}
+                              </span>
+                            </div>
+
+                            {savingsAmount > 0 && !isOutOfStock && (
+                              <p className="text-[9px] sm:text-[10px] text-green-600 font-semibold">
+                                Save ৳{savingsAmount}
+                              </p>
+                            )}
                           </div>
 
-                          <Link to="/checkout" state={{ product: item }} className="block">
-                            <button
-                              disabled={item.stock <= 0}
-                              className="w-full p-1 sm:p-2 md:p-2  rounded-md bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white text-[11px] sm:text-xs font-semibold transition"
-                            >
-                              {item.stock <= 0 ? "Unavailable" : "Buy Now"}
-                            </button>
-                          </Link>
+                          <button
+                            disabled={isOutOfStock}
+                            className="w-full h-8 sm:h-9 rounded-xl bg-[#16241F] hover:bg-[#0F1A16] active:scale-[0.98] disabled:bg-[#16241F]/20 disabled:text-[#16241F]/40 disabled:cursor-not-allowed text-[#FAF6EF] text-xs font-bold transition-all duration-200 shadow-sm flex items-center justify-center gap-1.5"
+                          >
+                            <span>{isOutOfStock ? "Unavailable" : "Buy Now"}</span>
+                          </button>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   );
                 })}
               </div>
             )}
-          </div>
+          </main>
         </div>
       </div>
     </div>

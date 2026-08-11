@@ -147,10 +147,10 @@ function DealCard({ deal }) {
 
 const DealOfTheDay = () => {
   return (
-    <section className="max-w-7xl mx-auto px-3 sm:px-4 ">
+    <section className="max-w-7xl mx-auto ">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-baseline justify-between mb-3 sm:mb-8">
-          <h2 className="text-xl sm:text-2xl md:text-3xl text-[#16241F]">
+          <h2 className="text-lg md:text-xl lg:text-2xl font-medium text-[#16241F]">
             Deal of the Day
           </h2>
           <span className="text-xs sm:text-sm text-[#16241F]/40">

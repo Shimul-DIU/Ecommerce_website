@@ -12,8 +12,6 @@ import {
   faUser,
   faChevronDown,
   faHeart,
-  faSun,
-  faMoon,
   faGlobe,
   faMoneyBillWave,
   faSignOutAlt,
@@ -39,31 +37,24 @@ const Navbar = ({ onMenuClick }) => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  // Language & Currency (Dark Mode removed)
+  // Language & Currency
   const [language, setLanguage] = useState("EN");
   const [currency, setCurrency] = useState("BDT (৳)");
 
-  // ================= SCROLL SHOW/HIDE LOGIC =================
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const closeTimer = useRef(null);
 
+  // ================= SCROLL EFFECT =================
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
-      setLastScrollY(currentScrollY);
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > 80);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
-
-  const closeTimer = useRef(null);
+  }, []);
 
   const navItems = [
     { name: language === "BN" ? "হোম" : "Home", path: "/" },
@@ -92,7 +83,6 @@ const Navbar = ({ onMenuClick }) => {
   };
 
   const handleSearchOpen = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
     setSearchOpen(true);
   };
 
@@ -102,34 +92,30 @@ const Navbar = ({ onMenuClick }) => {
   };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-in-out ${isVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 ">
+    <header className="fixed top-0 left-0 right-0 z-50 translate-y-0">
+      <div className="max-w-7xl mx-auto px-3">
         {/* ================= TOP ANNOUNCEMENT & UTILITY BAR ================= */}
-        <div className="max-w-7xl rounded-t-md mx-auto px-3 md:px-6 bg-white border-b  text-slate-600 text-xs py-1.5 ">
+        <div
+          className={`max-w-7xl rounded-t-md mx-auto px-3 md:px-6 bg-white border-b border-black/35 text-slate-600 text-xs py-1.5 transition-all duration-300 overflow-hidden ${isScrolled ? "max-h-0 py-0 border-0 opacity-0 pointer-events-none" : "max-h-12 py-1.5 opacity-100"
+            }`}
+        >
           <div className="flex items-center justify-between">
             <p className="hidden md:block text-slate-500">
               🚀 Free shipping on orders over ৳2000! Limited offer.
             </p>
 
-            {/* Right Side Settings (Lang, Currency) */}
             <div className="flex items-center justify-end gap-4 ml-auto">
-              {/* Language Switcher */}
               <div className="flex items-center gap-1 cursor-pointer hover:text-slate-800 transition-colors">
-                <FontAwesomeIcon icon={faGlobe} className="text-[11px]" />
+                <FontAwesomeIcon icon={faGlobe} className="text-xs" />
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="bg-transparent outline-none cursor-pointer text-xs text-slate-600"
+                  className="bg-transparent outline-none cursor-pointer text-xs sm:text-sm text-slate-600"
                 >
                   <option value="EN">English (EN)</option>
                   <option value="BN">বাংলা (BN)</option>
                 </select>
               </div>
-
-              {/* Currency Switcher */}
               <div className="flex items-center gap-1 cursor-pointer hover:text-slate-800 transition-colors">
                 <FontAwesomeIcon icon={faMoneyBillWave} className="text-[11px]" />
                 <select
@@ -177,10 +163,13 @@ const Navbar = ({ onMenuClick }) => {
         ) : (
           <>
             {/* ================= DESKTOP NAVBAR ================= */}
-            <div className="hidden border-b max-w-7xl rounded-b-md mx-auto md:px-6 md:block bg-white shadow-sm  transition-colors duration-300">
-              <nav className="h-16 flex items-center gap-8">
+            <div
+              className={`hidden max-w-7xl rounded-b-md mx-auto md:px-6 md:block bg-white shadow-sm transition-all duration-300 ${isScrolled ? "h-14" : "h-16"
+                }`}
+            >
+              <nav className="h-full flex items-center gap-8">
                 <Link to="/" className="shrink-0 flex items-center">
-                  <img src={logo} alt="logo" className="h-10" />
+                  <img src={logo} alt="logo" className={`transition-all duration-300 ${isScrolled ? "h-8" : "h-10"}`} />
                 </Link>
 
                 {/* Search Bar */}
@@ -204,7 +193,7 @@ const Navbar = ({ onMenuClick }) => {
 
                 {/* Navigation Links & Action Icons */}
                 <div className="flex items-center gap-7 shrink-0">
-                  <div className="flex items-center gap-6 text-sm font-medium text-slate-700">
+                  <div className="flex items-center gap-6 text-sm sm:text-base font-medium text-slate-700">
                     {navItems.map((item) => (
                       <div
                         key={item.path}
@@ -226,7 +215,6 @@ const Navbar = ({ onMenuClick }) => {
                               />
                             </button>
 
-                            {/* Categories Dropdown Menu */}
                             {isCategoryOpen && (
                               <div
                                 className="absolute top-full left-1/2 -translate-x-1/2 mt-0 bg-white shadow-xl rounded-xl py-5 px-2 border border-slate-100 z-50"
@@ -274,7 +262,6 @@ const Navbar = ({ onMenuClick }) => {
                     ))}
                   </div>
 
-                  {/* Right Quick Action Icons */}
                   <div className="flex items-center gap-5 text-slate-600">
                     <Link to="/wishlist" className="relative hover:text-blue-600 transition-colors" aria-label="Wishlist">
                       <FontAwesomeIcon icon={faHeart} className="text-lg" />
@@ -286,7 +273,6 @@ const Navbar = ({ onMenuClick }) => {
                       <CountBadge count={cart.length} color="bg-blue-600" />
                     </Link>
 
-                    {/* User Profile Dropdown */}
                     <div className="relative" onMouseLeave={() => setIsUserMenuOpen(false)}>
                       <button
                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -329,13 +315,16 @@ const Navbar = ({ onMenuClick }) => {
             </div>
 
             {/* ================= MOBILE TOP NAVBAR ================= */}
-            <nav className="md:hidden bg-white shadow-sm border-b border-slate-200 flex items-center justify-between px-3 h-14 transition-colors rounded-b-md">
+            <nav
+              className={`md:hidden bg-white shadow-sm border-b border-slate-200 flex items-center justify-between px-3 transition-all duration-300 ${isScrolled ? "h-12" : "h-14"
+                }`}
+            >
               <button onClick={onMenuClick} aria-label="Open menu" className="text-slate-700 p-1">
                 <FontAwesomeIcon icon={faBars} className="text-xl" />
               </button>
 
               <Link to="/">
-                <img src={logo} alt="logo" className="h-9" />
+                <img src={logo} alt="logo" className={`transition-all duration-300 ${isScrolled ? "h-7" : "h-9"}`} />
               </Link>
 
               <div className="flex items-center gap-3.5 text-slate-700">

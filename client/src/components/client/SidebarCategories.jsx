@@ -83,12 +83,11 @@ const SidebarCategories = () => {
 
   return (
 
-    <aside className="w-full  bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-sm static top-44 z-10">
+    <aside className="hidden lg:block  w-full  bg-white rounded-xl border border-slate-200/80 px-3.5   shadow-sm static top-44 z-10">
       {/* Header */}
-      <h2 className="text-xs font-bold text-slate-800 uppercase tracking-wider pb-2.5 mb-1 border-b border-slate-100">
+      <h2 className="text-lg md:text-xl lg:text-2xl font-medium   pb-2.5 mb-1 border-b border-slate-100">
         Category
       </h2>
-
       {/* Accordion List */}
       <div className="divide-y divide-slate-100">
         {categoriesData.map((category) => {
@@ -101,10 +100,10 @@ const SidebarCategories = () => {
                 className="flex items-center justify-between cursor-pointer group select-none py-0.5"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-6 h-6 rounded-md bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-200 shrink-0">
-                    <FontAwesomeIcon icon={category.icon} className="text-[10px]" />
+                  <div className="w-6 h-6 rounded-md bg-slate-100 flex items-center justify-center  group-hover:bg-blue-600 group-hover:text-white transition-colors duration-200 shrink-0">
+                    <FontAwesomeIcon icon={category.icon} className="text-xs sm:text-sm" />
                   </div>
-                  <span className="text-xs font-semibold text-slate-700 group-hover:text-blue-600 transition-colors truncate">
+                  <span className="text-sm sm:text-base font-semibold  group-hover:text-blue-600 transition-colors truncate">
                     {category.name}
                   </span>
                 </div>
@@ -112,11 +111,11 @@ const SidebarCategories = () => {
                 <button
                   type="button"
                   aria-label="Toggle category"
-                  className="text-slate-400 group-hover:text-blue-600 p-0.5 transition-colors shrink-0"
+                  className=" group-hover:text-blue-600 p-0.5 transition-colors shrink-0"
                 >
                   <FontAwesomeIcon
                     icon={isOpen ? faMinus : faPlus}
-                    className="text-[10px]"
+                    className="text-sm sm:text-base"
                   />
                 </button>
               </div>
@@ -127,7 +126,7 @@ const SidebarCategories = () => {
                     <Link
                       key={index}
                       to={subItem.path}
-                      className="flex items-center justify-between text-[11px] text-slate-500 hover:text-blue-600 transition-colors py-0.5 group/item"
+                      className="flex items-center justify-between  text-sm md:text-base text-slate-500 hover:text-blue-600 transition-colors py-0.5 group/item"
                     >
                       <span className="truncate group-hover/item:translate-x-0.5 transition-transform">
                         {subItem.name}
