@@ -1,276 +1,236 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faXmark,
   faPlus,
   faMinus,
+  faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
+import { useScroll } from "../../hooks/useScroll";
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const isScrolled = useScroll();
   const [menOpen, setMenOpen] = useState(false);
   const [womenOpen, setWomenOpen] = useState(false);
   const [jewelryOpen, setJewelryOpen] = useState(false);
   const [perfumeOpen, setPerfumeOpen] = useState(false);
+
+  // Active & Normal Link Design Styles
+  const linkStyle = ({ isActive }) =>
+    `block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${isActive
+      ? "bg-blue-50 text-blue-600 font-semibold shadow-sm"
+      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+    }`;
+
+  const subLinkStyle = ({ isActive }) =>
+    `block px-4 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${isActive
+      ? "text-blue-600 font-semibold bg-blue-50/60"
+      : "text-gray-600 hover:bg-gray-200/60 hover:text-gray-900"
+    }`;
 
   return (
     <>
       {/* Overlay */}
       <div
         onClick={onClose}
-        className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
-          isOpen ? "opacity-100 visible" : "opacity-0 invisible"
-        }`}
+        className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300 ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
       />
 
-      {/* Sidebar */}
+      {/* Sidebar Container */}
       <aside
-        className={`fixed top-[87px] rounded-md left-4 h-screen w-72 bg-white shadow-xl z-50
-        flex flex-col transform transition-transform duration-300 ease-in-out
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed left-0 w-72 bg-white shadow-2xl z-50 flex flex-col transform transition-all duration-300 ease-in-out border-r border-gray-100 ${isOpen ? "translate-x-0" : "-translate-x-full"
+          } ${isScrolled
+            ? "top-[49px] h-[calc(100vh-49px)]"
+            : "top-[87px] h-[calc(100vh-87px)]"
+          }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b px-5 py-4">
-          <h2 className="text-lg font-semibold">Categories</h2>
+        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3">
+          <h2 className="text-base font-bold text-gray-800 tracking-wide">
+            Categories
+          </h2>
 
           <button
             onClick={onClose}
-            className="text-xl hover:text-red-500"
+            className="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 hover:text-red-500 hover:bg-red-50 transition-colors"
           >
-            <FontAwesomeIcon icon={faXmark} />
+            <FontAwesomeIcon icon={faXmark} className="text-lg" />
           </button>
         </div>
 
-        {/* Menu */}
-        <ul className="flex-1 overflow-y-auto py-2">
-
+        {/* Menu (Scrollable List) */}
+        <ul className="flex-1 overflow-y-auto px-3 py-3 space-y-1 custom-scrollbar">
           {/* Home */}
           <li>
-            <Link
-              to="/"
-              className="block px-5 py-3 hover:bg-gray-100"
-            >
+            <NavLink to="/" onClick={onClose} className={linkStyle}>
               Home
-            </Link>
+            </NavLink>
           </li>
 
           {/* Products */}
           <li>
-            <Link
-              to="/products"
-              className="block px-5 py-3 hover:bg-gray-100"
-            >
+            <NavLink to="/products" onClick={onClose} className={linkStyle}>
               Products
-            </Link>
+            </NavLink>
           </li>
 
-          {/* Men's */}
+          {/* Men's Submenu */}
           <li>
-            <div className="flex items-center justify-between px-5 py-3 hover:bg-gray-100">
+            <button
+              onClick={() => setMenOpen(!menOpen)}
+              className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            >
               <span>Men's</span>
-
-              <button onClick={() => setMenOpen(!menOpen)}>
-                <FontAwesomeIcon
-                  icon={menOpen ? faMinus : faPlus}
-                />
-              </button>
-            </div>
+              <FontAwesomeIcon
+                icon={faChevronDown}
+                className={`text-xs text-gray-400 transition-transform duration-200 ${menOpen ? "rotate-180 text-blue-600" : ""
+                  }`}
+              />
+            </button>
 
             {menOpen && (
-              <ul className="bg-gray-50">
+              <ul className="ml-3 mt-1 pl-3 border-l-2 border-gray-100 space-y-1">
                 <li>
-                  <Link
-                    to="/men/shirt"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/men/shirt" onClick={onClose} className={subLinkStyle}>
                     Shirt
-                  </Link>
+                  </NavLink>
                 </li>
-
                 <li>
-                  <Link
-                    to="/men/shorts-jeans"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/men/shorts-jeans" onClick={onClose} className={subLinkStyle}>
                     Shorts & Jeans
-                  </Link>
+                  </NavLink>
                 </li>
-
                 <li>
-                  <Link
-                    to="/men/safety-shoes"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/men/safety-shoes" onClick={onClose} className={subLinkStyle}>
                     Safety Shoes
-                  </Link>
+                  </NavLink>
                 </li>
-
                 <li>
-                  <Link
-                    to="/men/wallet"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/men/wallet" onClick={onClose} className={subLinkStyle}>
                     Wallet
-                  </Link>
+                  </NavLink>
                 </li>
               </ul>
             )}
           </li>
 
-          {/* Women's */}
+          {/* Women's Submenu */}
           <li>
-            <div className="flex items-center justify-between px-5 py-3 hover:bg-gray-100">
+            <button
+              onClick={() => setWomenOpen(!womenOpen)}
+              className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            >
               <span>Women's</span>
-
-              <button onClick={() => setWomenOpen(!womenOpen)}>
-                <FontAwesomeIcon
-                  icon={womenOpen ? faMinus : faPlus}
-                />
-              </button>
-            </div>
+              <FontAwesomeIcon
+                icon={faChevronDown}
+                className={`text-xs text-gray-400 transition-transform duration-200 ${womenOpen ? "rotate-180 text-blue-600" : ""
+                  }`}
+              />
+            </button>
 
             {womenOpen && (
-              <ul className="bg-gray-50">
+              <ul className="ml-3 mt-1 pl-3 border-l-2 border-gray-100 space-y-1">
                 <li>
-                  <Link
-                    to="/women/dress-frock"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/women/dress-frock" onClick={onClose} className={subLinkStyle}>
                     Dress & Frock
-                  </Link>
+                  </NavLink>
                 </li>
-
                 <li>
-                  <Link
-                    to="/women/earrings"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/women/earrings" onClick={onClose} className={subLinkStyle}>
                     Earrings
-                  </Link>
+                  </NavLink>
                 </li>
-
                 <li>
-                  <Link
-                    to="/women/necklace"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/women/necklace" onClick={onClose} className={subLinkStyle}>
                     Necklace
-                  </Link>
+                  </NavLink>
                 </li>
-
                 <li>
-                  <Link
-                    to="/women/makeup-kit"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/women/makeup-kit" onClick={onClose} className={subLinkStyle}>
                     Makeup Kit
-                  </Link>
+                  </NavLink>
                 </li>
               </ul>
             )}
           </li>
 
-          {/* Jewellery */}
+          {/* Jewellery Submenu */}
           <li>
-            <div className="flex items-center justify-between px-5 py-3 hover:bg-gray-100">
+            <button
+              onClick={() => setJewelryOpen(!jewelryOpen)}
+              className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            >
               <span>Jewellery</span>
-
-              <button onClick={() => setJewelryOpen(!jewelryOpen)}>
-                <FontAwesomeIcon
-                  icon={jewelryOpen ? faMinus : faPlus}
-                />
-              </button>
-            </div>
+              <FontAwesomeIcon
+                icon={faChevronDown}
+                className={`text-xs text-gray-400 transition-transform duration-200 ${jewelryOpen ? "rotate-180 text-blue-600" : ""
+                  }`}
+              />
+            </button>
 
             {jewelryOpen && (
-              <ul className="bg-gray-50 ease-linear duration-500">
+              <ul className="ml-3 mt-1 pl-3 border-l-2 border-gray-100 space-y-1">
                 <li>
-                  <Link
-                    to="/jewellery/earrings"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/jewellery/earrings" onClick={onClose} className={subLinkStyle}>
                     Earrings
-                  </Link>
+                  </NavLink>
                 </li>
-
                 <li>
-                  <Link
-                    to="/jewellery/couple-rings"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/jewellery/couple-rings" onClick={onClose} className={subLinkStyle}>
                     Couple Rings
-                  </Link>
+                  </NavLink>
                 </li>
-
                 <li>
-                  <Link
-                    to="/jewellery/necklace"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/jewellery/necklace" onClick={onClose} className={subLinkStyle}>
                     Necklace
-                  </Link>
+                  </NavLink>
                 </li>
-
                 <li>
-                  <Link
-                    to="/jewellery/bracelets"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/jewellery/bracelets" onClick={onClose} className={subLinkStyle}>
                     Bracelets
-                  </Link>
+                  </NavLink>
                 </li>
               </ul>
             )}
           </li>
 
-          {/* Perfume */}
+          {/* Perfume Submenu */}
           <li>
-            <div className="flex items-center justify-between px-5 py-3 hover:bg-gray-100">
+            <button
+              onClick={() => setPerfumeOpen(!perfumeOpen)}
+              className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            >
               <span>Perfume</span>
-
-              <button onClick={() => setPerfumeOpen(!perfumeOpen)}>
-                <FontAwesomeIcon
-                  icon={perfumeOpen ? faMinus : faPlus}
-                />
-              </button>
-            </div>
+              <FontAwesomeIcon
+                icon={faChevronDown}
+                className={`text-xs text-gray-400 transition-transform duration-200 ${perfumeOpen ? "rotate-180 text-blue-600" : ""
+                  }`}
+              />
+            </button>
 
             {perfumeOpen && (
-              <ul className="bg-gray-50">
+              <ul className="ml-3 mt-1 pl-3 border-l-2 border-gray-100 space-y-1">
                 <li>
-                  <Link
-                    to="/perfume/clothes-perfume"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/perfume/clothes-perfume" onClick={onClose} className={subLinkStyle}>
                     Clothes Perfume
-                  </Link>
+                  </NavLink>
                 </li>
-
                 <li>
-                  <Link
-                    to="/perfume/deodorant"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/perfume/deodorant" onClick={onClose} className={subLinkStyle}>
                     Deodorant
-                  </Link>
+                  </NavLink>
                 </li>
-
                 <li>
-                  <Link
-                    to="/perfume/flower-fragrance"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/perfume/flower-fragrance" onClick={onClose} className={subLinkStyle}>
                     Flower Fragrance
-                  </Link>
+                  </NavLink>
                 </li>
-
                 <li>
-                  <Link
-                    to="/perfume/air-freshener"
-                    className="block px-10 py-2 hover:bg-gray-200"
-                  >
+                  <NavLink to="/perfume/air-freshener" onClick={onClose} className={subLinkStyle}>
                     Air Freshener
-                  </Link>
+                  </NavLink>
                 </li>
               </ul>
             )}
@@ -278,12 +238,9 @@ const Sidebar = ({ isOpen, onClose }) => {
 
           {/* Profile */}
           <li>
-            <Link
-              to="/profile"
-              className="block px-5 py-3 hover:bg-gray-100"
-            >
+            <NavLink to="/profile" onClick={onClose} className={linkStyle}>
               Profile
-            </Link>
+            </NavLink>
           </li>
         </ul>
       </aside>

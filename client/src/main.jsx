@@ -6,6 +6,7 @@ import Router from './routes/routes';
 import './index.css'
 import AuthProvider from './context/AuthContext';
 import {  CountProvider } from './context/countContext';
+import { LanguageProvider } from './context/LanguageContext';
 
 
 
@@ -14,9 +15,11 @@ createRoot(document.getElementById('root')).render(
 
     <AuthProvider>
       <CountProvider>
+      <LanguageProvider>
         <RouterProvider router= {Router} >
 
     </RouterProvider>
+        </LanguageProvider>
     </CountProvider>
 
     </AuthProvider>

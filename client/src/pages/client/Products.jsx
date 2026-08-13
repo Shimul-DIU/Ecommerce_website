@@ -11,6 +11,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { CountContext } from "../../context/countContext";
 import { Link, useLocation } from "react-router-dom";
 import useProducts from "../../hooks/useProducts";
+import { useScroll } from "../../hooks/useScroll";
 
 const CATEGORY_OPTIONS = [
   { key: "all", label: "All Categories" },
@@ -27,6 +28,7 @@ const MIN_LIMIT = 100;
 const MAX_LIMIT = 3000;
 
 const Products = () => {
+  const isScrolled =useScroll()
   const { wishlist, cart, toggleWishlist, toggleCart } = useContext(CountContext);
   const [products, loading, error] = useProducts();
   const location = useLocation();
@@ -260,7 +262,7 @@ const Products = () => {
         {/* Main Content Layout */}
         <div className="flex gap-8 items-start">
           {/* Desktop Sidebar Filter */}
-          <aside className="hidden lg:block w-64 shrink-0 bg-white border border-[#E4DDCE] rounded-2xl p-5 shadow-sm sticky top-[100px]">
+          <aside className={`hidden lg:block w-64 shrink-0 bg-white border border-[#E4DDCE] rounded-2xl p-5 shadow-sm sticky ${isScrolled ? 'top-[66px] ' :'top-[10px]' } `}>
             {renderFilterContent()}
           </aside>
 

@@ -18,6 +18,7 @@ import {
   faBoxOpen,
 } from "@fortawesome/free-solid-svg-icons";
 import { CountContext } from "../../context/countContext";
+import { useScroll } from "../../hooks/useScroll";
 
 const CountBadge = ({ count, color }) => {
   if (!count) return null;
@@ -31,29 +32,36 @@ const CountBadge = ({ count, color }) => {
 };
 
 const Navbar = ({ onMenuClick }) => {
+  const isScrolled = useScroll();
   const { wishlist, cart } = useContext(CountContext);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
 
   // Language & Currency
   const [language, setLanguage] = useState("EN");
   const [currency, setCurrency] = useState("BDT (৳)");
 
   const closeTimer = useRef(null);
+  const mobileMenuRef = useRef(null);
 
-  // ================= SCROLL EFFECT =================
+  // Close mobile dropdown when clicking outside
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      setIsScrolled(scrollY > 80);
+    const handleClickOutside = (event) => {
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target)
+      ) {
+        setMobileUserMenuOpen(false);
+      }
     };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const navItems = [
@@ -93,14 +101,16 @@ const Navbar = ({ onMenuClick }) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 translate-y-0">
-      <div className="max-w-7xl mx-auto px-3">
+      <div className="max-w-7xl mx-auto">
         {/* ================= TOP ANNOUNCEMENT & UTILITY BAR ================= */}
         <div
-          className={`max-w-7xl rounded-t-md mx-auto px-3 md:px-6 bg-white border-b border-black/35 text-slate-600 text-xs py-1.5 transition-all duration-300 overflow-hidden ${isScrolled ? "max-h-0 py-0 border-0 opacity-0 pointer-events-none" : "max-h-12 py-1.5 opacity-100"
+          className={`max-w-7xl rounded-t-md mx-auto ps-6 bg-white border-b border-black/35 text-slate-600 text-xs py-1.5 transition-all duration-300 overflow-hidden ${isScrolled
+              ? "max-h-0 py-0 border-b-0 opacity-0 pointer-events-none"
+              : "max-h-12 py-1.5 opacity-100"
             }`}
         >
           <div className="flex items-center justify-between">
-            <p className="hidden md:block text-slate-500">
+            <p className="hidden sm:block text-slate-500 bg-white">
               🚀 Free shipping on orders over ৳2000! Limited offer.
             </p>
 
@@ -250,7 +260,7 @@ const Navbar = ({ onMenuClick }) => {
                             onClick={() => setIsCategoryOpen(false)}
                             className={({ isActive }) =>
                               `relative py-5 block transition-colors ${isActive
-                                ? "text-blue-600 after:absolute after:left-0 after:right-0 after:-bottom-px after:h-0.5 after:bg-blue-600"
+                                ? "text-blue-600 after:absolute after:left-0 after:right-0 after:-bottom-px after:h-0.5 "
                                 : "hover:text-blue-600"
                               }`
                             }
@@ -262,47 +272,48 @@ const Navbar = ({ onMenuClick }) => {
                     ))}
                   </div>
 
-                  <div className="flex items-center gap-5 text-slate-600">
+                  <div className="flex items-center text-slate-600">
                     <Link to="/wishlist" className="relative hover:text-blue-600 transition-colors" aria-label="Wishlist">
-                      <FontAwesomeIcon icon={faHeart} className="text-lg" />
+                      <FontAwesomeIcon icon={faHeart} className="py-2 px-2 lg:px-3 text-lg" />
                       <CountBadge count={wishlist.length} color="bg-red-500" />
                     </Link>
 
                     <Link to="/cart" className="relative hover:text-blue-600 transition-colors" aria-label="Cart">
-                      <FontAwesomeIcon icon={faCartShopping} className="text-lg" />
+                      <FontAwesomeIcon icon={faCartShopping} className="py-2 px-2 lg:px-3 text-lg" />
                       <CountBadge count={cart.length} color="bg-blue-600" />
                     </Link>
 
+                    {/* DESKTOP USER MENU */}
                     <div className="relative" onMouseLeave={() => setIsUserMenuOpen(false)}>
                       <button
                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                         onMouseEnter={() => setIsUserMenuOpen(true)}
-                        className="hover:text-blue-600 transition-colors flex items-center pt-1"
+                        className="hover:text-blue-600 transition-colors flex items-center"
                         aria-label="Account"
                       >
-                        <FontAwesomeIcon icon={faUser} className="text-lg" />
+                        <FontAwesomeIcon icon={faUser} className="min-h-full py-5 px-3 text-lg" />
                       </button>
 
                       {isUserMenuOpen && (
-                        <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-2 z-50 text-sm">
+                        <div className="absolute -right-2 top-full border w-48 bg-white rounded-xl shadow-xl z-50 text-sm">
                           <Link
                             to="/userDashboard"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:bg-slate-50"
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
                           >
                             <FontAwesomeIcon icon={faUser} className="text-xs" /> My Profile
                           </Link>
                           <Link
                             to="/orders"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:bg-slate-50"
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
                           >
                             <FontAwesomeIcon icon={faBoxOpen} className="text-xs" /> Orders
                           </Link>
                           <hr className="my-1 border-slate-100" />
                           <button
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="w-full flex items-center gap-2.5 px-4 py-2 text-red-500 hover:bg-slate-50 text-left"
+                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-red-500 hover:bg-slate-50 text-left transition-colors"
                           >
                             <FontAwesomeIcon icon={faSignOutAlt} className="text-xs" /> Logout
                           </button>
@@ -319,12 +330,8 @@ const Navbar = ({ onMenuClick }) => {
               className={`md:hidden bg-white shadow-sm border-b border-slate-200 flex items-center justify-between px-3 transition-all duration-300 ${isScrolled ? "h-12" : "h-14"
                 }`}
             >
-              <button onClick={onMenuClick} aria-label="Open menu" className="text-slate-700 p-1">
-                <FontAwesomeIcon icon={faBars} className="text-xl" />
-              </button>
-
               <Link to="/">
-                <img src={logo} alt="logo" className={`transition-all duration-300 ${isScrolled ? "h-7" : "h-9"}`} />
+                <img src={logo} alt="logo" className={`transition-all duration-300 ${isScrolled ? "h-9" : "h-10"}`} />
               </Link>
 
               <div className="flex items-center gap-3.5 text-slate-700">
@@ -337,9 +344,46 @@ const Navbar = ({ onMenuClick }) => {
                   <CountBadge count={cart.length} color="bg-blue-600" />
                 </Link>
 
-                <Link to="/userDashboard" className="p-1" aria-label="Account">
-                  <FontAwesomeIcon icon={faUser} className="text-lg" />
-                </Link>
+                {/* MOBILE USER MENU (DROPDOWN) */}
+                <div className="relative" ref={mobileMenuRef}>
+                  <button
+                    onClick={() => setMobileUserMenuOpen(!mobileUserMenuOpen)}
+                    className="p-1 text-slate-700 hover:text-blue-600 transition-colors flex items-center"
+                    aria-label="Account"
+                  >
+                    <FontAwesomeIcon icon={faUser} className="text-lg" />
+                  </button>
+
+                  {mobileUserMenuOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl z-50 text-sm overflow-hidden">
+                      <Link
+                        to="/userDashboard"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                      >
+                        <FontAwesomeIcon icon={faUser} className="text-xs text-slate-400" /> My Profile
+                      </Link>
+                      <Link
+                        to="/orders"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                      >
+                        <FontAwesomeIcon icon={faBoxOpen} className="text-xs text-slate-400" /> Orders
+                      </Link>
+                      <hr className="my-1 border-slate-100" />
+                      <button
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-red-500 hover:bg-slate-50 text-left transition-colors"
+                      >
+                        <FontAwesomeIcon icon={faSignOutAlt} className="text-xs" /> Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <button onClick={onMenuClick} aria-label="Open menu" className="text-slate-700 p-1">
+                  <FontAwesomeIcon icon={faBars} className="text-xl" />
+                </button>
               </div>
             </nav>
           </>

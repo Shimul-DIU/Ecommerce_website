@@ -32,6 +32,7 @@ import UserProfile from "../pages/client/userDashboard/UserProfile.jsx";
 import UserDashboardLayout from "../pages/client/userDashboard/UserDashboardLayout.jsx";
 import OrderSuccess from "../components/common/OrderSuccess.jsx";
 import UserOrders from "../components/client/userDashboard/UserOrders.jsx";
+import Contact from "../pages/client/Contract.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -41,6 +42,7 @@ const Router = createBrowserRouter([
       { index: true, Component: Home },
       { path: "categories", Component: Categories },
       { path: "products", Component: Products },
+      { path: "contact", Component: Contact },
       { path: "card", Component: Card },
       { path: "login", Component: Login },
       { path: "register", Component: Register },
