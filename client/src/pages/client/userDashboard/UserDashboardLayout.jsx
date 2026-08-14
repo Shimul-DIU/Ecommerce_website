@@ -23,7 +23,7 @@ export default function UserDashboardLayout() {
     .toUpperCase();
 
   return (
-    <div className="flex h-[calc(100vh-87px)] mt-[87px] bg-gray-100 overflow-hidden relative">
+    <div className="flex flex-col h-[calc(100vh-87px)] mt-[72px] bg-gray-100 overflow-hidden relative">
       {/* Sidebar Navigation */}
       <UserDashboardNavbar
         isExpanded={isExpanded}

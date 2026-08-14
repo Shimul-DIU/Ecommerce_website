@@ -1,6 +1,6 @@
 import { useState, useRef, useContext, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import logo from "../../assets/images/logo-Photoroom.png";
+import logo from "../../assets/images/logo1.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -104,9 +104,9 @@ const Navbar = ({ onMenuClick }) => {
       <div className="max-w-7xl mx-auto">
         {/* ================= TOP ANNOUNCEMENT & UTILITY BAR ================= */}
         <div
-          className={`max-w-7xl rounded-t-md mx-auto ps-6 bg-white border-b border-black/35 text-slate-600 text-xs py-1.5 transition-all duration-300 overflow-hidden ${isScrolled
-              ? "max-h-0 py-0 border-b-0 opacity-0 pointer-events-none"
-              : "max-h-12 py-1.5 opacity-100"
+          className={`max-w-7xl rounded-t-md mx-auto ps-6 bg-white border-b border-black/70 text-slate-600 text-xs  transition-all duration-300 overflow-hidden ${isScrolled
+              ? "hidden"
+              : "lg:h-9 lg:pt-1 h-6 pt-0.5 opacity-100"
             }`}
         >
           <div className="flex items-center justify-between">
@@ -327,8 +327,8 @@ const Navbar = ({ onMenuClick }) => {
 
             {/* ================= MOBILE TOP NAVBAR ================= */}
             <nav
-              className={`md:hidden bg-white shadow-sm border-b border-slate-200 flex items-center justify-between px-3 transition-all duration-300 ${isScrolled ? "h-12" : "h-14"
-                }`}
+              className="md:hidden h-12 bg-white shadow-sm border-b border-slate-200 flex items-center justify-between  transition-all duration-300
+                "
             >
               <Link to="/">
                 <img src={logo} alt="logo" className={`transition-all duration-300 ${isScrolled ? "h-9" : "h-10"}`} />
