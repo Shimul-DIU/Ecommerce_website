@@ -6,20 +6,22 @@ import axiosInstance from "../utils/axiosInstance";
 
 import SignWithFacebook from "./SignInWithFacebook";
 import { useNavigate } from "react-router-dom";
-import { authContext } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 import useGoogleSignIn from "../hooks/useGoogleSignIn";
 
 const Login = () => {
   const navigate = useNavigate();
   const signInWithGoogle = useGoogleSignIn();
-  const { login } = useContext(authContext);
+  const { login } = useContext(AuthContext);
 
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+
   const [user, setUser] = useState({
     email: "",
     password: "",
+    rememberMe:false
   });
 
   const handleGoogleLogin = async () => {
@@ -31,13 +33,13 @@ const Login = () => {
   };
 
   const changeHandler = (e) => {
-    setUser((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-    setMessage("");
-  };
-
+  const { name, value, type, checked } = e.target;
+  setUser((prev) => ({
+    ...prev,
+    [name]: type === "checkbox" ? checked : value,
+  }));
+  setMessage("");
+};
   const forgetPasswordHandler = async () => {
     const email = user.email;
 
@@ -47,7 +49,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axiosInstance.post("/api/user/forgot-password", {
+      const response = await axiosInstance.post("/api/auth/user/forgot-password", {
         email,
       });
       setMessage(response.data.message);
@@ -65,7 +67,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axiosInstance.post("/api/user/login", user);
+      const response = await axiosInstance.post("/api/auth/user/login", user);
       setMessage(response.data.message);
       login(response.data.token);
       navigate("/userDashboard", { replace: true });
@@ -75,20 +77,22 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-1">
-
-      <div className="w-full max-w-md h-auto bg-white rounded-2xl shadow-xl p-8">
-
-        <div className="text-center mb-7">
+    <div className="mt-20 sm:mt-24 min-h-[calc(100vh-6rem)] bg-gray-100 flex items-center justify-center px-4 py-6">
+      {/* Login Card */}
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 sm:p-7">
+        {/* Heading */}
+        <div className="text-center mb-5">
           <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
-          <p className="text-gray-500 mt-2">Login to your account</p>
+          <p className="text-gray-500 mt-1.5 text-sm sm:text-base">
+            Login to your account
+          </p>
         </div>
 
-
-        <form className="space-y-4" onSubmit={handleLogin}>
-
+        {/* Form */}
+        <form className="space-y-3.5" onSubmit={handleLogin}>
+          {/* Email */}
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="block mb-1 text-sm font-medium text-gray-700">
               Email
             </label>
             <input
@@ -99,45 +103,43 @@ const Login = () => {
               onChange={changeHandler}
               autoComplete="email"
               placeholder="Enter your email"
-              className="w-full px-4 py-2 lg:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 text-base border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-
+          {/* Password */}
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="block mb-1 text-sm font-medium text-gray-700">
               Password
             </label>
-            <div className="flex border rounded-lg justify-between items-center focus-within:ring-2 focus-within:ring-blue-500">
-              <div className="w-11/12">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={user.password}
-                  name="password"
-                  required
-                  onChange={changeHandler}
-                  autoComplete="current-password"
-                  placeholder="Enter your password"
-                  className="w-full px-4 py-2 lg:py-3 border-gray-300 rounded-lg outline-none"
-                />
-              </div>
-              <div className="mr-3">
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="text-gray-500"
-                >
-                  <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
-                </button>
-              </div>
+            <div className="flex border border-gray-300 rounded-lg items-center focus-within:ring-2 focus-within:ring-blue-500">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={user.password}
+                name="password"
+                required
+                onChange={changeHandler}
+                autoComplete="current-password"
+                placeholder="Enter your password"
+                className="w-full px-4 py-2 text-base rounded-lg outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="px-3 text-gray-500"
+              >
+                <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+              </button>
             </div>
           </div>
 
-          {message && <p className="text-red-500 text-sm">{message}</p>}
+          {message && <p className="text-red-500 text-xs mt-1">{message}</p>}
 
-          <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center gap-2 text-gray-600">
-              <input type="checkbox" />
+          {/* Remember Me & Forgot Password */}
+          <div className="flex items-center justify-between text-sm pt-1">
+            <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
+              <input type="checkbox" className="rounded" checked={user.rememberMe}
+              onChange={changeHandler} name="rememberMe" />
               Remember me
             </label>
 
@@ -151,10 +153,10 @@ const Login = () => {
           </div>
 
           {/* Terms */}
-          <div className="flex items-start gap-2 text-sm text-gray-600">
+          <div className="flex items-start gap-2 text-sm text-gray-600 pt-0.5">
             <input
               type="checkbox"
-              className="mt-1"
+              className="mt-1 rounded cursor-pointer"
               checked={agreedToTerms}
               onChange={(e) => setAgreedToTerms(e.target.checked)}
             />
@@ -170,58 +172,58 @@ const Login = () => {
             </p>
           </div>
 
-
+          {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 transition duration-300 text-white py-2 lg:py-3 rounded-lg font-semibold"
+            className="w-full bg-blue-600 hover:bg-blue-700 transition duration-300 text-white py-2.5 rounded-lg font-semibold text-base"
           >
             Login
           </button>
         </form>
 
-
-        <div className="flex items-center gap-2 my-2">
-          <div className="flex-1 h-1 bg-gray-300"></div>
-          <p className="text-sm text-gray-500">OR</p>
-          <div className="flex-1 h-1 bg-gray-300"></div>
+        {/* Divider */}
+        <div className="flex items-center gap-2 my-3.5">
+          <div className="flex-1 h-[1px] bg-gray-300"></div>
+          <p className="text-xs text-gray-400 font-medium">OR</p>
+          <div className="flex-1 h-[1px] bg-gray-300"></div>
         </div>
 
-
-        <div className="space-y-2">
-
+        {/* Social Login */}
+        <div className="space-y-2.5">
           <button
             onClick={handleGoogleLogin}
             type="button"
-            className="w-full border border-gray-300 hover:bg-gray-100 transition py-2 lg:py-3 rounded-lg flex items-center justify-center gap-3 font-medium"
+            className="w-full border border-gray-300 hover:bg-gray-50 transition py-2 rounded-lg flex items-center justify-center gap-3 text-sm font-medium text-gray-700"
           >
             <FontAwesomeIcon icon={faGoogle} className="text-red-500 text-lg" />
             Continue with Google
           </button>
 
-
           <button
             onClick={handleFacebookLogin}
             type="button"
-            className="w-full border border-gray-300 hover:bg-gray-100 transition py-2 lg:py-3 rounded-lg flex items-center justify-center gap-3 font-medium"
+            className="w-full border border-gray-300 hover:bg-gray-50 transition py-2 rounded-lg flex items-center justify-center gap-3 text-sm font-medium text-gray-700"
           >
             <FontAwesomeIcon icon={faFacebook} className="text-blue-600 text-lg" />
             Continue with Facebook
           </button>
 
-
           <button
             type="button"
-            className="w-full border border-gray-300 hover:bg-gray-100 transition py-2 lg:py-3 rounded-lg flex items-center justify-center gap-3 font-medium"
+            className="w-full border border-gray-300 hover:bg-gray-50 transition py-2 rounded-lg flex items-center justify-center gap-3 text-sm font-medium text-gray-700"
           >
             <FontAwesomeIcon icon={faGithub} className="text-black text-lg" />
             Continue with GitHub
           </button>
         </div>
 
-
-        <p className="text-center text-sm text-gray-600 mt-6">
+        {/* Bottom */}
+        <p className="text-center text-sm text-gray-600 mt-5">
           Don't have an account?{" "}
-          <a href="/register" className="text-blue-600 font-medium hover:underline">
+          <a
+            href="/register"
+            className="text-blue-600 font-medium hover:underline"
+          >
             Sign Up
           </a>
         </p>

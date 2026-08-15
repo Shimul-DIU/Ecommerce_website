@@ -17,9 +17,7 @@ const limiter = rateLimit({
 });
 
 // admin login route
-adminRouter.post('/login', loginAdmin);
-adminRouter.post('/forgot-password',ForgotPassword)
-adminRouter.post("/reset-password", ResetPassword);
+
 // admin dashboard (protected route)
 adminRouter.get(
   '/dashboard',

@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express';
-import helmet from 'helmet';
+
 import cors from 'cors';
 import passport from 'passport';
 import dns from 'dns';
@@ -14,20 +14,15 @@ import userRouter from './routes/userRoute.js';
 import adminRouter from './routes/adminRoute.js';
 import productRouter from './routes/product.route.js';
 import orderRouter from './routes/orderRoute/clientOrderRoute.js';
+import authRouter from './routes/authRoute.js';
+
 
 const app = express();
 
-/* ================= MIDDLEWARE ================= */
-app.use(
-  helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
-  })
-);
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", process.env.CLIENT_URL],
+    origin: ["http://localhost:4173", process.env.CLIENT_URL],
     credentials: true,
   }),
 );
@@ -44,11 +39,12 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/user', userRouter);
+app.use('/api/auth', authRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/products', productRouter);
 app.use('/api/orders', orderRouter);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5004;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

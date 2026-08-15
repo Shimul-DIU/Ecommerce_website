@@ -29,7 +29,7 @@ const AdminLogin = () => {
   }
 
   setMessage("");
-  const response = await axiosInstance.post("/api/admin/forgot-password",
+  const response = await axiosInstance.post("/api/auth/admin/forgot-password",
     formData,
   );
   // console.log(`response send serer ${response}`)

@@ -18,7 +18,7 @@ const AdminResetPassword = () => {
 
     try {
 
-      const res = await axiosInstance.post("/api/admin/reset-password",
+      const res = await axiosInstance.post("/api/auth/admin/reset-password",
 
         {
           token,

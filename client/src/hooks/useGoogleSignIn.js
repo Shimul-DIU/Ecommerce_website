@@ -4,17 +4,18 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase/firebase.config";
 import axiosInstance from "../utils/axiosInstance";
-import { authContext } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
 const useGoogleSignIn = () => {
   const navigate = useNavigate();
-  const { login } = useContext(authContext);
+  const { login } = useContext(AuthContext);
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
       const response = await signInWithPopup(auth, provider);
       const user = response.user;
+      console.log(user)
 
       const res = await axiosInstance.post("/api/user/google-login", {
         fullname: user.displayName,

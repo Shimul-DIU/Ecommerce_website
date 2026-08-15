@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faRightFromBracket,
   faEnvelope,
-  
+
   faShoppingCart,
   faHeart,
   faHistory,
@@ -49,13 +49,13 @@ const Profile = () => {
       try {
         setLoading(true);
         const [profileRes, statsRes, ordersRes] = await Promise.all([
-          axiosInstance.get("/api/user/profile", {
+          axiosInstance.get("/api/auth/user/profile", {
             headers: { Authorization: token }
           }),
-          axiosInstance.get("/api/user/stats", {
+          axiosInstance.get("/api/auth/user/stats", {
             headers: { Authorization: token }
           }),
-          axiosInstance.get("/api/user/orders/recent", {
+          axiosInstance.get("/api/auth/user/orders/recent", {
             headers: { Authorization: token }
           })
         ]);

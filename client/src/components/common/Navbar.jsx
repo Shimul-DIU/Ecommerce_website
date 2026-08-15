@@ -1,5 +1,5 @@
 import { useState, useRef, useContext, useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo1.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,6 +19,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { CountContext } from "../../context/countContext";
 import { useScroll } from "../../hooks/useScroll";
+import { AuthContext } from "../../context/AuthContext";
 
 const CountBadge = ({ count, color }) => {
   if (!count) return null;
@@ -32,6 +33,8 @@ const CountBadge = ({ count, color }) => {
 };
 
 const Navbar = ({ onMenuClick }) => {
+  const { token, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
   const isScrolled = useScroll();
   const { wishlist, cart } = useContext(CountContext);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -99,15 +102,36 @@ const Navbar = ({ onMenuClick }) => {
     setQuery("");
   };
 
+  // User icon click handling logic
+  const handleUserIconClick = (isMobile = false) => {
+    if (!token) {
+      navigate("/login");
+    } else {
+      if (isMobile) {
+        setMobileUserMenuOpen((prev) => !prev);
+      } else {
+        setIsUserMenuOpen((prev) => !prev);
+      }
+    }
+  };
+
+  const handleLogout = () => {
+    if (logout) logout();
+    setIsUserMenuOpen(false);
+    setMobileUserMenuOpen(false);
+    navigate("/login");
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 translate-y-0">
       <div className="max-w-7xl mx-auto">
         {/* ================= TOP ANNOUNCEMENT & UTILITY BAR ================= */}
         <div
-          className={`max-w-7xl rounded-t-md mx-auto ps-6 bg-white border-b border-black/70 text-slate-600 text-xs  transition-all duration-300 overflow-hidden ${isScrolled
+          className={`max-w-7xl rounded-t-md mx-auto ps-6 bg-white border-b border-black/70 text-slate-600 text-xs transition-all duration-300 overflow-hidden ${
+            isScrolled
               ? "hidden"
               : "lg:h-9 lg:pt-1 h-6 pt-0.5 opacity-100"
-            }`}
+          }`}
         >
           <div className="flex items-center justify-between">
             <p className="hidden sm:block text-slate-500 bg-white">
@@ -174,8 +198,9 @@ const Navbar = ({ onMenuClick }) => {
           <>
             {/* ================= DESKTOP NAVBAR ================= */}
             <div
-              className={`hidden max-w-7xl rounded-b-md mx-auto md:px-6 md:block bg-white shadow-sm transition-all duration-300 ${isScrolled ? "h-14" : "h-16"
-                }`}
+              className={`hidden max-w-7xl rounded-b-md mx-auto md:px-6 md:block bg-white shadow-sm transition-all duration-300 ${
+                isScrolled ? "h-14" : "h-16"
+              }`}
             >
               <nav className="h-full flex items-center gap-8">
                 <Link to="/" className="shrink-0 flex items-center">
@@ -185,10 +210,11 @@ const Navbar = ({ onMenuClick }) => {
                 {/* Search Bar */}
                 <div className="flex-1 flex justify-center">
                   <div
-                    className={`flex items-center border rounded-full px-4 h-10 w-full max-w-sm transition-all duration-200 ${searchFocused
+                    className={`flex items-center border rounded-full px-4 h-10 w-full max-w-sm transition-all duration-200 ${
+                      searchFocused
                         ? "ring-2 ring-blue-500/40 border-blue-500 bg-white"
                         : "border-slate-200 bg-slate-50 hover:border-slate-300"
-                      }`}
+                    }`}
                   >
                     <FontAwesomeIcon icon={faSearch} className="text-slate-400 text-sm mr-2.5 shrink-0" />
                     <input
@@ -220,8 +246,9 @@ const Navbar = ({ onMenuClick }) => {
                               {item.name}
                               <FontAwesomeIcon
                                 icon={faChevronDown}
-                                className={`text-[10px] transition-transform duration-200 ${isCategoryOpen ? "rotate-180 text-blue-600" : "text-slate-400"
-                                  }`}
+                                className={`text-[10px] transition-transform duration-200 ${
+                                  isCategoryOpen ? "rotate-180 text-blue-600" : "text-slate-400"
+                                }`}
                               />
                             </button>
 
@@ -259,9 +286,10 @@ const Navbar = ({ onMenuClick }) => {
                             to={item.path}
                             onClick={() => setIsCategoryOpen(false)}
                             className={({ isActive }) =>
-                              `relative py-5 block transition-colors ${isActive
-                                ? "text-blue-600 after:absolute after:left-0 after:right-0 after:-bottom-px after:h-0.5 "
-                                : "hover:text-blue-600"
+                              `relative py-5 block transition-colors ${
+                                isActive
+                                  ? "text-blue-600 after:absolute after:left-0 after:right-0 after:-bottom-px after:h-0.5 "
+                                  : "hover:text-blue-600"
                               }`
                             }
                           >
@@ -286,15 +314,16 @@ const Navbar = ({ onMenuClick }) => {
                     {/* DESKTOP USER MENU */}
                     <div className="relative" onMouseLeave={() => setIsUserMenuOpen(false)}>
                       <button
-                        onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                        onMouseEnter={() => setIsUserMenuOpen(true)}
+                        onClick={() => handleUserIconClick(false)}
+                        onMouseEnter={() => token && setIsUserMenuOpen(true)}
                         className="hover:text-blue-600 transition-colors flex items-center"
                         aria-label="Account"
                       >
                         <FontAwesomeIcon icon={faUser} className="min-h-full py-5 px-3 text-lg" />
                       </button>
 
-                      {isUserMenuOpen && (
+                      {/* শুধুমাত্র Token থাকলেই ড্রপডাউন রেন্ডার হবে */}
+                      {token && isUserMenuOpen && (
                         <div className="absolute -right-2 top-full border w-48 bg-white rounded-xl shadow-xl z-50 text-sm">
                           <Link
                             to="/userDashboard"
@@ -312,7 +341,7 @@ const Navbar = ({ onMenuClick }) => {
                           </Link>
                           <hr className="my-1 border-slate-100" />
                           <button
-                            onClick={() => setIsUserMenuOpen(false)}
+                            onClick={handleLogout}
                             className="w-full flex items-center gap-2.5 px-4 py-2.5 text-red-500 hover:bg-slate-50 text-left transition-colors"
                           >
                             <FontAwesomeIcon icon={faSignOutAlt} className="text-xs" /> Logout
@@ -326,10 +355,7 @@ const Navbar = ({ onMenuClick }) => {
             </div>
 
             {/* ================= MOBILE TOP NAVBAR ================= */}
-            <nav
-              className="md:hidden h-12 bg-white shadow-sm border-b border-slate-200 flex items-center justify-between  transition-all duration-300
-                "
-            >
+            <nav className="md:hidden h-12 bg-white shadow-sm border-b border-slate-200 flex items-center justify-between transition-all duration-300">
               <Link to="/">
                 <img src={logo} alt="logo" className={`transition-all duration-300 ${isScrolled ? "h-9" : "h-10"}`} />
               </Link>
@@ -347,14 +373,15 @@ const Navbar = ({ onMenuClick }) => {
                 {/* MOBILE USER MENU (DROPDOWN) */}
                 <div className="relative" ref={mobileMenuRef}>
                   <button
-                    onClick={() => setMobileUserMenuOpen(!mobileUserMenuOpen)}
+                    onClick={() => handleUserIconClick(true)}
                     className="p-1 text-slate-700 hover:text-blue-600 transition-colors flex items-center"
                     aria-label="Account"
                   >
                     <FontAwesomeIcon icon={faUser} className="text-lg" />
                   </button>
 
-                  {mobileUserMenuOpen && (
+                  {/* শুধুমাত্র Token থাকলেই ড্রপডাউন রেন্ডার হবে */}
+                  {token && mobileUserMenuOpen && (
                     <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl z-50 text-sm overflow-hidden">
                       <Link
                         to="/userDashboard"
@@ -372,7 +399,7 @@ const Navbar = ({ onMenuClick }) => {
                       </Link>
                       <hr className="my-1 border-slate-100" />
                       <button
-                        onClick={() => setMobileUserMenuOpen(false)}
+                        onClick={handleLogout}
                         className="w-full flex items-center gap-2.5 px-4 py-2.5 text-red-500 hover:bg-slate-50 text-left transition-colors"
                       >
                         <FontAwesomeIcon icon={faSignOutAlt} className="text-xs" /> Logout

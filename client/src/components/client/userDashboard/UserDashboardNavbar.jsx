@@ -77,8 +77,9 @@ const UserDashboardNavbar = ({ isExpanded, setIsExpanded }) => {
       {/* ==========================================
           DESKTOP SIDEBAR LAYOUT (lg:flex)
          ========================================== */}
-      <div  className="hidden sm:flex lg:flex-col lg:justify-between h-full w-full">
+      <div  className="hidden sm:flex sm:flex-col sm:justify-between h-full min-w-80 bg-blue-400">
         <div className="flex flex-col w-full">
+
           <div className="flex items-center justify-between gap-2.5 mb-4 pb-3 border-b border-slate-100 px-2">
             <div className="flex items-center gap-2.5 overflow-hidden">
               <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shadow-sm shadow-blue-200">
