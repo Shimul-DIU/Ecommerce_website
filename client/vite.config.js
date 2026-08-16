@@ -4,9 +4,9 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  server: {
+   server: {
     host: '0.0.0.0',
-    port: 4173,
+     port: 5173,
     strictPort: false,
     watch: {
       usePolling: true,
@@ -14,7 +14,7 @@ export default defineConfig({
     hmr: {
       host: 'localhost',
       protocol: 'ws',
-      clientPort: 4173,
+      clientPort: 5173,
     },
   },
 })

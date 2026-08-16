@@ -41,10 +41,8 @@ const Sidebar = ({ isOpen, onClose }) => {
       {/* Sidebar Container */}
       <aside
         className={`fixed left-0 w-72 bg-white shadow-2xl z-50 flex flex-col transform transition-all duration-300 ease-in-out border-r border-gray-100 ${isOpen ? "translate-x-0" : "-translate-x-full"
-          } ${isScrolled
-            ? "top-[49px] h-[calc(100vh-49px)]"
-            : "top-[87px] h-[calc(100vh-87px)]"
-          }`}
+          } top-[72px] h-[calc(100vh-72px)]"
+          `}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3">

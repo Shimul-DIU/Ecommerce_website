@@ -14,8 +14,6 @@ export const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   // Access token React memory-তে থাকবে
   const [accessToken, setAccessToken] = useState(null);
-
-  // Logged-in user
   const [user, setUser] = useState(null);
 
   // Initial authentication check

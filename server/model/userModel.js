@@ -64,8 +64,7 @@ const userSchema = new mongoose.Schema(
 
     avatar: {
       type: String,
-      default: '',
-      match: [/^https?:\/\/.+/, 'Avatar must be a valid URL'],
+      default: null,
     },
 
     resetPasswordToken: {

@@ -34,6 +34,7 @@ import OrderSuccess from "../components/common/OrderSuccess.jsx";
 import UserOrders from "../components/client/userDashboard/UserOrders.jsx";
 import Contact from "../pages/client/Contract.jsx";
 import Offer from "../pages/client/Offer.jsx";
+import CartPage from "../pages/client/userDashboard/CartPage.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -62,7 +63,8 @@ const Router = createBrowserRouter([
               { index: true, Component: Overview },
               {path: "user-overview",Component: Overview},
               { path: 'user-orders', Component: UserOrders },
-              { path: 'user-wishlist', Component: Wishlist },
+              { path: 'cart', Component: CartPage },
+              { path: 'wishlist', Component: Wishlist },
               { path: 'user-addresses', Component: Addresses },
               { path: 'user-profile', Component: UserProfile }
             ]

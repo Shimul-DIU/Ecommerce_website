@@ -1,7 +1,6 @@
 import { useState, useRef, useContext, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo1.png";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
@@ -19,13 +18,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { CountContext } from "../../context/countContext";
 import { useScroll } from "../../hooks/useScroll";
-import {AuthContext} from '../../context/AuthContext'
-
+import { AuthContext } from '../../context/AuthContext'
+import { getInitials } from "../../utils/getInitials";
 const CountBadge = ({ count, color }) => {
   if (!count) return null;
   return (
     <span
-      className={`absolute -top-1.5 -right-2 min-w-[18px] h-[18px] px-1 ${color} text-white text-[10px] font-semibold rounded-full flex items-center justify-center leading-none shadow-sm`}
+      className={`absolute -top-3 -right-2 min-w-[18px] h-[18px] px-1 ${color} text-white text-[10px] font-semibold rounded-full flex items-center justify-center leading-none shadow-sm`}
     >
       {count > 99 ? "99+" : count}
     </span>
@@ -33,7 +32,8 @@ const CountBadge = ({ count, color }) => {
 };
 
 const Navbar = ({ onMenuClick }) => {
-  const { token, logout } = useContext(AuthContext);
+  const { accessToken, logout, user } = useContext(AuthContext);
+
   const navigate = useNavigate();
   const isScrolled = useScroll();
   const { wishlist, cart } = useContext(CountContext);
@@ -104,7 +104,7 @@ const Navbar = ({ onMenuClick }) => {
 
   // User icon click handling logic
   const handleUserIconClick = (isMobile = false) => {
-    if (!token) {
+    if (!accessToken) {
       navigate("/login");
     } else {
       if (isMobile) {
@@ -127,11 +127,8 @@ const Navbar = ({ onMenuClick }) => {
       <div className="max-w-7xl mx-auto">
         {/* ================= TOP ANNOUNCEMENT & UTILITY BAR ================= */}
         <div
-          className={`max-w-7xl rounded-t-md mx-auto ps-6 bg-white border-b border-black/70 text-slate-600 text-xs transition-all duration-300 overflow-hidden ${
-            isScrolled
-              ? "hidden"
-              : "lg:h-9 lg:pt-1 h-6 pt-0.5 opacity-100"
-          }`}
+          className="max-w-7xl rounded-t-md mx-auto ps-6 bg-white border-b border-black/70 text-slate-600 text-xs transition-all duration-300 overflow-hidden  lg:pt-1 h-5 md:h-6 pt-0.5 opacity-100"
+
         >
           <div className="flex items-center justify-between">
             <p className="hidden sm:block text-slate-500 bg-white">
@@ -198,9 +195,8 @@ const Navbar = ({ onMenuClick }) => {
           <>
             {/* ================= DESKTOP NAVBAR ================= */}
             <div
-              className={`hidden max-w-7xl rounded-b-md mx-auto md:px-6 md:block bg-white shadow-sm transition-all duration-300 ${
-                isScrolled ? "h-14" : "h-16"
-              }`}
+              className={`hidden max-w-7xl rounded-b-md mx-auto md:px-6 md:block bg-white shadow-sm transition-all duration-300 ${isScrolled ? "h-14" : "h-16"
+                }`}
             >
               <nav className="h-full flex items-center gap-8">
                 <Link to="/" className="shrink-0 flex items-center">
@@ -210,11 +206,10 @@ const Navbar = ({ onMenuClick }) => {
                 {/* Search Bar */}
                 <div className="flex-1 flex justify-center">
                   <div
-                    className={`flex items-center border rounded-full px-4 h-10 w-full max-w-sm transition-all duration-200 ${
-                      searchFocused
+                    className={`flex items-center border rounded-full px-4 h-10 w-full max-w-sm transition-all duration-200 ${searchFocused
                         ? "ring-2 ring-blue-500/40 border-blue-500 bg-white"
                         : "border-slate-200 bg-slate-50 hover:border-slate-300"
-                    }`}
+                      }`}
                   >
                     <FontAwesomeIcon icon={faSearch} className="text-slate-400 text-sm mr-2.5 shrink-0" />
                     <input
@@ -228,7 +223,7 @@ const Navbar = ({ onMenuClick }) => {
                 </div>
 
                 {/* Navigation Links & Action Icons */}
-                <div className="flex items-center gap-7 shrink-0">
+                <div className="flex items-center gap-6 shrink-0">
                   <div className="flex items-center gap-6 text-sm sm:text-base font-medium text-slate-700">
                     {navItems.map((item) => (
                       <div
@@ -246,9 +241,8 @@ const Navbar = ({ onMenuClick }) => {
                               {item.name}
                               <FontAwesomeIcon
                                 icon={faChevronDown}
-                                className={`text-[10px] transition-transform duration-200 ${
-                                  isCategoryOpen ? "rotate-180 text-blue-600" : "text-slate-400"
-                                }`}
+                                className={`text-[10px] transition-transform duration-200 ${isCategoryOpen ? "rotate-180 text-blue-600" : "text-slate-400"
+                                  }`}
                               />
                             </button>
 
@@ -286,10 +280,9 @@ const Navbar = ({ onMenuClick }) => {
                             to={item.path}
                             onClick={() => setIsCategoryOpen(false)}
                             className={({ isActive }) =>
-                              `relative py-5 block transition-colors ${
-                                isActive
-                                  ? "text-blue-600 after:absolute after:left-0 after:right-0 after:-bottom-px after:h-0.5 "
-                                  : "hover:text-blue-600"
+                              `relative py-5 block transition-colors ${isActive
+                                ? "text-blue-600 after:absolute after:left-0 after:right-0 after:-bottom-px after:h-0.5 "
+                                : "hover:text-blue-600"
                               }`
                             }
                           >
@@ -301,29 +294,41 @@ const Navbar = ({ onMenuClick }) => {
                   </div>
 
                   <div className="flex items-center text-slate-600">
-                    <Link to="/wishlist" className="relative hover:text-blue-600 transition-colors" aria-label="Wishlist">
+                      <Link to="/userDashboard/wishlist" className="relative hover:text-blue-600 transition-colors" aria-label="Wishlist">
                       <FontAwesomeIcon icon={faHeart} className="py-2 px-2 lg:px-3 text-lg" />
                       <CountBadge count={wishlist.length} color="bg-red-500" />
                     </Link>
 
-                    <Link to="/cart" className="relative hover:text-blue-600 transition-colors" aria-label="Cart">
+                      <Link to="/userDashboard/cart" className="relative hover:text-blue-600 transition-colors" aria-label="Cart">
                       <FontAwesomeIcon icon={faCartShopping} className="py-2 px-2 lg:px-3 text-lg" />
                       <CountBadge count={cart.length} color="bg-blue-600" />
                     </Link>
 
                     {/* DESKTOP USER MENU */}
                     <div className="relative" onMouseLeave={() => setIsUserMenuOpen(false)}>
-                      <button
+                      <div
                         onClick={() => handleUserIconClick(false)}
-                        onMouseEnter={() => token && setIsUserMenuOpen(true)}
-                        className="hover:text-blue-600 transition-colors flex items-center"
-                        aria-label="Account"
+                        className="cursor-pointer"
+                        role="button"
+                        aria-haspopup="true"
+                        aria-expanded={isUserMenuOpen}
+                        aria-label="User menu"
                       >
-                        <FontAwesomeIcon icon={faUser} className="min-h-full py-5 px-3 text-lg" />
-                      </button>
+                        {user?.avatar ? (
+                          <img
+                            src={user.avatar}
+                            alt={user.fullname}
+                            className="w-9 h-9  rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="cursor-pointer ms-2 w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">
+                            {getInitials(user?.fullname)}
+                          </div>
+                        )}
+                      </div>
 
-                      {/* শুধুমাত্র Token থাকলেই ড্রপডাউন রেন্ডার হবে */}
-                      {token && isUserMenuOpen && (
+                      {/* শুধুমাত্র accessToken থাকলেই ড্রপডাউন রেন্ডার হবে */}
+                      {accessToken && isUserMenuOpen && (
                         <div className="absolute -right-2 top-full border w-48 bg-white rounded-xl shadow-xl z-50 text-sm">
                           <Link
                             to="/userDashboard"
@@ -357,58 +362,75 @@ const Navbar = ({ onMenuClick }) => {
             {/* ================= MOBILE TOP NAVBAR ================= */}
             <nav className="md:hidden h-12 bg-white shadow-sm border-b border-slate-200 flex items-center justify-between transition-all duration-300">
               <Link to="/">
-                <img src={logo} alt="logo" className={`transition-all duration-300 ${isScrolled ? "h-9" : "h-10"}`} />
+                <img src={logo} alt="logo" className="transition-all duration-300 h-9 sm:h-10" />
               </Link>
 
               <div className="flex items-center gap-3.5 text-slate-700">
-                <button onClick={handleSearchOpen} aria-label="Search" className="p-1">
+                <button onClick={handleSearchOpen} aria-label="Search" className="">
                   <FontAwesomeIcon icon={faSearch} className="text-lg" />
                 </button>
 
-                <Link to="/cart" className="relative p-1" aria-label="Cart">
-                  <FontAwesomeIcon icon={faCartShopping} className="text-lg" />
-                  <CountBadge count={cart.length} color="bg-blue-600" />
+                  <Link to="/userDashboard/wishlist" className="relative hover:text-blue-600 transition-colors" aria-label="Wishlist">
+                    <FontAwesomeIcon icon={faHeart} className="py-2 text-lg" />
+                    <CountBadge count={wishlist.length} color="bg-red-500 absolute " />
+                  </Link>
+                  <Link to="/userDashboard/cart" className="relative " aria-label="Cart">
+                    <FontAwesomeIcon icon={faCartShopping} className="py-2  text-lg" />
+                  <CountBadge count={cart.length} color="bg-red-500" />
                 </Link>
 
                 {/* MOBILE USER MENU (DROPDOWN) */}
-                <div className="relative" ref={mobileMenuRef}>
-                  <button
+                <div className="flex items-center" ref={mobileMenuRef}>
+                  <div
                     onClick={() => handleUserIconClick(true)}
-                    className="p-1 text-slate-700 hover:text-blue-600 transition-colors flex items-center"
-                    aria-label="Account"
+                    className="cursor-pointer"
+                    role="button"
+                    aria-haspopup="true"
+                    aria-expanded={mobileUserMenuOpen}
+                    aria-label="User menu"
                   >
-                    <FontAwesomeIcon icon={faUser} className="text-lg" />
-                  </button>
+                    {user?.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt={user.fullname}
+                        className="w-6 h-6 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="cursor-pointer ms-2 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs">
+                        {getInitials(user?.fullname)}
+                      </div>
+                    )}
+                  </div>
 
-                  {/* শুধুমাত্র Token থাকলেই ড্রপডাউন রেন্ডার হবে */}
-                  {token && mobileUserMenuOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl z-50 text-sm overflow-hidden">
+                  {/* শুধুমাত্র accessToken থাকলেই ড্রপডাউন রেন্ডার হবে */}
+                  {accessToken && mobileUserMenuOpen && (
+                    <div className="absolute right-0 top-full mr-2 w-36 bg-white border border-slate-100 rounded-lg shadow-xl z-50 text-xs overflow-hidden">
                       <Link
                         to="/userDashboard"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition-colors"
                       >
-                        <FontAwesomeIcon icon={faUser} className="text-xs text-slate-400" /> My Profile
+                        <FontAwesomeIcon icon={faUser} className="text-[10px] text-slate-400" /> My Profile
                       </Link>
                       <Link
                         to="/orders"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition-colors"
                       >
-                        <FontAwesomeIcon icon={faBoxOpen} className="text-xs text-slate-400" /> Orders
+                        <FontAwesomeIcon icon={faBoxOpen} className="text-[10px] text-slate-400" /> Orders
                       </Link>
-                      <hr className="my-1 border-slate-100" />
+                      <hr className="my-0.5 border-slate-100" />
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-red-500 hover:bg-slate-50 text-left transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-1.5 text-red-500 hover:bg-slate-50 text-left transition-colors"
                       >
-                        <FontAwesomeIcon icon={faSignOutAlt} className="text-xs" /> Logout
+                        <FontAwesomeIcon icon={faSignOutAlt} className="text-[10px]" /> Logout
                       </button>
                     </div>
                   )}
                 </div>
 
-                <button onClick={onMenuClick} aria-label="Open menu" className="text-slate-700 p-1">
+                <button onClick={onMenuClick} aria-label="Open menu" className="text-slate-700 mr-1">
                   <FontAwesomeIcon icon={faBars} className="text-xl" />
                 </button>
               </div>

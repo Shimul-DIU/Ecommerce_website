@@ -65,17 +65,26 @@ const loginUser = async (req, res) => {
   try {
     const { email, password, rememberMe, agreedToTerms } = req.body;
 
-    if (!email || !password) {
+    /* if (!email || !password) {
       return res.status(400).json({
         message: 'Email and password required',
       });
+    } */
+    const fields = { email, password };
+
+    for (let [key, value] of Object.entries(fields)) {
+      if (!value) {
+        return res.status(400).json({
+          error: { [key]: `${key} is required` },
+        });
+      }
     }
 
     const user = await Users.findOne({ email }).select('+password');
 
     if (!user) {
       return res.status(400).json({
-        message: 'Invalid email or password',
+        message: 'user not exists',
       });
     }
     if (!agreedToTerms) {
@@ -83,7 +92,11 @@ const loginUser = async (req, res) => {
         message: "Please agree to Terms & Conditions",
       });
     }
-
+    if (!user.password) {
+      return res.status(400).json({
+        message: "Password not match",
+      });
+    }
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -108,6 +121,12 @@ const loginUser = async (req, res) => {
     return res.status(200).json({
       message: 'Login successful',
       accessToken,
+      user: {
+        id: user._id,
+        fullname: user.fullname,
+        email: user.email,
+        avatar: user.avatar || null,
+      },
 
     });
 

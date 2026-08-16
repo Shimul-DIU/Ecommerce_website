@@ -48,7 +48,7 @@ export default function Overview() {
 
   return (
     <>
-      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="mb-8 grid grid-cols-2 gap-2  md:gap-4 lg:grid-cols-4">
         <Link to="/userDashboard/user-orders">
           <StatCard
             label="Total Orders"

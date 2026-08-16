@@ -23,7 +23,8 @@ export default function UserDashboardLayout() {
     .toUpperCase();
 
   return (
-    <div className="flex flex-col h-[calc(100vh-87px)] mt-[72px] bg-gray-100 overflow-hidden relative">
+    // class="sticky top-0  z-40 bg-white border-b sm:border-b-0 sm:border-r border-slate-200 transition-all duration-300 w-full sm:h-screen sm:w-64 sm:flex sm:flex-col sm:justify-between sm:p-4"
+    <div className="flex max-w-7xl mx-auto  flex-col sm:flex-row h-[calc(100vh-87px)] mt-[72px] bg-gray-100 overflow-hidden relative">
       {/* Sidebar Navigation */}
       <UserDashboardNavbar
         isExpanded={isExpanded}
@@ -39,43 +40,9 @@ export default function UserDashboardLayout() {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 min-w-0 overflow-y-auto p-4 md:p-6 lg:p-8">
-        {/* Topbar */}
-        <div className="mb-6 md:mb-8 flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold text-slate-900">
-              Welcome back, {firstName}
-            </h1>
-            <p className="text-[12px] md:text-[13px] text-slate-500">
-              Here's what's happening with your account
-            </p>
-          </div>
+      <main className="flex-1 min-w-0 md:mt-4 lg:mt-6 overflow-y-auto p-2 md:p-3 lg:p-4">
 
-          <div className="flex items-center gap-2 md:gap-3">
-            {/* Search Input */}
-            <div className="hidden sm:flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-sm">
-              <Search size={15} className="text-slate-500" />
-              <input
-                type="text"
-                placeholder="Search orders..."
-                className="w-28 md:w-36 bg-transparent text-sm outline-none placeholder:text-slate-400"
-              />
-            </div>
 
-            {/* Notification Bell */}
-            <div className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer shadow-sm">
-              <Bell size={16} />
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-600 text-[10px] font-semibold text-white">
-                2
-              </span>
-            </div>
-
-            {/* User Avatar Initials */}
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white shadow-sm">
-              {initials}
-            </div>
-          </div>
-        </div>
 
         {/* Dashboard Pages Render Here */}
         <Outlet context={{ profile, setProfile }} />
