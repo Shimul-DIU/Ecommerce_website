@@ -8,9 +8,12 @@ import {
   User,
   Store,
 } from "lucide-react";
-import logout from "../../../context/AuthContext";
+import { useContext } from "react";
+import { AuthContext } from "../../../context/AuthContext";
+
 
 const UserDashboardNavbar = ({ isExpanded, setIsExpanded }) => {
+  const {logout}=useContext(AuthContext)
   const navItems = [
     { to: "/userDashboard/user-overview", icon: LayoutDashboard, label: "Overview" },
     { to: "/userDashboard/user-orders", icon: ShoppingBag, label: "Orders" },

@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
-
+import cookieParser from 'cookie-parser';
 import express from 'express';
 
 import cors from 'cors';
@@ -19,7 +19,7 @@ import authRouter from './routes/authRoute.js';
 
 const app = express();
 
-
+app.use(cookieParser())
 app.use(
   cors({
     origin: ["http://localhost:4173", process.env.CLIENT_URL],
@@ -44,9 +44,5 @@ app.use('/api/admin', adminRouter);
 app.use('/api/products', productRouter);
 app.use('/api/orders', orderRouter);
 
-const PORT = process.env.PORT || 5004;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 
 export default app;

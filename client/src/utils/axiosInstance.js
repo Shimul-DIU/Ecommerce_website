@@ -71,7 +71,7 @@ axiosInstance.interceptors.response.use(
       error.response?.status === 401 &&
       originalRequest &&
       !originalRequest._retry &&
-      !originalRequest.url.includes("/api/user/refresh")
+      !originalRequest.url.includes("/api/auth/user/refresh")
     ) {
 
       originalRequest._retry = true;
@@ -84,7 +84,7 @@ axiosInstance.interceptors.response.use(
         // ---------------------------------------------
 
         const response = await axiosInstance.post(
-          "/api/user/refresh"
+          "/api/auth/user/refresh"
         );
 
 

@@ -19,7 +19,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { CountContext } from "../../context/countContext";
 import { useScroll } from "../../hooks/useScroll";
-import { AuthContext } from "../../context/AuthContext";
+import {AuthContext} from '../../context/AuthContext'
 
 const CountBadge = ({ count, color }) => {
   if (!count) return null;

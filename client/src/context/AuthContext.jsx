@@ -1,41 +1,4 @@
-/* import { createContext, useState, useEffect } from "react";
 
-// Best Practice: Capital 'A' for AuthContext
-export const AuthContext = createContext(null);
-
-export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
-
-  const login = (newToken) => {
-    localStorage.setItem("token", newToken);
-    setToken(newToken);
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    setToken(null);
-  };
-
-  // Multiple Tabs Sync (অন্য ট্যাবে লগআউট বা লগইন করলে এই ট্যাবেও আপডেট হবে)
-  useEffect(() => {
-    const handleStorageChange = (e) => {
-      if (e.key === "token") {
-        setToken(e.newValue);
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
-
-  return (
-    <AuthContext.Provider value={{ token, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export default AuthProvider; */
 
 import {
   createContext,
@@ -46,7 +9,7 @@ import {
 
 import axiosInstance from "../utils/axiosInstance";
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   // Access token React memory-তে থাকবে
@@ -63,30 +26,27 @@ export const AuthProvider = ({ children }) => {
   // LOGIN
   // ===================================================
 
-  const login = async (email, password) => {
-    const response = await axiosInstance.post(
-      "/api/auth/login",
-      {
-        email,
-        password,
-      }
-    );
+  const login = async (email, password, rememberMe,agreedToTerms) => {
+  const response = await axiosInstance.post(
+    "/api/auth/user/login",
+    {
+      email,
+      password,
+      rememberMe,
+      agreedToTerms
+    }
+  );
 
-    const {
-      accessToken,
-      user,
-    } = response.data;
+  const {
+    accessToken,
+    user,
+  } = response.data;
 
-    // Store access token in React memory
-    setAccessToken(accessToken);
+  setAccessToken(accessToken);
+  setUser(user);
 
-    // Store user
-    setUser(user);
-
-    return response.data;
-  };
-
-
+  return response.data;
+};
   // ===================================================
   // REGISTER
   // ===================================================
@@ -97,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     password
   ) => {
     const response = await axiosInstance.post(
-      "/api/auth/register",
+      "/api/auth/user/register",
       {
         fullname,
         email,
@@ -116,7 +76,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await axiosInstance.post(
-        "/api/auth/logout"
+        "/api/auth/user/logout"
       );
     } catch (error) {
       console.error("Logout error:", error);
@@ -140,7 +100,7 @@ export const AuthProvider = ({ children }) => {
 
       const response =
         await axiosInstance.post(
-          "/api/auth/refresh"
+          "/api/auth/user/refresh"
         );
 
       setAccessToken(

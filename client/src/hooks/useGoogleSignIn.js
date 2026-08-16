@@ -17,7 +17,7 @@ const useGoogleSignIn = () => {
       const user = response.user;
       console.log(user)
 
-      const res = await axiosInstance.post("/api/user/google-login", {
+      const res = await axiosInstance.post("/api/auth/user/google-login", {
         fullname: user.displayName,
         email: user.email,
         photoURL: user.photoURL,

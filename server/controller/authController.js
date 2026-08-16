@@ -63,7 +63,7 @@ const createUser = async (req, res) => {
 /* ================= LOGIN USER ================= */
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe, agreedToTerms } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -78,6 +78,11 @@ const loginUser = async (req, res) => {
         message: 'Invalid email or password',
       });
     }
+    if (!agreedToTerms) {
+      return res.status(400).json({
+        message: "Please agree to Terms & Conditions",
+      });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
@@ -87,14 +92,17 @@ const loginUser = async (req, res) => {
       });
     }
 
-    const accessToken=jwt.sign({id:uesr._id,email:user.email},process.env.ACCESS_TOKEN_SECRET,{expiresIn:'15m'})
-    const refreshToken=jwt.sign({id:uesr._id,email:user.email},process.env.ACCESS_TOKEN_SECRET,{expiresIn:'15d'})
+    const accessToken = jwt.sign({ id: user._id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
+    const refreshToken = jwt.sign({ id: user._id, email: user.email }, process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: rememberMe ? '30d' : '15d' })
 
-    res.cookie('refreshToken',refreshToken,{
-      httpOnly:true,
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 15 * 24 * 60 * 60 * 1000,
+      maxAge: rememberMe ?
+        30 * 24 * 60 * 60 * 1000 :
+        15 * 24 * 60 * 60 * 1000,
       path: "/",
     })
     return res.status(200).json({
@@ -109,12 +117,30 @@ const loginUser = async (req, res) => {
       message: 'Internal server error',
     });
   }
+}
+// ================= CREATE ACCESS TOKEN =================
+
+const createAccessToken = (user) => {
+  return jwt.sign(
+    {
+      id: user._id,
+      email: user.email,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: "15m",
+    }
+  );
 };
 
-export const refreshAccessToken = async (req, res) => {
+
+// ================= REFRESH TOKEN =================
+
+const refreshAccessToken = async (req, res) => {
   try {
+
     // Get refresh token from cookie
-    const refreshToken = req.cookies.refreshToken;
+    const refreshToken = req.cookies?.refreshToken;
 
     if (!refreshToken) {
       return res.status(401).json({
@@ -125,11 +151,11 @@ export const refreshAccessToken = async (req, res) => {
     // Verify refresh token
     const decoded = jwt.verify(
       refreshToken,
-      process.env.JWT_REFRESH_SECRET
+      process.env.REFRESH_TOKEN_SECRET
     );
 
-    // Check user exists
-    const user = await User.findById(decoded.id);
+    // Find user
+    const user = await Users.findById(decoded.id);
 
     if (!user) {
       return res.status(401).json({
@@ -138,7 +164,7 @@ export const refreshAccessToken = async (req, res) => {
     }
 
     // Create new access token
-    const newAccessToken = createAccessToken(user._id);
+    const newAccessToken = createAccessToken(user);
 
     return res.status(200).json({
       accessToken: newAccessToken,
@@ -149,20 +175,20 @@ export const refreshAccessToken = async (req, res) => {
         email: user.email,
       },
     });
+
   } catch (error) {
+
     console.error("Refresh Error:", error);
 
     return res.status(401).json({
       message: "Invalid or expired refresh token",
     });
   }
-};
-
-// =====================================================
+};// =====================================================
 // LOGOUT
 // =====================================================
 
-export const logout = async (req, res) => {
+const logout = async (req, res) => {
   try {
     res.clearCookie("refreshToken", {
       httpOnly: true,
@@ -277,7 +303,7 @@ const GoogleLogin = async (req, res) => {
 
     if (!email || !firebaseId) {
       return res.status(400).json({
-        message:'Email and firebaseId are required',
+        message: 'Email and firebaseId are required',
       });
     }
 

@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom';
 import Router from './routes/routes';
 import './index.css'
-import AuthProvider from './context/AuthContext';
+import {AuthProvider} from './context/AuthContext';
 import {  CountProvider } from './context/countContext';
 import { LanguageProvider } from './context/LanguageContext';
 

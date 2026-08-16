@@ -59,22 +59,35 @@ const Login = () => {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!agreedToTerms) {
-      setMessage("Please agree to the Terms & Conditions");
-      return;
-    }
+  if (!agreedToTerms) {
+    setMessage("Please agree to the Terms & Conditions");
+    return;
+  }
 
-    try {
-      const response = await axiosInstance.post("/api/auth/user/login", user);
-      setMessage(response.data.message);
-      login(response.data.token);
-      navigate("/userDashboard", { replace: true });
-    } catch (error) {
-      setMessage(error.response?.data?.message || "An error occurred");
-    }
-  };
+  try {
+    await login(
+      user.email,
+      user.password,
+      user.rememberMe,
+      agreedToTerms
+
+    );
+
+    navigate("/userDashboard", {
+      replace: true,
+    });
+
+  } catch (error) {
+    console.log("Login error:", error);
+
+    setMessage(
+      error.response?.data?.message ||
+      "Login failed"
+    );
+  }
+};
 
   return (
     <div className="mt-20 sm:mt-24 min-h-[calc(100vh-6rem)] bg-gray-100 flex items-center justify-center px-4 py-6">
