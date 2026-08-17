@@ -6,7 +6,7 @@ import Users from '../../model/userModel.js';
 dotenv.config();
 
 // Validate JWT_SECRET
-if (!process.env.JWT_SECRET) {
+if (!process.env.ACCESS_TOKEN_SECRET) {
   throw new Error(
     'JWT_SECRET environment variable is required but not defined. Please add it to your .env file.'
   );
@@ -14,7 +14,7 @@ if (!process.env.JWT_SECRET) {
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET,
+  secretOrKey: process.env.ACCESS_TOKEN_SECRET,
 };
 
 passport.use(

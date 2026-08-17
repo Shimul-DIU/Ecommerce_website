@@ -45,10 +45,10 @@ const UserOrders = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-slate-900">My Orders</h1>
+          <h1 className="text-xl font-bold text-slate-900">My Orders</h1>
           <p className="text-sm text-slate-500 mt-1">
             Track and review all your past orders
           </p>

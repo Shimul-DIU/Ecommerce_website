@@ -24,7 +24,7 @@ const CountBadge = ({ count, color }) => {
   if (!count) return null;
   return (
     <span
-      className={`absolute -top-3 -right-2 min-w-[18px] h-[18px] px-1 ${color} text-white text-[10px] font-semibold rounded-full flex items-center justify-center leading-none shadow-sm`}
+      className={`absolute -top-2 -right-2  w-4 h-4 px-1 ${color} text-white text-[10px] font-semibold rounded-full flex items-center justify-center leading-none shadow-sm`}
     >
       {count > 99 ? "99+" : count}
     </span>
@@ -127,7 +127,7 @@ const Navbar = ({ onMenuClick }) => {
       <div className="max-w-7xl mx-auto">
         {/* ================= TOP ANNOUNCEMENT & UTILITY BAR ================= */}
         <div
-          className="max-w-7xl rounded-t-md mx-auto ps-6 bg-white border-b border-black/70 text-slate-600 text-xs transition-all duration-300 overflow-hidden  lg:pt-1 h-5 md:h-6 pt-0.5 opacity-100"
+          className="max-w-7xl rounded-t-md mx-auto ps-6 bg-white border-b border-black/70 text-slate-600 text-xs transition-all duration-300 overflow-hidden  lg:pt-1 h-5 md:h-6 pb-0.5 opacity-100"
 
         >
           <div className="flex items-center justify-between">
@@ -195,12 +195,12 @@ const Navbar = ({ onMenuClick }) => {
           <>
             {/* ================= DESKTOP NAVBAR ================= */}
             <div
-              className={`hidden max-w-7xl rounded-b-md mx-auto md:px-6 md:block bg-white shadow-sm transition-all duration-300 ${isScrolled ? "h-14" : "h-16"
-                }`}
+              className={`hidden max-w-7xl rounded-b-md mx-auto md:px-6 md:block bg-white shadow-sm transition-all duration-300 h-14
+                `}
             >
               <nav className="h-full flex items-center gap-8">
                 <Link to="/" className="shrink-0 flex items-center">
-                  <img src={logo} alt="logo" className={`transition-all duration-300 ${isScrolled ? "h-8" : "h-10"}`} />
+                  <img src={logo} alt="logo" className={`transition-all duration-300 h-10`} />
                 </Link>
 
                 {/* Search Bar */}
@@ -224,7 +224,7 @@ const Navbar = ({ onMenuClick }) => {
 
                 {/* Navigation Links & Action Icons */}
                 <div className="flex items-center gap-6 shrink-0">
-                  <div className="flex items-center gap-6 text-sm sm:text-base font-medium text-slate-700">
+                  <div className="flex items-center gap-6 text-sm sm:text-base font-medium ">
                     {navItems.map((item) => (
                       <div
                         key={item.path}
@@ -293,14 +293,14 @@ const Navbar = ({ onMenuClick }) => {
                     ))}
                   </div>
 
-                  <div className="flex items-center text-slate-600">
+                  <div className="flex items-center gap-1.5 text-slate-600">
                       <Link to="/userDashboard/wishlist" className="relative hover:text-blue-600 transition-colors" aria-label="Wishlist">
-                      <FontAwesomeIcon icon={faHeart} className="py-2 px-2 lg:px-3 text-lg" />
+                      <FontAwesomeIcon icon={faHeart} className="py-1 px-1  text-lg" />
                       <CountBadge count={wishlist.length} color="bg-red-500" />
                     </Link>
 
                       <Link to="/userDashboard/cart" className="relative hover:text-blue-600 transition-colors" aria-label="Cart">
-                      <FontAwesomeIcon icon={faCartShopping} className="py-2 px-2 lg:px-3 text-lg" />
+                      <FontAwesomeIcon icon={faCartShopping} className="py-1 px-1  text-lg" />
                       <CountBadge count={cart.length} color="bg-blue-600" />
                     </Link>
 
@@ -367,16 +367,16 @@ const Navbar = ({ onMenuClick }) => {
 
               <div className="flex items-center gap-3.5 text-slate-700">
                 <button onClick={handleSearchOpen} aria-label="Search" className="">
-                  <FontAwesomeIcon icon={faSearch} className="text-lg" />
+                  <FontAwesomeIcon icon={faSearch} className="text-base md:text-lg" />
                 </button>
 
                   <Link to="/userDashboard/wishlist" className="relative hover:text-blue-600 transition-colors" aria-label="Wishlist">
-                    <FontAwesomeIcon icon={faHeart} className="py-2 text-lg" />
+                    <FontAwesomeIcon icon={faHeart} className=" text-base md:text-lg" />
                     <CountBadge count={wishlist.length} color="bg-red-500 absolute " />
                   </Link>
                   <Link to="/userDashboard/cart" className="relative " aria-label="Cart">
-                    <FontAwesomeIcon icon={faCartShopping} className="py-2  text-lg" />
-                  <CountBadge count={cart.length} color="bg-red-500" />
+                    <FontAwesomeIcon icon={faCartShopping} className=" text-base md:text-lg" />
+                  <CountBadge count={cart.length} color="bg-red-500" className  />
                 </Link>
 
                 {/* MOBILE USER MENU (DROPDOWN) */}
@@ -396,7 +396,7 @@ const Navbar = ({ onMenuClick }) => {
                         className="w-6 h-6 rounded-full object-cover"
                       />
                     ) : (
-                      <div className="cursor-pointer ms-2 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs">
+                      <div className="cursor-pointer ms-2 w-[22px] sm:w-6 h-[22px] sm:h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[12px]">
                         {getInitials(user?.fullname)}
                       </div>
                     )}
@@ -431,7 +431,7 @@ const Navbar = ({ onMenuClick }) => {
                 </div>
 
                 <button onClick={onMenuClick} aria-label="Open menu" className="text-slate-700 mr-1">
-                  <FontAwesomeIcon icon={faBars} className="text-xl" />
+                  <FontAwesomeIcon icon={faBars} className="text-lg " />
                 </button>
               </div>
             </nav>

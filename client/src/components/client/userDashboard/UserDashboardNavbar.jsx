@@ -37,14 +37,14 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded }) => {
 
   return (
     <aside
-      className={`sticky top-0 md:mt-4 lg:mt-6 z-40 bg-white border-b sm:border-b-0 sm:border-r border-slate-200 transition-all duration-300 w-full sm:h-screen ${isExpanded ? "sm:w-64" : "sm:w-64" /* ডেস্কটপে সব সময় চওড়া (w-64) রাখতে চাইলে */
+      className={`sticky top-0 md:mt-[16px] lg:mt-6 z-40 bg-white border-b sm:border-b-0 sm:border-r border-slate-200 transition-all duration-300 w-full sm:h-screen ${isExpanded ? "sm:w-64" : "sm:w-64" /* ডেস্কটপে সব সময় চওড়া (w-64) রাখতে চাইলে */
         } sm:flex sm:flex-col sm:justify-between sm:p-4`}
     >
       {/* ==========================================
           1. MOBILE LAYOUT (< sm screens)
          ========================================== */}
       <div className="sm:hidden min-w-full  bg-white">
-        <nav className="flex items-center justify-between gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100 w-full h-12">
+        <nav className="flex items-center justify-between   bg-white   border border-slate-100 w-full h-8">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -54,7 +54,7 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded }) => {
                 onClick={handleItemClick}
                 title={item.label}
                 className={({ isActive }) =>
-                  `flex items-center justify-center flex-1 h-9 rounded-lg transition-all duration-200 ${isActive
+                  `flex items-center justify-center flex-1 h-6 rounded-lg transition-all duration-200 ${isActive
                     ? " text-blue-600 scale-105"
                     : "text-slate-500 hover:bg-slate-200/60 hover:text-slate-800"
                   }`
@@ -68,7 +68,7 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded }) => {
           <button
             onClick={handleLogout}
             title="Logout"
-            className="flex items-center justify-center flex-1 h-9 rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+            className="flex items-center justify-center flex-1 h-6 rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
           >
             <LogOut size={18} />
           </button>
