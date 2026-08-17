@@ -1,5 +1,3 @@
-
-
 import {
   createContext,
   useContext,
@@ -8,64 +6,52 @@ import {
 } from "react";
 
 import axiosInstance from "../utils/axiosInstance";
+import {
+  setAccessToken as saveTokenToManager,
+  clearAccessToken as clearTokenFromManager,
+} from "../utils/tokenManager";
 
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  // Access token React memory-তে থাকবে
   const [accessToken, setAccessToken] = useState(null);
   const [user, setUser] = useState(null);
-
-  // Initial authentication check
   const [loading, setLoading] = useState(true);
-
 
   // ===================================================
   // LOGIN
   // ===================================================
 
-  const login = async (email, password, rememberMe,agreedToTerms) => {
-  const response = await axiosInstance.post(
-    "/api/auth/user/login",
-    {
+  const login = async (email, password, rememberMe, agreedToTerms) => {
+    const response = await axiosInstance.post("/api/auth/user/login", {
       email,
       password,
       rememberMe,
-      agreedToTerms
-    }
-  );
+      agreedToTerms,
+    });
 
-  const {
-    accessToken,
-    user,
-  } = response.data;
+    const { accessToken, user } = response.data;
 
-  setAccessToken(accessToken);
-  setUser(user);
-
-  return response.data;
-};
-  // ===================================================
-  // REGISTER
-  // ===================================================
-
-  const register = async (
-    fullname,
-    email,
-    password
-  ) => {
-    const response = await axiosInstance.post(
-      "/api/auth/user/register",
-      {
-        fullname,
-        email,
-        password,
-      }
-    );
+    setAccessToken(accessToken);       // React state (UI-এর জন্য)
+    saveTokenToManager(accessToken);   // ✅ axiosInstance যেটা আসলে ব্যবহার করে
+    setUser(user);
 
     return response.data;
   };
 
+  // ===================================================
+  // REGISTER
+  // ===================================================
+
+  const register = async (fullname, email, password) => {
+    const response = await axiosInstance.post("/api/auth/user/register", {
+      fullname,
+      email,
+      password,
+    });
+
+    return response.data;
+  };
 
   // ===================================================
   // LOGOUT
@@ -73,21 +59,15 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axiosInstance.post(
-        "/api/auth/user/logout"
-      );
+      await axiosInstance.post("/api/auth/user/logout");
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-
-      // Clear React memory
       setAccessToken(null);
-
-      // Clear user
+      clearTokenFromManager(); // ✅
       setUser(null);
     }
   };
-
 
   // ===================================================
   // RESTORE LOGIN SESSION
@@ -95,33 +75,19 @@ export const AuthProvider = ({ children }) => {
 
   const restoreSession = async () => {
     try {
+      const response = await axiosInstance.post("/api/auth/user/refresh");
 
-      const response =
-        await axiosInstance.post(
-          "/api/auth/user/refresh"
-        );
-
-      setAccessToken(
-        response.data.accessToken
-      );
-
-      setUser(
-        response.data.user
-      );
-
+      setAccessToken(response.data.accessToken);
+      saveTokenToManager(response.data.accessToken); // ✅
+      setUser(response.data.user);
     } catch (error) {
-
       setAccessToken(null);
-
+      clearTokenFromManager(); // ✅
       setUser(null);
-
     } finally {
-
       setLoading(false);
-
     }
   };
-
 
   // ===================================================
   // INITIAL APP LOAD
@@ -130,7 +96,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     restoreSession();
   }, []);
-
 
   return (
     <AuthContext.Provider
@@ -141,7 +106,6 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-        setAccessToken,
       }}
     >
       {children}
@@ -149,4 +113,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-
+export const useAuth = () => useContext(AuthContext);
