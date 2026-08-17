@@ -63,6 +63,7 @@ const createUser = async (req, res) => {
 /* ================= LOGIN USER ================= */
 const loginUser = async (req, res) => {
   try {
+    const isProduction =process.env.NODE_ENV === "production";
     const { email, password, rememberMe, agreedToTerms } = req.body;
 
     /* if (!email || !password) {
@@ -112,7 +113,7 @@ const loginUser = async (req, res) => {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: isProduction ? "none" : "lax",
       maxAge: rememberMe ?
         30 * 24 * 60 * 60 * 1000 :
         15 * 24 * 60 * 60 * 1000,

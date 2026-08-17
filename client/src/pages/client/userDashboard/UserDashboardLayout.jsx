@@ -24,7 +24,7 @@ export default function UserDashboardLayout() {
 
   return (
     // class="sticky top-0  z-40 bg-white border-b sm:border-b-0 sm:border-r border-slate-200 transition-all duration-300 w-full sm:h-screen sm:w-64 sm:flex sm:flex-col sm:justify-between sm:p-4"
-    <div className="flex max-w-7xl mx-auto  flex-col sm:flex-row h-[calc(100vh-87px)] mt-[68px] bg-gray-100 overflow-hidden relative">
+    <div className="flex max-w-7xl mx-auto  flex-col sm:flex-row h-[calc(100vh-87px)] mt-[65px] bg-gray-100 overflow-hidden relative">
       {/* Sidebar Navigation */}
       <UserDashboardNavbar
         isExpanded={isExpanded}
@@ -40,7 +40,7 @@ export default function UserDashboardLayout() {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 min-w-0 md:mt-4 lg:mt-6 overflow-y-auto p-2 md:p-3 lg:p-4">
+      <main className="flex-1 min-w-0 md:mt-4  overflow-y-auto p-2 md:p-3 lg:p-4">
 
 
 

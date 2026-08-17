@@ -92,7 +92,7 @@ const NewArrivals = () => {
           {[...Array(itemsPerRow)].map((_, index) => (
             <div
               key={index}
-              className="bg-white border border-[#E4DDCE]/60 rounded-2xl p-2"
+              className="bg-white border border-[#E4DDCE]/60 rounded-2xl p-2 animate-pulse"
             >
               <div className="aspect-square rounded-xl bg-[#E4DDCE]/50" />
               <div className="h-3.5 w-3/4 rounded-md bg-[#E4DDCE]/50 mt-2" />
