@@ -63,7 +63,7 @@ const createUser = async (req, res) => {
 /* ================= LOGIN USER ================= */
 const loginUser = async (req, res) => {
   try {
-    const isProduction =process.env.NODE_ENV === "production";
+
     const { email, password, rememberMe, agreedToTerms } = req.body;
 
     /* if (!email || !password) {
@@ -81,7 +81,7 @@ const loginUser = async (req, res) => {
       }
     }
 
-    const user = await Users.findOne({ email }).select('+password');
+    const user = await Users.findOne({ email }).select({password:1});
 
     if (!user) {
       return res.status(400).json({
@@ -113,7 +113,7 @@ const loginUser = async (req, res) => {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: isProduction ? "none" : "lax",
+      sameSite: "none",
       maxAge: rememberMe ?
         30 * 24 * 60 * 60 * 1000 :
         15 * 24 * 60 * 60 * 1000,
@@ -210,10 +210,12 @@ const refreshAccessToken = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
+    const isProduction = process.env.NODE_ENV === "production";
+
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       path: "/",
     });
 
