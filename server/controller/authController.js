@@ -342,17 +342,31 @@ const GoogleLogin = async (req, res) => {
       await user.save();
     }
 
-    const token = jwt.sign(
-      { email: user.email, id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const accessToken = jwt.sign({ id: user._id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
+    const refreshToken = jwt.sign({ id: user._id, email: user.email }, process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: '15d' })
 
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge:
+        15 * 24 * 60 * 60 * 1000,
+      path: "/",
+    })
     return res.status(200).json({
       message: 'Login successful',
-      token: 'Bearer ' + token,
+      accessToken,
+      user: {
+        id: user._id,
+        fullname: user.fullname,
+        email: user.email,
+        avatar: user.avatar || null,
+      },
+
     });
-  } catch (error) {
+
+  }catch (error) {
     console.error('GoogleLogin error:', error);
     return res.status(500).json({
       message: 'Internal server error',

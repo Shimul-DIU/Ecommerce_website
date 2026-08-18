@@ -5,7 +5,7 @@ import { faGoogle, faFacebook, faGithub } from "@fortawesome/free-brands-svg-ico
 import axiosInstance from "../utils/axiosInstance";
 
 import SignWithFacebook from "./SignInWithFacebook";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import useGoogleSignIn from "../hooks/useGoogleSignIn";
 
@@ -21,7 +21,7 @@ const Login = () => {
   const [user, setUser] = useState({
     email: "",
     password: "",
-    rememberMe:false
+    rememberMe: false,
   });
 
   const handleGoogleLogin = async () => {
@@ -33,13 +33,14 @@ const Login = () => {
   };
 
   const changeHandler = (e) => {
-  const { name, value, type, checked } = e.target;
-  setUser((prev) => ({
-    ...prev,
-    [name]: type === "checkbox" ? checked : value,
-  }));
-  setMessage("");
-};
+    const { name, value, type, checked } = e.target;
+    setUser((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+    setMessage("");
+  };
+
   const forgetPasswordHandler = async () => {
     const email = user.email;
 
@@ -59,53 +60,52 @@ const Login = () => {
   };
 
   const handleLogin = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!agreedToTerms) {
-    setMessage("Please agree to the Terms & Conditions");
-    return;
-  }
+    if (!agreedToTerms) {
+      setMessage("Please agree to the Terms & Conditions");
+      return;
+    }
 
-  try {
-    await login(
-      user.email,
-      user.password,
-      user.rememberMe,
-      agreedToTerms
+    try {
+      await login(
+        user.email,
+        user.password,
+        user.rememberMe,
+        agreedToTerms
+      );
 
-    );
+      navigate("/userDashboard", {
+        replace: true,
+      });
+    } catch (error) {
+      console.log("Login error:", error);
 
-    navigate("/userDashboard", {
-      replace: true,
-    });
-
-  } catch (error) {
-    console.log("Login error:", error);
-
-    setMessage(
-      error.response?.data?.message ||
-      "Login failed"
-    );
-  }
-};
+      setMessage(
+        error.response?.data?.message ||
+        "Login failed"
+      );
+    }
+  };
 
   return (
-    <div className="mt-20 sm:mt-24 min-h-[calc(100vh-6rem)] bg-gray-100 flex items-center justify-center px-4 py-6">
-      {/* Login Card */}
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 sm:p-7">
-        {/* Heading */}
-        <div className="text-center mb-5">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
-          <p className="text-gray-500 mt-1.5 text-sm sm:text-base">
+    /* Reduced container top margin and padding for mobile */
+    <div className="mt-14 sm:mt-24 min-h-[calc(100vh-3.5rem)] sm:min-h-[calc(100vh-6rem)] bg-gray-100 flex items-center justify-center px-3 py-4 sm:px-4 sm:py-6">
+      {/* Login Card - Compact padding on mobile */}
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-4 sm:p-7">
+        {/* Heading - Reduced bottom margin */}
+        <div className="text-center mb-3 sm:mb-5">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Welcome Back</h1>
+          <p className="text-gray-500 mt-0.5 sm:mt-1.5 text-xs sm:text-base">
             Login to your account
           </p>
         </div>
 
-        {/* Form */}
-        <form className="space-y-3.5" onSubmit={handleLogin}>
+        {/* Form - Tighter spacing for inputs */}
+        <form className="space-y-2.5 sm:space-y-3.5" onSubmit={handleLogin}>
           {/* Email */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
+            <label className="block mb-0.5 sm:mb-1 text-xs sm:text-sm font-medium text-gray-700">
               Email
             </label>
             <input
@@ -116,13 +116,13 @@ const Login = () => {
               onChange={changeHandler}
               autoComplete="email"
               placeholder="Enter your email"
-              className="w-full px-4 py-2 text-base border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           {/* Password */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
+            <label className="block mb-0.5 sm:mb-1 text-xs sm:text-sm font-medium text-gray-700">
               Password
             </label>
             <div className="flex border border-gray-300 rounded-lg items-center focus-within:ring-2 focus-within:ring-blue-500">
@@ -134,25 +134,30 @@ const Login = () => {
                 onChange={changeHandler}
                 autoComplete="current-password"
                 placeholder="Enter your password"
-                className="w-full px-4 py-2 text-base rounded-lg outline-none"
+                className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="px-3 text-gray-500"
+                className="px-2.5 sm:px-3 text-gray-500 text-sm sm:text-base"
               >
                 <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
               </button>
             </div>
           </div>
 
-          {message && <p className="text-red-500 text-xs mt-1">{message}</p>}
+          {message && <p className="text-red-500 text-xs mt-0.5">{message}</p>}
 
           {/* Remember Me & Forgot Password */}
-          <div className="flex items-center justify-between text-sm pt-1">
-            <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
-              <input type="checkbox" className="rounded" checked={user.rememberMe}
-              onChange={changeHandler} name="rememberMe" />
+          <div className="flex items-center justify-between text-xs sm:text-sm pt-0.5">
+            <label className="flex items-center gap-1.5 text-gray-600 cursor-pointer">
+              <input
+                type="checkbox"
+                className="rounded"
+                checked={user.rememberMe}
+                onChange={changeHandler}
+                name="rememberMe"
+              />
               Remember me
             </label>
 
@@ -166,14 +171,14 @@ const Login = () => {
           </div>
 
           {/* Terms */}
-          <div className="flex items-start gap-2 text-sm text-gray-600 pt-0.5">
+          <div className="flex items-start gap-1.5 text-xs sm:text-sm text-gray-600 pt-0.5">
             <input
               type="checkbox"
-              className="mt-1 rounded cursor-pointer"
+              className="mt-0.5 rounded cursor-pointer"
               checked={agreedToTerms}
               onChange={(e) => setAgreedToTerms(e.target.checked)}
             />
-            <p>
+            <p className="leading-tight">
               I agree to the{" "}
               <span className="text-blue-600 cursor-pointer hover:underline">
                 Terms & Conditions
@@ -188,57 +193,57 @@ const Login = () => {
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 transition duration-300 text-white py-2.5 rounded-lg font-semibold text-base"
+            className="w-full bg-blue-600 hover:bg-blue-700 transition duration-300 text-white py-2 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base mt-1"
           >
             Login
           </button>
         </form>
 
         {/* Divider */}
-        <div className="flex items-center gap-2 my-3.5">
+        <div className="flex items-center gap-2 my-2.5 sm:my-3.5">
           <div className="flex-1 h-[1px] bg-gray-300"></div>
-          <p className="text-xs text-gray-400 font-medium">OR</p>
+          <p className="text-[10px] sm:text-xs text-gray-400 font-medium">OR</p>
           <div className="flex-1 h-[1px] bg-gray-300"></div>
         </div>
 
-        {/* Social Login */}
-        <div className="space-y-2.5">
+        {/* Social Login - Compact height */}
+        <div className="space-y-2 sm:space-y-2.5">
           <button
             onClick={handleGoogleLogin}
             type="button"
-            className="w-full border border-gray-300 hover:bg-gray-50 transition py-2 rounded-lg flex items-center justify-center gap-3 text-sm font-medium text-gray-700"
+            className="w-full border border-gray-300 hover:bg-gray-50 transition py-1.5 sm:py-2 rounded-lg flex items-center justify-center gap-2.5 text-xs sm:text-sm font-medium text-gray-700"
           >
-            <FontAwesomeIcon icon={faGoogle} className="text-red-500 text-lg" />
+            <FontAwesomeIcon icon={faGoogle} className="text-red-500 text-base sm:text-lg" />
             Continue with Google
           </button>
 
           <button
             onClick={handleFacebookLogin}
             type="button"
-            className="w-full border border-gray-300 hover:bg-gray-50 transition py-2 rounded-lg flex items-center justify-center gap-3 text-sm font-medium text-gray-700"
+            className="w-full border border-gray-300 hover:bg-gray-50 transition py-1.5 sm:py-2 rounded-lg flex items-center justify-center gap-2.5 text-xs sm:text-sm font-medium text-gray-700"
           >
-            <FontAwesomeIcon icon={faFacebook} className="text-blue-600 text-lg" />
+            <FontAwesomeIcon icon={faFacebook} className="text-blue-600 text-base sm:text-lg" />
             Continue with Facebook
           </button>
 
           <button
             type="button"
-            className="w-full border border-gray-300 hover:bg-gray-50 transition py-2 rounded-lg flex items-center justify-center gap-3 text-sm font-medium text-gray-700"
+            className="w-full border border-gray-300 hover:bg-gray-50 transition py-1.5 sm:py-2 rounded-lg flex items-center justify-center gap-2.5 text-xs sm:text-sm font-medium text-gray-700"
           >
-            <FontAwesomeIcon icon={faGithub} className="text-black text-lg" />
+            <FontAwesomeIcon icon={faGithub} className="text-black text-base sm:text-lg" />
             Continue with GitHub
           </button>
         </div>
 
         {/* Bottom */}
-        <p className="text-center text-sm text-gray-600 mt-5">
+        <p className="text-center text-xs sm:text-sm text-gray-600 mt-3 sm:mt-5">
           Don't have an account?{" "}
-          <a
-            href="/register"
+          <Link
+            to="/register"
             className="text-blue-600 font-medium hover:underline"
           >
             Sign Up
-          </a>
+          </Link>
         </p>
       </div>
     </div>

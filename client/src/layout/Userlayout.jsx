@@ -30,10 +30,11 @@ const Userlayout = () => {
       />
 
       <main className="pb-20 md:pb-0">
+        isOpen={isOpen}
         <Outlet />
       </main>
 
-    
+
       <Footer/>
     </div>
   );

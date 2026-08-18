@@ -11,7 +11,7 @@ import {
 import { useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 
-const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded }) => {
+const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded,isOpen }) => {
   const { logout } = useContext(AuthContext);
 
   const navItems = [
@@ -37,7 +37,7 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded }) => {
 
   return (
     <aside
-      className={`sticky top-0 md:mt-4 z-40 bg-white border-b sm:border-b-0 sm:border-r border-slate-200 transition-all duration-300 w-full sm:h-screen ${isExpanded ? "sm:w-64" : "sm:w-64" /* ডেস্কটপে সব সময় চওড়া (w-64) রাখতে চাইলে */
+      className={`sticky top-0 md:mt-4 z-40 bg-white border-b sm:border-b-0 sm:border-r  border-slate-200 transition-all duration-300 w-full sm:h-screen ${isExpanded ? "sm:w-64" : "sm:w-64" /* ডেস্কটপে সব সময় চওড়া (w-64) রাখতে চাইলে */
         } sm:flex sm:flex-col sm:justify-between sm:p-4`}
     >
       {/* ==========================================

@@ -24,13 +24,8 @@ const UserOrders = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("token");
 
-        const res = await axiosInstance.get("/api/orders/order-details", {
-          headers: {
-            Authorization: token,
-          },
-        });
+        const res = await axiosInstance.get("/api/orders/order-details");
 
         setOrders(res.data.orders);
       } catch (error) {

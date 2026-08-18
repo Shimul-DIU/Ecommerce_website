@@ -15,7 +15,7 @@ const useGoogleSignIn = () => {
     try {
       const response = await signInWithPopup(auth, provider);
       const user = response.user;
-      console.log(user)
+  
 
       const res = await axiosInstance.post("/api/auth/user/google-login", {
         fullname: user.displayName,
@@ -24,7 +24,7 @@ const useGoogleSignIn = () => {
         firebaseId: user.uid,
       });
 
-      login(res.data.token);
+      login(res.data.accessToken);
       navigate("/userDashboard");
     } catch (error) {
       console.log(error);

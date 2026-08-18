@@ -41,7 +41,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       {/* Sidebar Container */}
       <aside
         className={`fixed left-0 w-72 bg-white shadow-2xl z-50 flex flex-col transform transition-all duration-300 ease-in-out border-r border-gray-100 ${isOpen ? "translate-x-0" : "-translate-x-full"
-          } top-[72px] h-[calc(100vh-72px)]"
+          } top-[68px] h-[calc(100vh-68px)]"
           `}
       >
         {/* Header */}

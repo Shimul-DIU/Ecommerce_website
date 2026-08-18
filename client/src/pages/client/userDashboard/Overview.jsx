@@ -24,10 +24,8 @@ export default function Overview() {
     const fetchOrder = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem('token');
-        const res = await axiosInstance.get('/api/orders/order-details', {
-          headers: { Authorization: token },
-        });
+
+        const res = await axiosInstance.get('/api/orders/order-details');
         setOrders(res.data.orders || []);
       } catch (error) {
         console.error("Error fetching orders:", error);

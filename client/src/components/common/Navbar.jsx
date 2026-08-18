@@ -15,6 +15,7 @@ import {
   faMoneyBillWave,
   faSignOutAlt,
   faBoxOpen,
+  faUserShield
 } from "@fortawesome/free-solid-svg-icons";
 import { CountContext } from "../../context/countContext";
 import { useScroll } from "../../hooks/useScroll";
@@ -338,6 +339,13 @@ const Navbar = ({ onMenuClick }) => {
                             <FontAwesomeIcon icon={faUser} className="text-xs" /> My Profile
                           </Link>
                           <Link
+                              to="/admin/login"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                          >
+                              <FontAwesomeIcon icon={faUserShield} className="text-xs" /> Admin
+                          </Link>
+                          <Link
                             to="/orders"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
@@ -406,11 +414,18 @@ const Navbar = ({ onMenuClick }) => {
                   {accessToken && mobileUserMenuOpen && (
                     <div className="absolute right-0 top-full mr-2 w-36 bg-white border border-slate-100 rounded-lg shadow-xl z-50 text-xs overflow-hidden">
                       <Link
-                        to="/userDashboard"
+                          to="/userDashboard"
                         onClick={() => setMobileUserMenuOpen(false)}
                         className="flex items-center gap-2 px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition-colors"
                       >
-                        <FontAwesomeIcon icon={faUser} className="text-[10px] text-slate-400" /> My Profile
+                          <FontAwesomeIcon icon={faUser} className="text-[10px] text-slate-400" />My Profile
+                      </Link>
+                      <Link
+                          to="/admin/login"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-2 px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                      >
+                          <FontAwesomeIcon icon={faUserShield} className="text-[10px] text-slate-400" />Admin
                       </Link>
                       <Link
                         to="/orders"
