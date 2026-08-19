@@ -90,7 +90,7 @@ const Login = () => {
 
   return (
     /* Reduced container top margin and padding for mobile */
-    <div className="mt-8 sm:mt-12 md:mt-14 min-h-[calc(100vh-3.5rem)] sm:min-h-[calc(100vh-6rem)] bg-gray-100 flex items-center justify-center px-3 py-4 sm:px-4 sm:py-6">
+    <div className="mt-7 sm:mt-12 md:mt-14 min-h-[calc(100vh-3.5rem)] sm:min-h-[calc(100vh-6rem)] bg-gray-100 flex items-center justify-center px-3 py-4 sm:px-4 sm:py-6">
       {/* Login Card - Compact padding on mobile */}
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-4 sm:p-7">
         {/* Heading - Reduced bottom margin */}
