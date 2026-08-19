@@ -39,6 +39,12 @@ export const AuthProvider = ({ children }) => {
     return response.data;
   };
 
+  const googleLogin = (accessToken, user) => {
+    setAccessToken(accessToken);
+    saveTokenToManager(accessToken);
+    setUser(user);
+  };
+
   // ===================================================
   // REGISTER
   // ===================================================
@@ -104,6 +110,7 @@ export const AuthProvider = ({ children }) => {
         user,
         loading,
         login,
+        googleLogin,
         register,
         logout,
       }}
@@ -113,4 +120,3 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);

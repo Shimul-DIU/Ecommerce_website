@@ -1,14 +1,27 @@
-import { useContext } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { useContext } from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+
 
 const UserProtectedRoute = () => {
-  const { accessToken } =useContext(AuthContext)
+  const { user, loading } = useContext(AuthContext)
 
-  if (!accessToken) {
+  // এখনো authentication check শেষ হয়নি
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  // authentication check শেষ
+  // কিন্তু user নেই
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 
+  // user আছে
   return <Outlet />;
 };
 

@@ -63,7 +63,7 @@ const createUser = async (req, res) => {
 /* ================= LOGIN USER ================= */
 const loginUser = async (req, res) => {
   try {
-
+    const isProduction = process.env.NODE_ENV === "production";
     const { email, password, rememberMe, agreedToTerms } = req.body;
 
     /* if (!email || !password) {
@@ -112,8 +112,8 @@ const loginUser = async (req, res) => {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: rememberMe ?
         30 * 24 * 60 * 60 * 1000 :
         15 * 24 * 60 * 60 * 1000,
@@ -320,6 +320,7 @@ const resetPassword = async (req, res) => {
 
 /* ================= GOOGLE LOGIN ================= */
 const GoogleLogin = async (req, res) => {
+  const isProduction = process.env.NODE_ENV === "production";
   try {
     const { fullname, email, photoURL, firebaseId } = req.body;
 
@@ -348,8 +349,8 @@ const GoogleLogin = async (req, res) => {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge:
         15 * 24 * 60 * 60 * 1000,
       path: "/",

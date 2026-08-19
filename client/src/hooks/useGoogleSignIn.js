@@ -8,14 +8,14 @@ import { AuthContext } from "../context/AuthContext";
 
 const useGoogleSignIn = () => {
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { googleLogin } = useContext(AuthContext);
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
       const response = await signInWithPopup(auth, provider);
       const user = response.user;
-  
+
 
       const res = await axiosInstance.post("/api/auth/user/google-login", {
         fullname: user.displayName,
@@ -24,7 +24,7 @@ const useGoogleSignIn = () => {
         firebaseId: user.uid,
       });
 
-      login(res.data.accessToken);
+      googleLogin(res.data.accessToken,res.data.user);
       navigate("/userDashboard");
     } catch (error) {
       console.log(error);
