@@ -21,11 +21,17 @@ import { CountContext } from "../../context/countContext";
 import { useScroll } from "../../hooks/useScroll";
 import { AuthContext } from '../../context/AuthContext'
 import { getInitials } from "../../utils/getInitials";
+
+// ---- Consistent icon-size tokens (used everywhere instead of one-off text-lg/text-xl) ----
+const ICON_SM = "text-[13px]";      // top utility bar (globe, currency)
+const ICON_ACTION = "text-[18px] sm:text-[19px] md:text-[18px]"; // search / heart / cart / bars — same visual size everywhere
+const AVATAR_SIZE = "w-7 h-7 sm:w-10 sm:h-10"; // avatar/fallback circle, same on mobile & desktop
+
 const CountBadge = ({ count, color }) => {
   if (!count) return null;
   return (
     <span
-      className={`absolute -top-2 -right-2  w-4 h-4 px-1 ${color} text-white text-[10px] font-semibold rounded-full flex items-center justify-center leading-none shadow-sm`}
+      className={`absolute -top-1 -right-1 min-w-[16px] h-4 px-1 ${color} text-white text-[10px] font-semibold rounded-full flex items-center justify-center leading-none shadow-sm`}
     >
       {count > 99 ? "99+" : count}
     </span>
@@ -128,7 +134,7 @@ const Navbar = ({ onMenuClick }) => {
       <div className="max-w-7xl mx-auto">
         {/* ================= TOP ANNOUNCEMENT & UTILITY BAR ================= */}
         <div
-          className="max-w-7xl rounded-t-md mx-auto ps-6 bg-white border-b border-black/70 text-slate-600 text-xs transition-all duration-300 overflow-hidden  lg:pt-1 h-5 md:h-6 pb-0.5 opacity-100"
+          className="max-w-7xl rounded-t-md mx-auto ps-6 bg-white border-b border-b-gray-300 text-slate-600 text-xs transition-all duration-300 overflow-hidden  lg:pt-1 h-5 md:h-6 pb-0.5 opacity-100"
 
         >
           <div className="flex items-center justify-between">
@@ -138,7 +144,7 @@ const Navbar = ({ onMenuClick }) => {
 
             <div className="flex items-center justify-end gap-4 ml-auto">
               <div className="flex items-center gap-1 cursor-pointer hover:text-slate-800 transition-colors">
-                <FontAwesomeIcon icon={faGlobe} className="text-xs" />
+                <FontAwesomeIcon icon={faGlobe} className={ICON_SM} />
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
@@ -149,7 +155,7 @@ const Navbar = ({ onMenuClick }) => {
                 </select>
               </div>
               <div className="flex items-center gap-1 cursor-pointer hover:text-slate-800 transition-colors">
-                <FontAwesomeIcon icon={faMoneyBillWave} className="text-[11px]" />
+                <FontAwesomeIcon icon={faMoneyBillWave} className={ICON_SM} />
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
@@ -170,9 +176,9 @@ const Navbar = ({ onMenuClick }) => {
             <button
               onClick={handleSearchClose}
               aria-label="Close search"
-              className="text-slate-700 hover:text-slate-900 transition-colors shrink-0"
+              className="text-slate-700 hover:text-slate-900 transition-colors shrink-0 p-2 -m-2"
             >
-              <FontAwesomeIcon icon={faArrowLeft} className="text-lg" />
+              <FontAwesomeIcon icon={faArrowLeft} className={ICON_ACTION} />
             </button>
             <div className="flex-1 flex items-center bg-slate-50 rounded-full pl-4 pr-2 h-10 shadow-sm border border-slate-200">
               <FontAwesomeIcon icon={faSearch} className="text-slate-400 text-sm mr-2 shrink-0" />
@@ -187,9 +193,9 @@ const Navbar = ({ onMenuClick }) => {
             </div>
             <button
               aria-label="Voice search"
-              className="text-slate-700 hover:text-slate-900 transition-colors shrink-0"
+              className="text-slate-700 hover:text-slate-900 transition-colors shrink-0 p-2 -m-2"
             >
-              <FontAwesomeIcon icon={faMicrophone} className="text-lg" />
+              <FontAwesomeIcon icon={faMicrophone} className={ICON_ACTION} />
             </button>
           </nav>
         ) : (
@@ -208,8 +214,8 @@ const Navbar = ({ onMenuClick }) => {
                 <div className="flex-1 flex justify-center">
                   <div
                     className={`flex items-center border rounded-full px-4 h-10 w-full max-w-sm transition-all duration-200 ${searchFocused
-                        ? "ring-2 ring-blue-500/40 border-blue-500 bg-white"
-                        : "border-slate-200 bg-slate-50 hover:border-slate-300"
+                      ? "ring-2 ring-blue-500/40 border-blue-500 bg-white"
+                      : "border-slate-200 bg-slate-50 hover:border-slate-300"
                       }`}
                   >
                     <FontAwesomeIcon icon={faSearch} className="text-slate-400 text-sm mr-2.5 shrink-0" />
@@ -294,19 +300,27 @@ const Navbar = ({ onMenuClick }) => {
                     ))}
                   </div>
 
-                  <div className="flex items-center gap-1.5 text-slate-600">
-                      <Link to="/userDashboard/wishlist" className="relative hover:text-blue-600 transition-colors" aria-label="Wishlist">
-                      <FontAwesomeIcon icon={faHeart} className="py-1 px-1  text-lg" />
+                  <div className="flex items-center gap-1 text-slate-600">
+                    <Link
+                      to="/userDashboard/wishlist"
+                      className="relative hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-slate-50"
+                      aria-label="Wishlist"
+                    >
+                      <FontAwesomeIcon icon={faHeart} className={ICON_ACTION} />
                       <CountBadge count={wishlist.length} color="bg-red-500" />
                     </Link>
 
-                      <Link to="/userDashboard/cart" className="relative hover:text-blue-600 transition-colors" aria-label="Cart">
-                      <FontAwesomeIcon icon={faCartShopping} className="py-1 px-1  text-lg" />
+                    <Link
+                      to="/userDashboard/cart"
+                      className="relative hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-slate-50"
+                      aria-label="Cart"
+                    >
+                      <FontAwesomeIcon icon={faCartShopping} className={ICON_ACTION} />
                       <CountBadge count={cart.length} color="bg-blue-600" />
                     </Link>
 
                     {/* DESKTOP USER MENU */}
-                    <div className="relative" onMouseLeave={() => setIsUserMenuOpen(false)}>
+                    <div className="relative ml-1" onMouseLeave={() => setIsUserMenuOpen(false)}>
                       <div
                         onClick={() => handleUserIconClick(false)}
                         className="cursor-pointer"
@@ -319,10 +333,10 @@ const Navbar = ({ onMenuClick }) => {
                           <img
                             src={user.avatar}
                             alt={user.fullname}
-                            className="w-9 h-9  rounded-full object-cover"
+                            className={`${AVATAR_SIZE} rounded-full object-cover`}
                           />
                         ) : (
-                          <div className="cursor-pointer ms-2 w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">
+                          <div className={`cursor-pointer ${AVATAR_SIZE} rounded-full bg-blue-600 text-white flex items-center justify-center text-sm`}>
                             {getInitials(user?.fullname)}
                           </div>
                         )}
@@ -336,28 +350,28 @@ const Navbar = ({ onMenuClick }) => {
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
                           >
-                            <FontAwesomeIcon icon={faUser} className="text-xs" /> My Profile
+                            <FontAwesomeIcon icon={faUser} className="text-xs w-3.5" /> My Profile
                           </Link>
                           <Link
-                              to="/admin/login"
+                            to="/admin/login"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
                           >
-                              <FontAwesomeIcon icon={faUserShield} className="text-xs" /> Admin
+                            <FontAwesomeIcon icon={faUserShield} className="text-xs w-3.5" /> Admin
                           </Link>
                           <Link
                             to="/orders"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
                           >
-                            <FontAwesomeIcon icon={faBoxOpen} className="text-xs" /> Orders
+                            <FontAwesomeIcon icon={faBoxOpen} className="text-xs w-3.5" /> Orders
                           </Link>
                           <hr className="my-1 border-slate-100" />
                           <button
                             onClick={handleLogout}
                             className="w-full flex items-center gap-2.5 px-4 py-2.5 text-red-500 hover:bg-slate-50 text-left transition-colors"
                           >
-                            <FontAwesomeIcon icon={faSignOutAlt} className="text-xs" /> Logout
+                            <FontAwesomeIcon icon={faSignOutAlt} className="text-xs w-3.5" /> Logout
                           </button>
                         </div>
                       )}
@@ -368,30 +382,43 @@ const Navbar = ({ onMenuClick }) => {
             </div>
 
             {/* ================= MOBILE TOP NAVBAR ================= */}
-            <nav className="md:hidden h-12 bg-white shadow-sm border-b border-slate-200 flex items-center justify-between transition-all duration-300">
+            <nav className="md:hidden h-12 bg-white shadow-sm border-b border-slate-200 flex items-center justify-between px-3 transition-all duration-300">
               <Link to="/">
-                <img src={logo} alt="logo" className="transition-all duration-300 h-9 sm:h-10" />
+                <img src={logo} alt="logo" className="transition-all basis-2/6 duration-300 h-10 sm:h-11" />
               </Link>
 
-              <div className="flex items-center gap-3.5 text-slate-700">
-                <button onClick={handleSearchOpen} aria-label="Search" className="">
-                  <FontAwesomeIcon icon={faSearch} className="text-base md:text-lg" />
+              <div className="flex items-center justify-around basis-4/6 gap-1 text-slate-700">
+                <button
+                  onClick={handleSearchOpen}
+                  aria-label="Search"
+                  className=" rounded-full hover:bg-slate-50"
+                >
+                  <FontAwesomeIcon icon={faSearch} className={ICON_ACTION} />
                 </button>
 
-                  <Link to="/userDashboard/wishlist" className="relative hover:text-blue-600 transition-colors" aria-label="Wishlist">
-                    <FontAwesomeIcon icon={faHeart} className=" text-base md:text-lg" />
-                    <CountBadge count={wishlist.length} color="bg-red-500 absolute " />
-                  </Link>
-                  <Link to="/userDashboard/cart" className="relative " aria-label="Cart">
-                    <FontAwesomeIcon icon={faCartShopping} className=" text-base md:text-lg" />
-                  <CountBadge count={cart.length} color="bg-red-500" className  />
+                <Link
+                  to="/userDashboard/wishlist"
+                  className="relative p-1 rounded-full hover:bg-slate-50 hover:text-blue-600 transition-colors"
+                  aria-label="Wishlist"
+                >
+                  <FontAwesomeIcon icon={faHeart} className={ICON_ACTION} />
+                  <CountBadge count={wishlist.length} color="bg-red-500" />
+                </Link>
+
+                <Link
+                  to="/userDashboard/cart"
+                  className="relative p-1 rounded-full hover:bg-slate-50 hover:text-blue-600 transition-colors"
+                  aria-label="Cart"
+                >
+                  <FontAwesomeIcon icon={faCartShopping} className={ICON_ACTION} />
+                  <CountBadge count={cart.length} color="bg-blue-600" />
                 </Link>
 
                 {/* MOBILE USER MENU (DROPDOWN) */}
-                <div className="flex items-center" ref={mobileMenuRef}>
+                <div className="flex items-center relative" ref={mobileMenuRef}>
                   <div
                     onClick={() => handleUserIconClick(true)}
-                    className="cursor-pointer"
+                    className="cursor-pointer p-1"
                     role="button"
                     aria-haspopup="true"
                     aria-expanded={mobileUserMenuOpen}
@@ -401,10 +428,10 @@ const Navbar = ({ onMenuClick }) => {
                       <img
                         src={user.avatar}
                         alt={user.fullname}
-                        className="w-6 h-6 rounded-full object-cover"
+                        className={`${AVATAR_SIZE} rounded-full object-cover`}
                       />
                     ) : (
-                      <div className="cursor-pointer ms-2 w-[22px] sm:w-6 h-[22px] sm:h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[12px]">
+                      <div className={`cursor-pointer ${AVATAR_SIZE} rounded-full bg-blue-600 text-white flex items-center justify-center text-sm`}>
                         {getInitials(user?.fullname)}
                       </div>
                     )}
@@ -412,41 +439,41 @@ const Navbar = ({ onMenuClick }) => {
 
                   {/* শুধুমাত্র accessToken থাকলেই ড্রপডাউন রেন্ডার হবে */}
                   {accessToken && mobileUserMenuOpen && (
-                    <div className="absolute right-0 top-full mr-2 w-36 bg-white border border-slate-100 rounded-lg shadow-xl z-50 text-xs overflow-hidden">
+                    <div className="absolute right-0 top-full mt-1.5 w-48 bg-white border border-slate-100 rounded-lg shadow-xl z-50 text-sm overflow-hidden">
                       <Link
-                          to="/userDashboard"
+                        to="/userDashboard"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
                       >
-                          <FontAwesomeIcon icon={faUser} className="text-[10px] text-slate-400" />My Profile
+                        <FontAwesomeIcon icon={faUser} className="text-sm w-4 text-slate-400" /> My Profile
                       </Link>
                       <Link
-                          to="/admin/login"
+                        to="/admin/login"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
                       >
-                          <FontAwesomeIcon icon={faUserShield} className="text-[10px] text-slate-400" />Admin
+                        <FontAwesomeIcon icon={faUserShield} className="text-sm w-4 text-slate-400" /> Admin
                       </Link>
                       <Link
                         to="/orders"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
                       >
-                        <FontAwesomeIcon icon={faBoxOpen} className="text-[10px] text-slate-400" /> Orders
+                        <FontAwesomeIcon icon={faBoxOpen} className="text-sm w-4 text-slate-400" /> Orders
                       </Link>
                       <hr className="my-0.5 border-slate-100" />
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-3 py-1.5 text-red-500 hover:bg-slate-50 text-left transition-colors"
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-red-500 hover:bg-slate-50 text-left transition-colors"
                       >
-                        <FontAwesomeIcon icon={faSignOutAlt} className="text-[10px]" /> Logout
+                        <FontAwesomeIcon icon={faSignOutAlt} className="text-sm w-4" /> Logout
                       </button>
                     </div>
                   )}
                 </div>
 
-                <button onClick={onMenuClick} aria-label="Open menu" className="text-slate-700 mr-1">
-                  <FontAwesomeIcon icon={faBars} className="text-lg " />
+                <button onClick={onMenuClick} aria-label="Open menu" className=" rounded-full hover:bg-slate-50 text-slate-700">
+                  <FontAwesomeIcon icon={faBars} className={ICON_ACTION} />
                 </button>
               </div>
             </nav>

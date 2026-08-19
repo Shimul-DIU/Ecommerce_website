@@ -63,10 +63,10 @@ const NewArrivals = () => {
       {/* Section Header */}
       <div className="flex items-center justify-between pb-3 ">
         <div className="flex items-center gap-2 ">
-          <h2 className="text-lg md:text-xl lg:text-2xl font-medium text-[#16241F]">
-             New Arrivals
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-medium text-[#16241F]">
+            New Arrivals
           </h2>
-          <span className="ml-2 bg-[#FAF6EF] border border-[#E4DDCE] text-[#16241F]/70 text-[10px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-full">
+          <span className="ml-2 bg-[#FAF6EF] border border-[#E4DDCE] text-[#16241F]/70 text-xs sm:text-sm font-semibold px-2.5 py-0.5 rounded-full">
             {products?.length || 0} Products
           </span>
         </div>
@@ -75,13 +75,13 @@ const NewArrivals = () => {
         <Link
           to="/products"
           state={{ filter: "all" }}
-          className="group flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#16241F] hover:text-[#B08946] transition-colors duration-200"
+          className="group flex items-center gap-1.5 text-sm sm:text-base font-semibold text-[#16241F] hover:text-[#B08946] transition-colors duration-200"
         >
           <span>See All</span>
-          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#FAF6EF] group-hover:bg-[#B08946] text-[#16241F] group-hover:text-white flex items-center justify-center transition-all duration-300">
+          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#FAF6EF] group-hover:bg-[#B08946] text-[#16241F] group-hover:text-white flex items-center justify-center transition-all duration-300">
             <FontAwesomeIcon
               icon={faArrowRight}
-              className="text-[10px] sm:text-xs transition-transform duration-200 group-hover:translate-x-0.5"
+              className="text-xs sm:text-sm transition-transform duration-200 group-hover:translate-x-0.5"
             />
           </div>
         </Link>
@@ -137,8 +137,8 @@ const NewArrivals = () => {
 
                   {/* Top Left Discount Badge */}
                   {discountPercent > 0 && !isOutOfStock && (
-                    <div className="absolute top-2 left-2 z-10 bg-red-600 text-white text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-md flex items-center gap-1">
-                      <FontAwesomeIcon icon={faTag} className="text-[8px] sm:text-[9px]" />
+                    <div className="absolute top-2 left-2 z-10 bg-red-600 text-white text-[10px] sm:text-xs font-extrabold px-2 py-0.5 rounded-md shadow-md flex items-center gap-1">
+                      <FontAwesomeIcon icon={faTag} className="text-[9px] sm:text-[10px]" />
                       <span>{discountPercent}% OFF</span>
                     </div>
                   )}
@@ -152,14 +152,14 @@ const NewArrivals = () => {
                         toggleWishlist(item._id);
                       }}
                       aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inWishlist
-                          ? "bg-red-500 text-white"
-                          : "bg-white/90 text-[#16241F]/60 hover:text-red-500 hover:bg-white"
+                      className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inWishlist
+                        ? "bg-red-500 text-white"
+                        : "bg-white/90 text-[#16241F]/60 hover:text-red-500 hover:bg-white"
                         }`}
                     >
                       <FontAwesomeIcon
                         icon={faHeart}
-                        className="text-[11px] sm:text-xs"
+                        className="text-xs sm:text-sm"
                       />
                     </button>
 
@@ -170,14 +170,14 @@ const NewArrivals = () => {
                         toggleCart(item._id);
                       }}
                       aria-label={inCart ? "Remove from cart" : "Add to cart"}
-                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inCart
-                          ? "bg-[#16241F] text-[#B08946]"
-                          : "bg-white/90 text-[#16241F]/60 hover:text-[#16241F] hover:bg-white"
+                      className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inCart
+                        ? "bg-[#16241F] text-[#B08946]"
+                        : "bg-white/90 text-[#16241F]/60 hover:text-[#16241F] hover:bg-white"
                         }`}
                     >
                       <FontAwesomeIcon
                         icon={faShoppingCart}
-                        className="text-[11px] sm:text-xs"
+                        className="text-xs sm:text-sm"
                       />
                     </button>
                   </div>
@@ -185,7 +185,7 @@ const NewArrivals = () => {
                   {/* Out of Stock Overlay */}
                   {isOutOfStock && (
                     <div className="absolute inset-0 bg-[#16241F]/40 backdrop-blur-[2px] flex items-center justify-center p-2 z-10">
-                      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-red-600 bg-white px-3 py-1 rounded-full shadow-lg border border-red-100">
+                      <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-red-600 bg-white px-3 py-1 rounded-full shadow-lg border border-red-100">
                         Out of Stock
                       </span>
                     </div>
@@ -197,7 +197,7 @@ const NewArrivals = () => {
                   <div>
                     <h3
                       title={item.name}
-                      className="text-[#16241F] text-xs sm:text-sm font-semibold line-clamp-1 leading-snug group-hover:text-[#B08946] transition-colors"
+                      className="text-[#16241F] text-sm sm:text-base font-semibold line-clamp-1 leading-snug group-hover:text-[#B08946] transition-colors"
                     >
                       {item.name}
                     </h3>
@@ -206,23 +206,23 @@ const NewArrivals = () => {
                   <div className="mt-2">
                     <div className="space-y-0.5 mb-2">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1">
-                          <span className="text-sm sm:text-base font-extrabold text-[#16241F]">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-base sm:text-lg font-extrabold text-[#16241F]">
                             ৳{item.price}
                           </span>
                           {originalPrice > item.price && (
-                            <span className="text-[10px] sm:text-xs text-[#16241F]/40 line-through font-medium">
+                            <span className="text-xs sm:text-sm text-[#16241F]/40 line-through font-medium">
                               ৳{originalPrice}
                             </span>
                           )}
                         </div>
-                        <span className="text-[9px] sm:text-[10px] font-medium text-[#16241F]/50 bg-[#FAF6EF] px-1 py-0.5 rounded border border-[#E4DDCE]/60">
+                        <span className="text-[10px] sm:text-xs font-medium text-[#16241F]/50 bg-[#FAF6EF] px-1.5 py-0.5 rounded border border-[#E4DDCE]/60">
                           Stock: {item.stock}
                         </span>
                       </div>
 
                       {savingsAmount > 0 && !isOutOfStock && (
-                        <p className="text-[9px] sm:text-[10px] text-green-600 font-semibold">
+                        <p className="text-[10px] sm:text-xs text-green-600 font-semibold">
                           Save ৳{savingsAmount}
                         </p>
                       )}
@@ -230,7 +230,7 @@ const NewArrivals = () => {
 
                     <button
                       disabled={isOutOfStock}
-                      className="w-full h-8 sm:h-9 rounded-xl bg-[#16241F] hover:bg-[#0F1A16] active:scale-[0.98] disabled:bg-[#16241F]/20 disabled:text-[#16241F]/40 disabled:cursor-not-allowed text-[#FAF6EF] text-xs font-bold transition-all duration-200 shadow-sm flex items-center justify-center gap-1.5"
+                      className="w-full h-9 sm:h-10 rounded-xl bg-[#16241F] hover:bg-[#0F1A16] active:scale-[0.98] disabled:bg-[#16241F]/20 disabled:text-[#16241F]/40 disabled:cursor-not-allowed text-[#FAF6EF] text-sm sm:text-base font-bold transition-all duration-200 shadow-sm flex items-center justify-center gap-1.5"
                     >
                       <span>{isOutOfStock ? "Unavailable" : "Buy Now"}</span>
                     </button>

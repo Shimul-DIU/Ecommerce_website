@@ -11,7 +11,7 @@ import {
 import { useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 
-const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded,isOpen }) => {
+const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded, isOpen }) => {
   const { logout } = useContext(AuthContext);
 
   const navItems = [
@@ -25,7 +25,7 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded,isOpen }) => {
 
   const handleItemClick = (e) => {
     e.stopPropagation();
-    // Mobile-এ ক্লিক করলে বন্ধ হবে, desktop-এ না চাইলে condition উঠিয়ে দিতে পারেন
+    // Mobile-এ ক্লিক করলে বন্ধ হবে, desktop-এ না চাইলে condition উঠিয়ে দিতে পারেন
     if (setIsExpanded && window.innerWidth < 640) setIsExpanded(false);
   };
 
@@ -37,14 +37,14 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded,isOpen }) => {
 
   return (
     <aside
-      className={`sticky top-0 md:mt-4 z-40 bg-white border-b sm:border-b-0 sm:border-r  border-slate-200 transition-all duration-300 w-full sm:h-screen ${isExpanded ? "sm:w-64" : "sm:w-64" /* ডেস্কটপে সব সময় চওড়া (w-64) রাখতে চাইলে */
+      className={`sticky top-0 md:mt-4 z-40 bg-white border-b sm:border-b-0 sm:border-r  border-slate-200 transition-all duration-300 w-full sm:h-screen ${isExpanded ? "sm:w-64" : "sm:w-64" /* ডেস্কটপে সব সময় চওড়া (w-64) রাখতে চাইলে */
         } sm:flex sm:flex-col sm:justify-between sm:p-4`}
     >
       {/* ==========================================
           1. MOBILE LAYOUT (< sm screens)
          ========================================== */}
       <div className="sm:hidden min-w-full  bg-white">
-        <nav className="flex items-center justify-between   bg-white   border border-slate-100 w-full h-8">
+        <nav className="flex items-center justify-between bg-white border border-slate-100 w-full h-12">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -54,13 +54,13 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded,isOpen }) => {
                 onClick={handleItemClick}
                 title={item.label}
                 className={({ isActive }) =>
-                  `flex items-center justify-center flex-1 h-6 rounded-lg transition-all duration-200 ${isActive
+                  `flex items-center justify-center flex-1 h-11 rounded-lg transition-all duration-200 ${isActive
                     ? " text-blue-600 scale-105"
                     : "text-slate-500 hover:bg-slate-200/60 hover:text-slate-800"
                   }`
                 }
               >
-                <Icon size={18} />
+                <Icon size={22} strokeWidth={2} />
               </NavLink>
             );
           })}
@@ -68,9 +68,9 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded,isOpen }) => {
           <button
             onClick={handleLogout}
             title="Logout"
-            className="flex items-center justify-center flex-1 h-6 rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+            className="flex items-center justify-center flex-1 h-11 rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
           >
-            <LogOut size={18} />
+            <LogOut size={24} strokeWidth={2} />
           </button>
         </nav>
       </div>
@@ -82,8 +82,8 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded,isOpen }) => {
         <div className="flex flex-col w-full ">
           {/* Logo Section */}
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 px-2">
-            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-200">
-              <Store size={20} className="text-white" />
+            <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-200">
+              <Store size={24} className="text-white" />
             </div>
             <span className="whitespace-nowrap font-bold text-slate-800 text-lg tracking-tight">
               ShimulShop
@@ -106,7 +106,7 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded,isOpen }) => {
                     }`
                   }
                 >
-                  <Icon size={20} className="flex-shrink-0" />
+                  <Icon size={24} strokeWidth={2} className="flex-shrink-0" />
                   <span className="whitespace-nowrap">
                     {item.label}
                   </span>
@@ -122,7 +122,7 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded,isOpen }) => {
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors w-full"
           >
-            <LogOut size={20} className="flex-shrink-0" />
+            <LogOut size={24} strokeWidth={2} className="flex-shrink-0" />
             <span className="whitespace-nowrap">
               Logout
             </span>

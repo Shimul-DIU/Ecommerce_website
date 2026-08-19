@@ -85,7 +85,7 @@ const SidebarCategories = () => {
 
     <aside className="hidden lg:block  w-full  bg-white rounded-xl border border-slate-200/80 px-3.5   shadow-sm static top-44 z-10">
       {/* Header */}
-      <h2 className="text-lg md:text-xl lg:text-2xl font-medium   pb-2.5 mb-1 border-b border-slate-100">
+      <h2 className="text-xl md:text-2xl lg:text-2xl font-medium   pb-2.5 mb-1 border-b border-slate-100">
         Category
       </h2>
       {/* Accordion List */}
@@ -94,16 +94,16 @@ const SidebarCategories = () => {
           const isOpen = !!openCategories[category.id];
 
           return (
-            <div key={category.id} className="py-2">
+            <div key={category.id} className="py-2.5">
               <div
                 onClick={() => toggleCategory(category.id)}
-                className="flex items-center justify-between cursor-pointer group select-none py-0.5"
+                className="flex items-center justify-between cursor-pointer group select-none py-1"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-6 h-6 rounded-md bg-slate-100 flex items-center justify-center  group-hover:bg-blue-600 group-hover:text-white transition-colors duration-200 shrink-0">
-                    <FontAwesomeIcon icon={category.icon} className="text-xs sm:text-sm" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-slate-100 flex items-center justify-center  group-hover:bg-blue-600 group-hover:text-white transition-colors duration-200 shrink-0">
+                    <FontAwesomeIcon icon={category.icon} className="text-sm sm:text-base" />
                   </div>
-                  <span className="text-sm sm:text-base font-semibold  group-hover:text-blue-600 transition-colors truncate">
+                  <span className="text-base sm:text-lg font-semibold  group-hover:text-blue-600 transition-colors truncate">
                     {category.name}
                   </span>
                 </div>
@@ -111,27 +111,27 @@ const SidebarCategories = () => {
                 <button
                   type="button"
                   aria-label="Toggle category"
-                  className=" group-hover:text-blue-600 p-0.5 transition-colors shrink-0"
+                  className=" group-hover:text-blue-600 p-1 transition-colors shrink-0"
                 >
                   <FontAwesomeIcon
                     icon={isOpen ? faMinus : faPlus}
-                    className="text-sm sm:text-base"
+                    className="text-base sm:text-lg"
                   />
                 </button>
               </div>
 
               {isOpen && (
-                <div className="pt-1.5 pb-1 pl-8 pr-1 space-y-1.5">
+                <div className="pt-2 pb-1 pl-9 pr-1 space-y-2">
                   {category.items.map((subItem, index) => (
                     <Link
                       key={index}
                       to={subItem.path}
-                      className="flex items-center justify-between  text-sm md:text-base text-slate-500 hover:text-blue-600 transition-colors py-0.5 group/item"
+                      className="flex items-center justify-between  text-base md:text-lg text-slate-500 hover:text-blue-600 transition-colors py-1 group/item"
                     >
                       <span className="truncate group-hover/item:translate-x-0.5 transition-transform">
                         {subItem.name}
                       </span>
-                      <span className="text-[10px] text-slate-400 group-hover/item:text-blue-600 shrink-0 ml-1">
+                      <span className="text-xs sm:text-sm text-slate-400 group-hover/item:text-blue-600 shrink-0 ml-1.5">
                         ({subItem.count})
                       </span>
                     </Link>

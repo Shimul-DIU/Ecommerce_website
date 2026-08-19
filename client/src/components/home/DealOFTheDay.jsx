@@ -52,10 +52,10 @@ function useCountdown(endsAt) {
 function TimeBox({ value, label }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-md sm:rounded-lg bg-[#16241F] text-[#FAF6EF] flex items-center justify-center text-[11px] sm:text-sm font-medium">
+      <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-md sm:rounded-lg bg-[#16241F] text-[#FAF6EF] flex items-center justify-center text-xs sm:text-base font-semibold">
         {String(value).padStart(2, "0")}
       </div>
-      <span className="text-[8px] sm:text-[10px] text-[#16241F]/45 mt-0.5 uppercase tracking-wide">
+      <span className="text-[10px] sm:text-xs text-[#16241F]/45 mt-1 uppercase tracking-wide">
         {label}
       </span>
     </div>
@@ -81,25 +81,25 @@ function DealCard({ deal }) {
       {/* Content Container */}
       <div className="p-2.5 sm:p-5 flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="text-xs sm:text-xl text-[#16241F] font-semibold leading-snug line-clamp-1 sm:line-clamp-2">
+          <h3 className="text-sm sm:text-lg md:text-xl text-[#16241F] font-semibold leading-snug line-clamp-1 sm:line-clamp-2">
             {name}
           </h3>
-          <p className="hidden sm:block text-xs sm:text-sm text-[#16241F]/50 mt-1 sm:mt-2 leading-relaxed line-clamp-2">
+          <p className="hidden sm:block text-sm md:text-base text-[#16241F]/50 mt-1 sm:mt-2 leading-relaxed line-clamp-2">
             {description}
           </p>
 
-          <div className="flex items-baseline gap-1.5 sm:gap-2 mt-1 sm:mt-3">
-            <span className="text-sm sm:text-2xl text-[#16241F] font-semibold">
+          <div className="flex items-baseline gap-1.5 sm:gap-2 mt-1.5 sm:mt-3">
+            <span className="text-lg sm:text-2xl md:text-3xl text-[#16241F] font-semibold">
               ৳{price}
             </span>
-            <span className="text-[10px] sm:text-sm text-[#16241F]/35 line-through">
+            <span className="text-xs sm:text-base text-[#16241F]/35 line-through">
               ৳{oldPrice}
             </span>
           </div>
 
           {/* Stock progress */}
-          <div className="mt-1.5 sm:mt-4">
-            <div className="flex justify-between text-[10px] sm:text-xs text-[#16241F]/50 mb-0.5 sm:mb-1">
+          <div className="mt-2 sm:mt-4">
+            <div className="flex justify-between text-xs sm:text-sm text-[#16241F]/50 mb-1 sm:mb-1.5">
               <span>
                 Sold: <b className="text-[#16241F]">{sold}</b>
               </span>
@@ -116,13 +116,13 @@ function DealCard({ deal }) {
           </div>
 
           {/* Countdown */}
-          <div className="mt-2 sm:mt-5">
-            <p className="flex items-center gap-1 text-[10px] sm:text-xs font-medium text-[#16241F]/60 mb-1 sm:mb-2">
-              <FontAwesomeIcon icon={faBolt} className="text-[#B08946] text-[10px] sm:text-xs" />
+          <div className="mt-2.5 sm:mt-5">
+            <p className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#16241F]/60 mb-1.5 sm:mb-2">
+              <FontAwesomeIcon icon={faBolt} className="text-[#B08946] text-xs sm:text-sm" />
               {expired ? "Ended" : "Ends in"}
             </p>
             {!expired && (
-              <div className="flex gap-1 sm:gap-2">
+              <div className="flex gap-1.5 sm:gap-2.5">
                 <TimeBox value={days} label="Days" />
                 <TimeBox value={hours} label="Hrs" />
                 <TimeBox value={minutes} label="Min" />
@@ -135,9 +135,9 @@ function DealCard({ deal }) {
         {/* Action Button */}
         <button
           disabled={expired}
-          className="mt-2.5 sm:mt-6 w-full sm:w-auto self-start flex items-center justify-center gap-1.5 px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-md sm:rounded-lg bg-[#16241F] hover:bg-[#0F1A16] disabled:bg-[#16241F]/30 disabled:cursor-not-allowed text-[#FAF6EF] text-[11px] sm:text-sm font-medium transition"
+          className="mt-3 sm:mt-6 w-full sm:w-auto self-start flex items-center justify-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-md sm:rounded-lg bg-[#16241F] hover:bg-[#0F1A16] disabled:bg-[#16241F]/30 disabled:cursor-not-allowed text-[#FAF6EF] text-sm sm:text-base font-medium transition"
         >
-          <FontAwesomeIcon icon={faShoppingCart} className="text-[10px] sm:text-xs" />
+          <FontAwesomeIcon icon={faShoppingCart} className="text-xs sm:text-sm" />
           Add to cart
         </button>
       </div>
@@ -150,10 +150,10 @@ const DealOfTheDay = () => {
     <section className="max-w-7xl mx-auto ">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-baseline justify-between mb-3 sm:mb-8">
-          <h2 className="text-lg md:text-xl lg:text-2xl font-medium text-[#16241F]">
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-medium text-[#16241F]">
             Deal of the Day
           </h2>
-          <span className="text-xs sm:text-sm text-[#16241F]/40">
+          <span className="text-sm sm:text-base text-[#16241F]/40">
             {deals.length} deals
           </span>
         </div>

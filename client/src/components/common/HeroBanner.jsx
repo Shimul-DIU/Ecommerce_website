@@ -83,13 +83,13 @@ const HeroBanner = () => {
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef(null);
 
-  
+
   useEffect(() => {
     if (isPaused) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % banners.length);
-    }, 2500);
+    }, 3500);
 
     return () => clearInterval(interval);
   }, [isPaused, currentIndex]);
@@ -115,20 +115,22 @@ const HeroBanner = () => {
 
   return (
     <div
-      className="max-w-7xl mx-auto "
+      // mt-[..] = navbar-এর (utility bar + main nav) মোট ফিক্সড উচ্চতা, যাতে banner নেভবারের ঠিক নিচে বসে,
+      // ওভারল্যাপ/আন্ডারল্যাপ না হয়। mobile: ~68px (h-5 + h-12), md+: ~80px (h-6 + h-14)। সাথে সামান্য গ্যাপ যোগ করা আছে।
+      className="max-w-7xl mx-auto mt-[-27px] md:mt-[-35px] px-2 sm:px-0"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
       {/* Container */}
-      <div className="relative w-full h-[140px] sm:h-[200px] md:h-[240px] lg:h-[260px] rounded-lg sm:rounded-xl overflow-hidden shadow-sm">
+      <div className="relative w-full h-[200px] sm:h-[280px] md:h-[340px] lg:h-[400px] rounded-lg sm:rounded-xl overflow-hidden shadow-sm">
 
         {/* Slides Stack */}
         {banners.map((banner, index) => (
           <div
             key={banner.id}
-            className="absolute inset-0 flex items-center justify-between px-4 sm:px-8 md:px-12 transition-opacity duration-700 ease-in-out"
+            className="absolute inset-0 flex items-center justify-between px-5 sm:px-10 md:px-14 lg:px-16 transition-opacity duration-700 ease-in-out"
             style={{
               background: banner.bg,
               opacity: index === currentIndex ? 1 : 0,
@@ -140,24 +142,24 @@ const HeroBanner = () => {
             {/* Left Content */}
             <div className="flex flex-col justify-center max-w-[62%] sm:max-w-[55%]">
               <span
-                className="text-[8px] sm:text-[10px] md:text-xs font-bold tracking-widest uppercase mb-0.5 sm:mb-1"
+                className="text-[10px] sm:text-xs md:text-sm font-bold tracking-widest uppercase mb-1 sm:mb-2"
                 style={{ color: banner.badgeColor }}
               >
                 {banner.badge}
               </span>
 
               <h2
-                className="font-serif italic font-bold leading-tight mb-0.5 sm:mb-1"
+                className="font-serif italic font-bold leading-tight mb-1 sm:mb-2"
                 style={{
                   color: banner.titleColor,
-                  fontSize: "clamp(0.95rem, 2.5vw, 1.8rem)",
+                  fontSize: "clamp(1.3rem, 4vw, 3rem)",
                 }}
               >
                 {banner.title}
               </h2>
 
               <p
-                className="text-[9px] sm:text-xs md:text-xs mb-2 sm:mb-3 opacity-90 font-medium line-clamp-1"
+                className="text-[11px] sm:text-sm md:text-base mb-3 sm:mb-5 opacity-90 font-medium line-clamp-2"
                 style={{ color: banner.subtitleColor }}
               >
                 {banner.subtitle}
@@ -166,7 +168,7 @@ const HeroBanner = () => {
               <div>
                 <a
                   href={banner.btnLink}
-                  className="inline-block px-3 sm:px-5 py-1 sm:py-1.5 text-[9px] sm:text-xs font-semibold rounded-full shadow-sm no-underline w-fit transition-transform hover:scale-105 active:scale-95"
+                  className="inline-block px-4 sm:px-6 md:px-8 py-1.5 sm:py-2 md:py-2.5 text-[11px] sm:text-sm md:text-base font-semibold rounded-full shadow-sm no-underline w-fit transition-transform hover:scale-105 active:scale-95"
                   style={{ background: banner.btnBg, color: banner.btnColor }}
                 >
                   {banner.btnText}
@@ -175,12 +177,12 @@ const HeroBanner = () => {
             </div>
 
             {/* Right Product Icons */}
-            <div className="flex items-center gap-1 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
               {banner.products.map((p, i) => (
                 <span
                   key={i}
                   className="drop-shadow-md select-none"
-                  style={{ fontSize: "clamp(18px, 3.8vw, 38px)", lineHeight: 1 }}
+                  style={{ fontSize: "clamp(28px, 6vw, 64px)", lineHeight: 1 }}
                 >
                   {p}
                 </span>
@@ -192,39 +194,39 @@ const HeroBanner = () => {
         {/* Navigation Arrows */}
         <button
           onClick={goToPrevious}
-          className="absolute left-1.5 sm:left-3 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-8 sm:h-8 bg-black/30 hover:bg-black/50 text-white rounded-full grid place-items-center transition-all z-20 backdrop-blur-sm"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full grid place-items-center transition-all z-20 backdrop-blur-sm"
           aria-label="Previous slide"
         >
-          <svg viewBox="0 0 24 24" width="12" height="12" className="sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 24 24" width="16" height="16" className="sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
         <button
           onClick={goToNext}
-          className="absolute right-1.5 sm:right-3 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-8 sm:h-8 bg-black/30 hover:bg-black/50 text-white rounded-full grid place-items-center transition-all z-20 backdrop-blur-sm"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full grid place-items-center transition-all z-20 backdrop-blur-sm"
           aria-label="Next slide"
         >
-          <svg viewBox="0 0 24 24" width="12" height="12" className="sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 24 24" width="16" height="16" className="sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </button>
 
         {/* Counter */}
-        <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-black/30 backdrop-blur-sm text-white text-[8px] sm:text-[10px] font-semibold px-1.5 py-0.5 rounded-full z-20">
+        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-black/30 backdrop-blur-sm text-white text-[10px] sm:text-xs font-semibold px-2 py-0.5 sm:py-1 rounded-full z-20">
           {currentIndex + 1} / {banners.length}
         </div>
 
         {/* Indicator Dots */}
-        <div className="absolute bottom-1.5 sm:bottom-2.5 inset-x-0 flex items-center justify-center gap-1 z-20">
-          <div className="flex items-center gap-1 bg-black/25 backdrop-blur-md px-2 py-0.5 sm:py-1 rounded-full">
+        <div className="absolute bottom-2.5 sm:bottom-4 inset-x-0 flex items-center justify-center gap-1 z-20">
+          <div className="flex items-center gap-1.5 bg-black/25 backdrop-blur-md px-2.5 py-1 sm:py-1.5 rounded-full">
             {banners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`transition-all duration-300 rounded-full h-1 ${
+                className={`transition-all duration-300 rounded-full h-1.5 ${
                   index === currentIndex
-                    ? "w-4 bg-white"
-                    : "w-1 bg-white/50 hover:bg-white/80"
+                    ? "w-5 bg-white"
+                    : "w-1.5 bg-white/50 hover:bg-white/80"
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
                 aria-current={index === currentIndex}

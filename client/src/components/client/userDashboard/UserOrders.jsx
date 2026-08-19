@@ -43,8 +43,8 @@ const UserOrders = () => {
     <div className="min-h-screen bg-slate-50 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-xl font-bold text-slate-900">My Orders</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">My Orders</h1>
+          <p className="text-sm sm:text-base text-slate-500 mt-1">
             Track and review all your past orders
           </p>
         </div>
@@ -71,15 +71,15 @@ const UserOrders = () => {
 
         {!loading && error && (
           <div className="bg-white rounded-2xl border border-red-200 p-8 text-center">
-            <p className="text-red-600">{error}</p>
+            <p className="text-red-600 text-sm sm:text-base">{error}</p>
           </div>
         )}
 
         {!loading && !error && orders.length === 0 && (
           <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
             <Package className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-            <p className="text-slate-500 font-medium">No Orders Found</p>
-            <p className="text-sm text-slate-400 mt-1">
+            <p className="text-slate-500 font-medium text-base sm:text-lg">No Orders Found</p>
+            <p className="text-sm sm:text-base text-slate-400 mt-1">
               Your placed orders will show up here.
             </p>
           </div>
@@ -94,12 +94,12 @@ const UserOrders = () => {
               >
                 {/* Header strip */}
                 <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 bg-slate-50 border-b border-slate-100">
-                  <span className="text-xs text-slate-500 truncate">
+                  <span className="text-xs sm:text-sm text-slate-500 truncate">
                     Order ID: <span className="font-medium text-slate-700">{order._id}</span>
                   </span>
                   {order.status && (
                     <span
-                      className={`text-xs font-medium px-2.5 py-1 rounded-full border capitalize ${statusStyles[order.status] ||
+                      className={`text-xs sm:text-sm font-medium px-2.5 py-1 rounded-full border capitalize ${statusStyles[order.status] ||
                         "bg-slate-100 text-slate-600 border-slate-200"
                         }`}
                     >
@@ -114,16 +114,16 @@ const UserOrders = () => {
                     <img
                       src={order.productSnapshot?.image}
                       alt={order.productSnapshot?.name}
-                      className="w-20 h-20 rounded-lg object-cover border border-slate-200 shrink-0"
+                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover border border-slate-200 shrink-0"
                     />
                     <div className="min-w-0 flex flex-col justify-center">
-                      <p className="font-semibold text-slate-900 truncate">
+                      <p className="font-semibold text-slate-900 text-base sm:text-lg truncate">
                         {order.productSnapshot?.name}
                       </p>
-                      <p className="text-xs text-slate-400 mt-0.5">
+                      <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
                         ID: {order.productSnapshot?.productId}
                       </p>
-                      <p className="text-sm text-slate-600 mt-2">
+                      <p className="text-sm sm:text-base text-slate-600 mt-2">
                         ৳{order.productSnapshot?.price?.toLocaleString()} ×{" "}
                         {order.quantity}
                       </p>
@@ -131,18 +131,18 @@ const UserOrders = () => {
                   </div>
 
                   {/* Price breakdown */}
-                  <div className="sm:w-48 shrink-0 sm:border-l sm:border-slate-100 sm:pl-5 space-y-1.5">
-                    <div className="flex justify-between text-sm text-slate-500">
+                  <div className="sm:w-52 shrink-0 sm:border-l sm:border-slate-100 sm:pl-5 space-y-1.5 sm:space-y-2">
+                    <div className="flex justify-between text-sm sm:text-base text-slate-500">
                       <span>Subtotal</span>
                       <span>৳{order.subtotal?.toLocaleString()}</span>
                     </div>
-                    <div className="flex justify-between text-sm text-slate-500">
+                    <div className="flex justify-between text-sm sm:text-base text-slate-500">
                       <span>Delivery</span>
                       <span>৳{order.deliveryCharge?.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between pt-1.5 border-t border-slate-100">
-                      <span className="text-sm font-semibold text-slate-900">Total</span>
-                      <span className="text-base font-bold text-slate-900">
+                      <span className="text-sm sm:text-base font-semibold text-slate-900">Total</span>
+                      <span className="text-lg sm:text-xl font-bold text-slate-900">
                         ৳{order.total?.toLocaleString()}
                       </span>
                     </div>
@@ -151,37 +151,37 @@ const UserOrders = () => {
 
                 {/* Customer + payment */}
                 <div className="border-t border-slate-100 px-5 py-4 grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50/50">
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2 text-sm text-slate-700">
-                      <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <div className="flex items-center gap-2 text-sm sm:text-base text-slate-700">
+                      <User className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-400 shrink-0" />
                       <span>{order.customer?.name}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-700">
-                      <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <div className="flex items-center gap-2 text-sm sm:text-base text-slate-700">
+                      <Phone className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-400 shrink-0" />
                       <span>{order.customer?.phone}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-700">
-                      <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <div className="flex items-center gap-2 text-sm sm:text-base text-slate-700">
+                      <MapPin className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-400 shrink-0" />
                       <span className="truncate">{order.customer?.address}</span>
                     </div>
                   </div>
 
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2 text-sm text-slate-700">
-                      <CreditCard className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <div className="flex items-center gap-2 text-sm sm:text-base text-slate-700">
+                      <CreditCard className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-400 shrink-0" />
                       <span>
                         {paymentLabels[order.payment?.method] || order.payment?.method}
                       </span>
                     </div>
                     {order.payment?.mobileNumber && (
-                      <div className="flex items-center gap-2 text-sm text-slate-700">
-                        <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <div className="flex items-center gap-2 text-sm sm:text-base text-slate-700">
+                        <Phone className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-400 shrink-0" />
                         <span>{order.payment.mobileNumber}</span>
                       </div>
                     )}
                     {order.payment?.transactionId && (
-                      <div className="flex items-center gap-2 text-sm text-slate-700">
-                        <Truck className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <div className="flex items-center gap-2 text-sm sm:text-base text-slate-700">
+                        <Truck className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-400 shrink-0" />
                         <span className="truncate">
                           TrxID: {order.payment.transactionId}
                         </span>

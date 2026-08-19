@@ -221,7 +221,7 @@ const Products = () => {
   }
 
   return (
-    <div className="min-h-screen mt-[90px] sm:mt-[98px] pb-10 px-4 md:px-8">
+    <div className="min-h-screen mt-[55px] sm:mt-[65px] pb-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Top Header Section */}
         <div className="flex justify-between mb-3">
