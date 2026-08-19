@@ -1,12 +1,7 @@
 import { useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faXmark,
-  faPlus,
-  faMinus,
-  faChevronDown,
-} from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { useScroll } from "../../hooks/useScroll";
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -16,17 +11,18 @@ const Sidebar = ({ isOpen, onClose }) => {
   const [jewelryOpen, setJewelryOpen] = useState(false);
   const [perfumeOpen, setPerfumeOpen] = useState(false);
 
-  // Active & Normal Link Design Styles
+  // Main Link Style (Slightly reduced padding)
   const linkStyle = ({ isActive }) =>
-    `block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${isActive
-      ? "bg-blue-50 text-blue-600 font-semibold shadow-sm"
+    `block px-4 py-2.5 text-base font-semibold rounded-lg transition-all duration-200 ${isActive
+      ? "bg-blue-600 text-white shadow-sm"
       : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
     }`;
 
+  // Sub-link Style (Slightly reduced padding)
   const subLinkStyle = ({ isActive }) =>
-    `block px-4 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${isActive
-      ? "text-blue-600 font-semibold bg-blue-50/60"
-      : "text-gray-600 hover:bg-gray-200/60 hover:text-gray-900"
+    `block px-3.5 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${isActive
+      ? "bg-blue-100 text-blue-700 font-bold"
+      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
     }`;
 
   return (
@@ -40,12 +36,11 @@ const Sidebar = ({ isOpen, onClose }) => {
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed left-0 w-72 bg-white shadow-2xl z-50 flex flex-col transform transition-all duration-300 ease-in-out border-r border-gray-100 ${isOpen ? "translate-x-0" : "-translate-x-full"
-          } top-[68px] h-[calc(100vh-68px)]"
-          `}
+        className={`fixed left-0 w-72 bg-white shadow-2xl z-50 flex flex-col transform transition-all duration-300 ease-in-out border-r border-gray-100 top-[68px] h-[calc(100vh-68px)] ${isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3">
+        <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
           <h2 className="text-base font-bold text-gray-800 tracking-wide">
             Categories
           </h2>
@@ -58,7 +53,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Menu (Scrollable List) */}
+        {/* Menu List */}
         <ul className="flex-1 overflow-y-auto px-3 py-3 space-y-1 custom-scrollbar">
           {/* Home */}
           <li>
@@ -78,7 +73,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           <li>
             <button
               onClick={() => setMenOpen(!menOpen)}
-              className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              className="w-full flex items-center justify-between px-4 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <span>Men's</span>
               <FontAwesomeIcon
@@ -89,7 +84,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             </button>
 
             {menOpen && (
-              <ul className="ml-3 mt-1 pl-3 border-l-2 border-gray-100 space-y-1">
+              <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
                 <li>
                   <NavLink to="/men/shirt" onClick={onClose} className={subLinkStyle}>
                     Shirt
@@ -118,7 +113,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           <li>
             <button
               onClick={() => setWomenOpen(!womenOpen)}
-              className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              className="w-full flex items-center justify-between px-4 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <span>Women's</span>
               <FontAwesomeIcon
@@ -129,7 +124,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             </button>
 
             {womenOpen && (
-              <ul className="ml-3 mt-1 pl-3 border-l-2 border-gray-100 space-y-1">
+              <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
                 <li>
                   <NavLink to="/women/dress-frock" onClick={onClose} className={subLinkStyle}>
                     Dress & Frock
@@ -158,7 +153,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           <li>
             <button
               onClick={() => setJewelryOpen(!jewelryOpen)}
-              className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              className="w-full flex items-center justify-between px-4 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <span>Jewellery</span>
               <FontAwesomeIcon
@@ -169,7 +164,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             </button>
 
             {jewelryOpen && (
-              <ul className="ml-3 mt-1 pl-3 border-l-2 border-gray-100 space-y-1">
+              <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
                 <li>
                   <NavLink to="/jewellery/earrings" onClick={onClose} className={subLinkStyle}>
                     Earrings
@@ -198,7 +193,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           <li>
             <button
               onClick={() => setPerfumeOpen(!perfumeOpen)}
-              className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              className="w-full flex items-center justify-between px-4 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <span>Perfume</span>
               <FontAwesomeIcon
@@ -209,7 +204,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             </button>
 
             {perfumeOpen && (
-              <ul className="ml-3 mt-1 pl-3 border-l-2 border-gray-100 space-y-1">
+              <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
                 <li>
                   <NavLink to="/perfume/clothes-perfume" onClick={onClose} className={subLinkStyle}>
                     Clothes Perfume
