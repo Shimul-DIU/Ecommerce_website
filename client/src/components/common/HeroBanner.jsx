@@ -1,80 +1,66 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
 const banners = [
   {
     id: 1,
-    badge: "NEW COLLECTION",
-    title: "MEN'S FASHION",
-    subtitle: "Look good, feel confident",
-    btnText: "Shop Now",
-    btnLink: "/shop?category=men",
-    products: ["👔", "👟", "⌚"],
-    bg: "#0d1b2a",
-    badgeColor: "#8d99ae",
-    titleColor: "#ffffff",
-    subtitleColor: "#b0bec5",
-    btnBg: "#ffffff",
-    btnColor: "#0d1b2a",
+    badge: "HOT DEAL - 50% OFF",
+    title: "LATEST SMARTPHONES",
+    subtitle: "Experience cutting-edge technology with high-res cameras and all-day battery life.",
+    btnText: "Shop Electronics",
+    btnLink: "/products?category=smartphones",
+    bgImage: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1600&auto=format&fit=crop",
+    badgeBg: "#D10024",
+    badgeTextColor: "#FFFFFF",
+    titleColor: "#FFFFFF",
+    subtitleColor: "#E4E6EB",
+    btnBg: "#D10024",
+    btnColor: "#FFFFFF",
   },
   {
     id: 2,
     badge: "NEW ARRIVAL",
-    title: "FEEL THE BEAUTY",
-    subtitle: "Premium Fragrances for Every You",
-    btnText: "Shop Now",
-    btnLink: "/shop?category=perfume",
-    products: ["🌸", "🧴", "💎"],
-    bg: "#fce4ec",
-    badgeColor: "#c2185b",
-    titleColor: "#880e4f",
-    subtitleColor: "#6d4c5a",
-    btnBg: "#c2185b",
-    btnColor: "#ffffff",
+    title: "PREMIUM HEADPHONES",
+    subtitle: "Immerse yourself in crystal-clear sound with active noise cancellation.",
+    btnText: "Discover Sound",
+    btnLink: "/products?category=accessories",
+    bgImage: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1600&auto=format&fit=crop",
+    badgeBg: "#2B2D42",
+    badgeTextColor: "#FFFFFF",
+    titleColor: "#FFFFFF",
+    subtitleColor: "#D1D5DB",
+    btnBg: "#FFFFFF",
+    btnColor: "#15161D",
   },
   {
     id: 3,
-    badge: "LATEST TECHNOLOGY",
-    title: "ELECTRONICS",
-    subtitle: "Smart choices, better living",
-    btnText: "Shop Now",
-    btnLink: "/shop?category=electronics",
-    products: ["🎧", "⌚", "📱"],
-    bg: "#0a0f1a",
-    badgeColor: "#00bcd4",
-    titleColor: "#ffffff",
-    subtitleColor: "#90a4ae",
-    btnBg: "#00bcd4",
-    btnColor: "#0a0f1a",
+    badge: "EXCLUSIVES",
+    title: "NEXT-GEN LAPTOPS",
+    subtitle: "Unmatched performance for gaming, editing, and daily productivity.",
+    btnText: "Buy Now",
+    btnLink: "/products?category=laptops",
+    bgImage: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=1600&auto=format&fit=crop",
+    badgeBg: "#FFB400",
+    badgeTextColor: "#15161D",
+    titleColor: "#FFFFFF",
+    subtitleColor: "#E5E7EB",
+    btnBg: "#D10024",
+    btnColor: "#FFFFFF",
   },
   {
     id: 4,
-    badge: "NEW SEASON",
-    title: "WOMEN'S FASHION",
-    subtitle: "Elevate your style, every day",
-    btnText: "Shop Now",
-    btnLink: "/shop?category=women",
-    products: ["👗", "👜", "👒"],
-    bg: "#f5ebe0",
-    badgeColor: "#6d4c41",
-    titleColor: "#3e2723",
-    subtitleColor: "#5d4037",
-    btnBg: "#3e2723",
-    btnColor: "#f5ebe0",
-  },
-  {
-    id: 5,
-    badge: "LIMITED TIME OFFER",
-    title: "MEGA SALE",
-    subtitle: "Up to 50% off on selected items",
-    btnText: "Shop Now",
-    btnLink: "/offers",
-    products: ["👟", "👜", "⌚"],
-    bg: "#b71c1c",
-    badgeColor: "#ffeb3b",
-    titleColor: "#ffffff",
-    subtitleColor: "#ffcdd2",
-    btnBg: "#ffffff",
-    btnColor: "#b71c1c",
+    badge: "LIMITED STOCK",
+    title: "SMARTWATCHES & WEARABLES",
+    subtitle: "Track your health, fitness, and daily notifications seamlessly on the go.",
+    btnText: "Explore Collection",
+    btnLink: "/products?category=wearables",
+    bgImage: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1600&auto=format&fit=crop",
+    badgeBg: "#10B981",
+    badgeTextColor: "#FFFFFF",
+    titleColor: "#FFFFFF",
+    subtitleColor: "#D1D5DB",
+    btnBg: "#FFFFFF",
+    btnColor: "#111827",
   },
 ];
 
@@ -83,16 +69,15 @@ const HeroBanner = () => {
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef(null);
 
-
   useEffect(() => {
     if (isPaused) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % banners.length);
-    }, 3500);
+    }, 4500);
 
     return () => clearInterval(interval);
-  }, [isPaused, currentIndex]);
+  }, [isPaused]);
 
   const goToPrevious = () =>
     setCurrentIndex((prev) => (prev === 0 ? banners.length - 1 : prev - 1));
@@ -115,126 +100,131 @@ const HeroBanner = () => {
 
   return (
     <div
-      // mt-[..] = navbar-এর (utility bar + main nav) মোট ফিক্সড উচ্চতা, যাতে banner নেভবারের ঠিক নিচে বসে,
-      // ওভারল্যাপ/আন্ডারল্যাপ না হয়। mobile: ~68px (h-5 + h-12), md+: ~80px (h-6 + h-14)। সাথে সামান্য গ্যাপ যোগ করা আছে।
-      className="max-w-7xl mx-auto mt-[-27px] md:mt-[-35px] px-2 sm:px-0"
+      className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 mt-4"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Container */}
-      <div className="relative w-full h-[200px] sm:h-[280px] md:h-[340px] lg:h-[400px] rounded-lg sm:rounded-xl overflow-hidden shadow-sm">
-
-        {/* Slides Stack */}
-        {banners.map((banner, index) => (
-          <div
-            key={banner.id}
-            className="absolute inset-0 flex items-center justify-between px-5 sm:px-10 md:px-14 lg:px-16 transition-opacity duration-700 ease-in-out"
-            style={{
-              background: banner.bg,
-              opacity: index === currentIndex ? 1 : 0,
-              pointerEvents: index === currentIndex ? "auto" : "none",
-              zIndex: index === currentIndex ? 1 : 0,
-            }}
-            aria-hidden={index !== currentIndex}
-          >
-            {/* Left Content */}
-            <div className="flex flex-col justify-center max-w-[62%] sm:max-w-[55%]">
-              <span
-                className="text-[10px] sm:text-xs md:text-sm font-bold tracking-widest uppercase mb-1 sm:mb-2"
-                style={{ color: banner.badgeColor }}
-              >
-                {banner.badge}
-              </span>
-
-              <h2
-                className="font-serif italic font-bold leading-tight mb-1 sm:mb-2"
+      {/* Banner Container */}
+      <div className="relative w-full h-[260px] sm:h-[340px] md:h-[420px] lg:h-[480px] rounded-2xl overflow-hidden shadow-2xl bg-gray-900">
+        {/* Slides */}
+        {banners.map((banner, index) => {
+          const isActive = index === currentIndex;
+          return (
+            <div
+              key={banner.id}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${isActive ? "opacity-100 z-10 pointer-events-auto" : "opacity-0 z-0 pointer-events-none"
+                }`}
+            >
+              {/* Background Image with Dark Overlay */}
+              <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-10000 ease-out"
                 style={{
-                  color: banner.titleColor,
-                  fontSize: "clamp(1.3rem, 4vw, 3rem)",
+                  backgroundImage: `url(${banner.bgImage})`,
+                  transform: isActive ? "scale(1.05)" : "scale(1)",
                 }}
               >
-                {banner.title}
-              </h2>
+                <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-transparent" />
+              </div>
 
-              <p
-                className="text-[11px] sm:text-sm md:text-base mb-3 sm:mb-5 opacity-90 font-medium line-clamp-2"
-                style={{ color: banner.subtitleColor }}
-              >
-                {banner.subtitle}
-              </p>
+              {/* Content Box */}
+              <div className="relative h-full max-w-xl flex flex-col justify-center px-6 sm:px-12 md:px-16 text-left">
+                {/* Badge */}
+                <div className="mb-2 sm:mb-3">
+                  <span
+                    className="inline-block text-[10px] sm:text-xs font-black tracking-wider px-3 py-1 rounded-md uppercase shadow-md"
+                    style={{
+                      backgroundColor: banner.badgeBg,
+                      color: banner.badgeTextColor,
+                    }}
+                  >
+                    {banner.badge}
+                  </span>
+                </div>
 
-              <div>
-                <a
-                  href={banner.btnLink}
-                  className="inline-block px-4 sm:px-6 md:px-8 py-1.5 sm:py-2 md:py-2.5 text-[11px] sm:text-sm md:text-base font-semibold rounded-full shadow-sm no-underline w-fit transition-transform hover:scale-105 active:scale-95"
-                  style={{ background: banner.btnBg, color: banner.btnColor }}
+                {/* Title */}
+                <h2
+                  className="text-2xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-tight leading-tight mb-2 sm:mb-3 drop-shadow-md"
+                  style={{ color: banner.titleColor }}
                 >
-                  {banner.btnText}
-                </a>
+                  {banner.title}
+                </h2>
+
+                {/* Subtitle */}
+                <p
+                  className="text-xs sm:text-sm md:text-base font-medium mb-5 sm:mb-8 line-clamp-2 leading-relaxed opacity-90 max-w-md"
+                  style={{ color: banner.subtitleColor }}
+                >
+                  {banner.subtitle}
+                </p>
+
+                {/* CTA Button */}
+                <div>
+                  <Link
+                    to={banner.btnLink}
+                    className="inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3.5 text-xs sm:text-sm font-bold uppercase tracking-wider rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95"
+                    style={{
+                      backgroundColor: banner.btnBg,
+                      color: banner.btnColor,
+                    }}
+                  >
+                    {banner.btnText}
+                  </Link>
+                </div>
               </div>
             </div>
+          );
+        })}
 
-            {/* Right Product Icons */}
-            <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
-              {banner.products.map((p, i) => (
-                <span
-                  key={i}
-                  className="drop-shadow-md select-none"
-                  style={{ fontSize: "clamp(28px, 6vw, 64px)", lineHeight: 1 }}
-                >
-                  {p}
-                </span>
-              ))}
-            </div>
-          </div>
-        ))}
-
-        {/* Navigation Arrows */}
+        {/* Previous Button */}
         <button
           onClick={goToPrevious}
-          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full grid place-items-center transition-all z-20 backdrop-blur-sm"
-          aria-label="Previous slide"
+          className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/40 hover:bg-[#D10024] text-white rounded-full flex items-center justify-center transition-all duration-300 z-20 backdrop-blur-md border border-white/10 shadow-md group"
+          aria-label="Previous Slide"
         >
-          <svg viewBox="0 0 24 24" width="16" height="16" className="sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
+          <svg
+            className="w-5 h-5 transition-transform group-hover:-translate-x-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
+
+        {/* Next Button */}
         <button
           onClick={goToNext}
-          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 bg-black/30 hover:bg-black/50 text-white rounded-full grid place-items-center transition-all z-20 backdrop-blur-sm"
-          aria-label="Next slide"
+          className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/40 hover:bg-[#D10024] text-white rounded-full flex items-center justify-center transition-all duration-300 z-20 backdrop-blur-md border border-white/10 shadow-md group"
+          aria-label="Next Slide"
         >
-          <svg viewBox="0 0 24 24" width="16" height="16" className="sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6" />
+          <svg
+            className="w-5 h-5 transition-transform group-hover:translate-x-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
           </svg>
         </button>
 
-        {/* Counter */}
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-black/30 backdrop-blur-sm text-white text-[10px] sm:text-xs font-semibold px-2 py-0.5 sm:py-1 rounded-full z-20">
-          {currentIndex + 1} / {banners.length}
-        </div>
-
-        {/* Indicator Dots */}
-        <div className="absolute bottom-2.5 sm:bottom-4 inset-x-0 flex items-center justify-center gap-1 z-20">
-          <div className="flex items-center gap-1.5 bg-black/25 backdrop-blur-md px-2.5 py-1 sm:py-1.5 rounded-full">
+        {/* Bottom Pagination Dots */}
+        <div className="absolute bottom-4 sm:bottom-6 inset-x-0 flex items-center justify-center gap-2 z-20">
+          <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
             {banners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`transition-all duration-300 rounded-full h-1.5 ${
-                  index === currentIndex
-                    ? "w-5 bg-white"
-                    : "w-1.5 bg-white/50 hover:bg-white/80"
-                }`}
+                className={`transition-all duration-300 rounded-full h-2 ${index === currentIndex
+                    ? "w-7 bg-[#D10024]"
+                    : "w-2 bg-white/50 hover:bg-white"
+                  }`}
                 aria-label={`Go to slide ${index + 1}`}
-                aria-current={index === currentIndex}
               />
             ))}
           </div>
         </div>
-
       </div>
     </div>
   );

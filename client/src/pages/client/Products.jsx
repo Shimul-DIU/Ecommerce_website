@@ -28,8 +28,9 @@ const MIN_LIMIT = 100;
 const MAX_LIMIT = 3000;
 
 const Products = () => {
-  const isScrolled =useScroll()
-  const { wishlist, cart, toggleWishlist, toggleCart } = useContext(CountContext);
+  const isScrolled = useScroll();
+  const { wishlist, cart, toggleWishlist, toggleCart } =
+    useContext(CountContext);
   const [products, loading, error] = useProducts();
   const location = useLocation();
 
@@ -38,7 +39,6 @@ const Products = () => {
   const [activeCategory, setActiveCategory] = useState(initialFilter);
   const [sortBy, setSortBy] = useState("default");
 
-  // Dynamic Range Config (100 Tk - 3000 Tk)
   const [minPrice, setMinPrice] = useState(MIN_LIMIT);
   const [maxPrice, setMaxPrice] = useState(MAX_LIMIT);
 
@@ -51,7 +51,6 @@ const Products = () => {
     }
   }, [location.state]);
 
-  // Dynamic Filtering Logic
   const filteredProducts = useMemo(() => {
     if (!products) return [];
 
@@ -64,8 +63,9 @@ const Products = () => {
       result = result.filter((item) => item.stock > 0);
     }
 
-    // Dynamic Price Filter (Between minPrice and maxPrice)
-    result = result.filter((item) => item.price >= minPrice && item.price <= maxPrice);
+    result = result.filter(
+      (item) => item.price >= minPrice && item.price <= maxPrice
+    );
 
     if (sortBy === "price-low") {
       result = [...result].sort((a, b) => a.price - b.price);
@@ -84,11 +84,9 @@ const Products = () => {
     setInStockOnly(false);
   };
 
-  // Dynamic Percentage Calculation for Active Track Line
   const minPercent = ((minPrice - MIN_LIMIT) / (MAX_LIMIT - MIN_LIMIT)) * 100;
   const maxPercent = ((maxPrice - MIN_LIMIT) / (MAX_LIMIT - MIN_LIMIT)) * 100;
 
-  // Render Filter Section Body
   const renderFilterContent = () => (
     <div className="space-y-5">
       <div className="flex items-center gap-2 pb-3 border-b border-[#E4DDCE]">
@@ -96,7 +94,6 @@ const Products = () => {
         <h3 className="text-lg font-bold text-[#16241F]">Filter Products</h3>
       </div>
 
-      {/* Category Selection */}
       <div>
         <label className="block text-xs uppercase tracking-wider text-[#16241F]/70 mb-2 font-bold">
           Category
@@ -114,7 +111,6 @@ const Products = () => {
         </select>
       </div>
 
-      {/* Sorting */}
       <div>
         <label className="block text-xs uppercase tracking-wider text-[#16241F]/70 mb-2 font-bold">
           Sort by
@@ -130,7 +126,6 @@ const Products = () => {
         </select>
       </div>
 
-      {/* Dual Price Range Slider */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <label className="block text-xs uppercase tracking-wider text-[#16241F]/70 font-bold">
@@ -141,12 +136,9 @@ const Products = () => {
           </span>
         </div>
 
-        {/* Range Slider Track */}
         <div className="relative w-full h-8 flex items-center">
-          {/* Base Background Bar */}
           <div className="absolute w-full h-2 bg-[#E4DDCE] rounded-lg pointer-events-none"></div>
 
-          {/* Dynamic Active Gold Bar */}
           <div
             className="absolute h-2 bg-[#B08946] rounded-lg pointer-events-none"
             style={{
@@ -155,7 +147,6 @@ const Products = () => {
             }}
           ></div>
 
-          {/* MIN Price Input Slider (Left Circle) */}
           <input
             type="range"
             min={MIN_LIMIT}
@@ -169,7 +160,6 @@ const Products = () => {
             className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none accent-[#B08946] z-30 focus:outline-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto"
           />
 
-          {/* MAX Price Input Slider (Right Circle) */}
           <input
             type="range"
             min={MIN_LIMIT}
@@ -190,7 +180,6 @@ const Products = () => {
         </div>
       </div>
 
-      {/* Stock Checkbox */}
       <label className="flex items-center gap-2 cursor-pointer select-none py-1">
         <input
           type="checkbox"
@@ -198,10 +187,11 @@ const Products = () => {
           onChange={(e) => setInStockOnly(e.target.checked)}
           className="w-4 h-4 accent-[#B08946] rounded cursor-pointer"
         />
-        <span className="text-sm text-[#16241F] font-medium">In stock only</span>
+        <span className="text-sm text-[#16241F] font-medium">
+          In stock only
+        </span>
       </label>
 
-      {/* Reset Button */}
       <button
         type="button"
         onClick={resetFilters}
@@ -221,9 +211,9 @@ const Products = () => {
   }
 
   return (
-    <div className="min-h-screen mt-[55px] sm:mt-[65px] pb-10 px-4 md:px-8">
+    // ✅ FIX: Proper top padding to sit below the fixed navbar
+    <div className="min-h-screen pt-[104px] md:pt-[144px] pb-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Top Header Section */}
         <div className="flex justify-between mb-3">
           <h2 className="text-lg sm:text-2xl lg:hidden font-bold">Products</h2>
           <div className="lg:hidden flex items-center sm:w-auto">
@@ -237,7 +227,6 @@ const Products = () => {
           </div>
         </div>
 
-        {/* Mobile Filter Drawer */}
         {isDrawerOpen && (
           <div className="lg:hidden fixed inset-0 z-50 flex">
             <div
@@ -251,7 +240,10 @@ const Products = () => {
                   onClick={() => setIsDrawerOpen(false)}
                   className="p-1.5 hover:bg-[#FAF6EF] rounded-full transition"
                 >
-                  <FontAwesomeIcon icon={faTimes} className="text-[#16241F] text-lg" />
+                  <FontAwesomeIcon
+                    icon={faTimes}
+                    className="text-[#16241F] text-lg"
+                  />
                 </button>
               </div>
               {renderFilterContent()}
@@ -259,14 +251,14 @@ const Products = () => {
           </div>
         )}
 
-        {/* Main Content Layout */}
         <div className="flex gap-8 items-start">
-          {/* Desktop Sidebar Filter */}
-          <aside className={`hidden lg:block w-64 shrink-0 bg-white border border-[#E4DDCE] rounded-2xl p-5 shadow-sm sticky ${isScrolled ? 'top-[66px] ' :'top-[10px]' } `}>
+          <aside
+            className={`hidden lg:block w-64 shrink-0 bg-white border border-[#E4DDCE] rounded-2xl p-5 shadow-sm sticky ${isScrolled ? "top-[100px] " : ""
+              } `}
+          >
             {renderFilterContent()}
           </aside>
 
-          {/* Products Grid */}
           <main className="flex-1 min-w-0">
             {loading && (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4.5">
@@ -286,8 +278,13 @@ const Products = () => {
 
             {!loading && filteredProducts.length === 0 && (
               <div className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl border border-[#E4DDCE] text-center p-6">
-                <FontAwesomeIcon icon={faTag} className="text-4xl text-[#16241F]/30 mb-3" />
-                <p className="text-base text-[#16241F] font-semibold">No products found!</p>
+                <FontAwesomeIcon
+                  icon={faTag}
+                  className="text-4xl text-[#16241F]/30 mb-3"
+                />
+                <p className="text-base text-[#16241F] font-semibold">
+                  No products found!
+                </p>
                 <p className="text-xs text-[#16241F]/60 mt-1">
                   Try resetting your filters or adjusting your price range.
                 </p>
@@ -312,19 +309,20 @@ const Products = () => {
                   const discountPercent =
                     item.discountPercent ||
                     (originalPrice > item.price
-                      ? Math.round(((originalPrice - item.price) / originalPrice) * 100)
+                      ? Math.round(
+                        ((originalPrice - item.price) / originalPrice) * 100
+                      )
                       : 0);
 
                   const savingsAmount = originalPrice - item.price;
 
                   return (
                     <Link
-                      to={'/checkout'}
+                      to={"/checkout"}
                       state={{ product: item }}
                       key={item._id}
                       className="group relative flex flex-col bg-white border border-[#E4DDCE] hover:border-[#B08946]/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
                     >
-                      {/* Image Container */}
                       <div className="relative w-full aspect-square bg-[#FAF6EF]/60 overflow-hidden flex items-center justify-center p-1 sm:p-2">
                         <img
                           src={item.image}
@@ -333,15 +331,16 @@ const Products = () => {
                           className="w-full rounded-lg h-full object-contain transition-transform duration-500 group-hover:scale-105"
                         />
 
-                        {/* Top Left Discount Badge */}
                         {discountPercent > 0 && !isOutOfStock && (
                           <div className="absolute top-2 left-2 z-10 bg-red-600 text-white text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-md flex items-center gap-1">
-                            <FontAwesomeIcon icon={faTag} className="text-[8px] sm:text-[9px]" />
+                            <FontAwesomeIcon
+                              icon={faTag}
+                              className="text-[8px] sm:text-[9px]"
+                            />
                             <span>{discountPercent}% OFF</span>
                           </div>
                         )}
 
-                        {/* Floating Action Buttons */}
                         <div className="absolute top-2 right-2 flex flex-col gap-1.5 z-20">
                           <button
                             type="button"
@@ -350,7 +349,9 @@ const Products = () => {
                               toggleWishlist(item._id);
                             }}
                             aria-label={
-                              inWishlist ? "Remove from wishlist" : "Add to wishlist"
+                              inWishlist
+                                ? "Remove from wishlist"
+                                : "Add to wishlist"
                             }
                             className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inWishlist
                                 ? "bg-red-500 text-white"
@@ -369,7 +370,9 @@ const Products = () => {
                               e.preventDefault();
                               toggleCart(item._id);
                             }}
-                            aria-label={inCart ? "Remove from cart" : "Add to cart"}
+                            aria-label={
+                              inCart ? "Remove from cart" : "Add to cart"
+                            }
                             className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inCart
                                 ? "bg-[#16241F] text-[#B08946]"
                                 : "bg-white/90 text-[#16241F]/60 hover:text-[#16241F] hover:bg-white"
@@ -382,7 +385,6 @@ const Products = () => {
                           </button>
                         </div>
 
-                        {/* Out of Stock Overlay */}
                         {isOutOfStock && (
                           <div className="absolute inset-0 bg-[#16241F]/40 backdrop-blur-[2px] flex items-center justify-center p-2 z-10">
                             <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-red-600 bg-white px-3 py-1 rounded-full shadow-lg border border-red-100">
@@ -392,7 +394,6 @@ const Products = () => {
                         )}
                       </div>
 
-                      {/* Details Section */}
                       <div className="pl-2.5 pb-2.5 pr-1 sm:p-3.5 flex flex-col justify-between flex-1">
                         <div>
                           <h3
@@ -432,7 +433,9 @@ const Products = () => {
                             disabled={isOutOfStock}
                             className="w-full h-8 sm:h-9 rounded-xl bg-[#16241F] hover:bg-[#0F1A16] active:scale-[0.98] disabled:bg-[#16241F]/20 disabled:text-[#16241F]/40 disabled:cursor-not-allowed text-[#FAF6EF] text-xs font-bold transition-all duration-200 shadow-sm flex items-center justify-center gap-1.5"
                           >
-                            <span>{isOutOfStock ? "Unavailable" : "Buy Now"}</span>
+                            <span>
+                              {isOutOfStock ? "Unavailable" : "Buy Now"}
+                            </span>
                           </button>
                         </div>
                       </div>

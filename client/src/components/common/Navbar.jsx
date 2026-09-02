@@ -195,10 +195,9 @@ const Navbar = ({ onMenuClick }) => {
     if (!query.trim()) return;
 
     navigate(
-      `/products?search=${encodeURIComponent(query.trim())}${
-        activeCategory !== "All Category"
-          ? `&category=${encodeURIComponent(activeCategory)}`
-          : ""
+      `/products?search=${encodeURIComponent(query.trim())}${activeCategory !== "All Category"
+        ? `&category=${encodeURIComponent(activeCategory)}`
+        : ""
       }`
     );
 
@@ -231,7 +230,7 @@ const Navbar = ({ onMenuClick }) => {
       className={`
         fixed top-0 left-0 right-0 z-50
         bg-white transition-all duration-300 ease-in-out
-        ${showNavbar ? "translate-y-0" : "-translate-y-full"}
+
         ${isScrolled ? "shadow-lg" : "shadow-sm"}
       `}
     >
@@ -358,9 +357,9 @@ const Navbar = ({ onMenuClick }) => {
           <div className="border-b border-slate-100">
             <div
               className={`
-                max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between gap-4 lg:gap-8
+                max-w-7xl mx-auto px-4 lg:px-8 h-14 py-1 flex items-center justify-between gap-4 lg:gap-8
                 transition-all duration-300 ease-in-out
-                ${isScrolled ? "h-16 py-1" : "h-20 lg:h-24 py-3"}
+
               `}
             >
               {/* LOGO */}
@@ -370,7 +369,7 @@ const Navbar = ({ onMenuClick }) => {
                   alt="Logo"
                   className={`
                     w-auto object-contain transition-all duration-300
-                    ${isScrolled ? "h-9 lg:h-10" : "h-11 lg:h-14"}
+                   h-12
                   `}
                 />
               </Link>
@@ -381,7 +380,7 @@ const Navbar = ({ onMenuClick }) => {
                   className={`
                     relative w-full flex items-stretch border rounded-lg
                     overflow-visible bg-slate-50/50 hover:bg-white transition-all duration-200
-                    ${isScrolled ? "h-10" : "h-12"}
+                   h-10
                     ${searchFocused ? "border-orange-500 bg-white ring-2 ring-orange-500/15" : "border-slate-300"}
                   `}
                 >
@@ -452,8 +451,8 @@ const Navbar = ({ onMenuClick }) => {
                   to="/compare"
                   className={`
                     hidden sm:flex relative items-center justify-center rounded-full border border-slate-200
-                    text-slate-700 hover:text-orange-500 hover:border-orange-400 hover:bg-orange-50/50 transition-all
-                    ${isScrolled ? "w-10 h-10 text-base" : "w-11 h-11 text-lg"}
+                    text-slate-700 hover:text-orange-500 hover:border-orange-400 w-10 h-10 text-base hover:bg-orange-50/50 transition-all
+
                   `}
                   aria-label="Compare"
                 >
@@ -465,13 +464,25 @@ const Navbar = ({ onMenuClick }) => {
                   to="/userDashboard/wishlist"
                   className={`
                     relative flex items-center justify-center rounded-full border border-slate-200
-                    text-slate-700 hover:text-orange-500 hover:border-orange-400 hover:bg-orange-50/50 transition-all
-                    ${isScrolled ? "w-10 h-10 text-base" : "w-11 h-11 text-lg"}
+                    text-slate-700 hover:text-orange-500 hover:border-orange-400 w-10 h-10  hover:bg-orange-50/50 text-xl transition-all
+
                   `}
                   aria-label="Wishlist"
                 >
                   <FontAwesomeIcon icon={faHeart} />
                   <CountBadge count={wishlist.length} color="bg-orange-500" />
+                </Link>
+                <Link
+                  to="/userDashboard/cart"
+                  className={`
+                    relative flex items-center justify-center rounded-full border border-slate-200
+                    text-slate-700 hover:text-orange-500 hover:border-orange-400 w-10 h-10  hover:bg-orange-50/50 text-xl transition-all
+
+                  `}
+                  aria-label="cart"
+                >
+                  <FontAwesomeIcon icon={faCartShopping} />
+                  <CountBadge count={cart.length} color="bg-orange-500" />
                 </Link>
 
                 {/* NOTIFICATIONS */}
@@ -479,40 +490,36 @@ const Navbar = ({ onMenuClick }) => {
                   to="/userDashboard/notifications"
                   className={`
                     hidden sm:flex relative items-center justify-center rounded-full border border-slate-200
-                    text-slate-700 hover:text-orange-500 hover:border-orange-400 hover:bg-orange-50/50 transition-all
-                    ${isScrolled ? "w-10 h-10 text-base" : "w-11 h-11 text-lg"}
+                    text-slate-700 hover:text-orange-500 hover:border-orange-400 w-10 h-10 text-xl hover:bg-orange-50/50 transition-all
+
                   `}
                   aria-label="Notifications"
                 >
                   <FontAwesomeIcon icon={faBell} />
                 </Link>
 
-                {/* CART */}
                 <Link
-                  to="/userDashboard/cart"
+                  to="/userDashboard/login"
                   className={`
-                    relative flex items-center gap-2.5 rounded-full border border-slate-200
-                    text-slate-800 hover:text-orange-500 hover:border-orange-400 hover:bg-orange-50/50 transition-all
-                    ${isScrolled ? "h-10 pl-3 pr-4" : "h-11 pl-3.5 pr-5"}
+                    hidden sm:flex relative items-center justify-center rounded-md border border-slate-200 bg-orange-600
+                    text-white hover:text-orange-500 hover:border-orange-400 w-10 h-10 text-xl hover:bg-orange-50/50 transition-all
+
                   `}
-                  aria-label="Cart"
+                  aria-label=""
                 >
-                  <span className="relative flex items-center justify-center">
-                    <FontAwesomeIcon icon={faCartShopping} className={isScrolled ? "text-base" : "text-lg"} />
-                    <CountBadge count={cart.length} color="bg-orange-500" />
-                  </span>
-                  <span className="hidden sm:inline text-sm lg:text-base font-bold">
-                    {cart.total ? `$${cart.total}` : "$0.00"}
-                  </span>
+                  <FontAwesomeIcon icon={faUser} />
                 </Link>
+
+
+
 
                 {/* USER */}
                 <div className="relative ml-1" onMouseLeave={() => setIsUserMenuOpen(false)}>
                   <button
                     onClick={() => handleUserIconClick(false)}
                     className={`
-                      flex items-center justify-center rounded-full overflow-hidden border-2 border-transparent hover:border-orange-500 transition-all
-                      ${isScrolled ? "w-10 h-10" : "w-11 h-11"}
+                      flex items-center justify-center rounded-full overflow-hidden border-2 border-transparent hover:border-orange-500 w-10 h-10 transition-all
+
                     `}
                     aria-label="User menu"
                   >
@@ -597,14 +604,14 @@ const Navbar = ({ onMenuClick }) => {
               DESKTOP CATEGORY NAVIGATION & MENU LINKS
           ====================================================== */}
           <div className="  ">
-              <div className="max-w-7xl mx-auto bg-orange-500 shadow-inner ">
+            <div className="max-w-7xl mx-auto bg-orange-500 shadow-inner ">
               <nav
                 className={`
                   flex items-center justify-between transition-all duration-300
 
                 `}
               >
-                <div className="flex items-center h-16 w-full ">
+                <div className="flex items-center h-10 w-full ">
                   {/* ALL CATEGORIES */}
                   <div
                     className="relative h-full flex items-center"
@@ -616,9 +623,8 @@ const Navbar = ({ onMenuClick }) => {
                       <span>All Categories</span>
                       <FontAwesomeIcon
                         icon={faChevronDown}
-                        className={`text-xs transition-transform duration-200 ${
-                          isCategoryOpen ? "rotate-180" : ""
-                        }`}
+                        className={`text-xs transition-transform duration-200 ${isCategoryOpen ? "rotate-180" : ""
+                          }`}
                       />
                     </button>
 
@@ -656,10 +662,9 @@ const Navbar = ({ onMenuClick }) => {
                         key={item.path}
                         to={item.path}
                         className={({ isActive }) =>
-                          `h-full px-4 flex items-center text-sm lg:text-base font-bold transition-all ${
-                            isActive
-                              ? "text-white bg-orange-600/60"
-                              : "text-orange-50 hover:text-white hover:bg-orange-600/30"
+                          `h-full px-4 flex items-center text-sm lg:text-base font-bold transition-all ${isActive
+                            ? "text-white bg-orange-600/60"
+                            : "text-orange-50 hover:text-white hover:bg-orange-600/30"
                           }`
                         }
                       >
@@ -677,9 +682,8 @@ const Navbar = ({ onMenuClick }) => {
                         <span>{language === "BN" ? "পেজ" : "Pages"}</span>
                         <FontAwesomeIcon
                           icon={faChevronDown}
-                          className={`text-xs transition-transform duration-200 ${
-                            isPagesOpen ? "rotate-180" : ""
-                          }`}
+                          className={`text-xs transition-transform duration-200 ${isPagesOpen ? "rotate-180" : ""
+                            }`}
                         />
                       </button>
 
@@ -702,10 +706,9 @@ const Navbar = ({ onMenuClick }) => {
                     <NavLink
                       to="/contact"
                       className={({ isActive }) =>
-                        `h-full px-4 flex items-center text-sm lg:text-base font-bold transition-all ${
-                          isActive
-                            ? "text-white bg-orange-600/60"
-                            : "text-orange-50 hover:text-white hover:bg-orange-600/30"
+                        `h-full px-4 flex items-center text-sm lg:text-base font-bold transition-all ${isActive
+                          ? "text-white bg-orange-600/60"
+                          : "text-orange-50 hover:text-white hover:bg-orange-600/30"
                         }`
                       }
                     >
@@ -715,13 +718,13 @@ const Navbar = ({ onMenuClick }) => {
                 </div>
 
                 {/* HOTLINE */}
-                <a
+                {/* <a
                   href="tel:+0123456789"
                   className="h-8 lg:h-9 px-4 lg:px-5 flex items-center gap-2 bg-slate-900 text-white text-xs lg:text-sm font-bold rounded-full hover:bg-black transition-all shadow-md shrink-0"
-                >
-                  <FontAwesomeIcon icon={faPhone} className="text-orange-400 text-xs" />
+                > */}
+                {/* <FontAwesomeIcon icon={faPhone} className="text-orange-400 text-xs" />
                   <span>+0123 456 7890</span>
-                </a>
+                </a> */}
               </nav>
             </div>
           </div>
@@ -731,23 +734,7 @@ const Navbar = ({ onMenuClick }) => {
       {/* =====================================================
           MOBILE HEADER BAR (Categories & Offers)
       ====================================================== */}
-      {!searchOpen && (
-        <div className="md:hidden border-t border-orange-600 bg-orange-500">
-          <nav className="h-11 px-4 flex items-center justify-between">
-            <button
-              onClick={onMenuClick}
-              className="flex items-center gap-2 text-sm font-bold text-white active:opacity-80"
-            >
-              <FontAwesomeIcon icon={faBars} />
-              <span>Categories</span>
-            </button>
-
-            <Link to="/offers" className="text-sm font-bold text-white hover:underline">
-              Offers
-            </Link>
-          </nav>
-        </div>
-      )}
+      
 
       {/* =====================================================
           MOBILE USER DROPDOWN

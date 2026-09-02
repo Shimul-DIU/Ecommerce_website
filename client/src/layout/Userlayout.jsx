@@ -35,7 +35,7 @@ const Userlayout = () => {
       </main>
 
 
-      <Footer/>
+      <Footer />
     </div>
   );
 };
