@@ -73,7 +73,7 @@ const Register = () => {
   };
 
   return (
-    <div className="mt-7 sm:mt-12 min-h-[calc(100vh-6rem)] bg-gray-100 flex items-center justify-center px-4 py-6">
+    <div className="mt-3 min-h-[calc(100vh-6rem)]  flex items-center justify-center px-4 py-6">
       {/* Register Card */}
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 sm:p-7">
         {/* Heading */}

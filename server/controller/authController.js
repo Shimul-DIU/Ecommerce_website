@@ -9,6 +9,18 @@ dotenv.config();
 
 const saltRounds = 10;
 
+const refreshCookieOptions = (req) => {
+  const isHttps =
+    req.secure || req.headers["x-forwarded-proto"] === "https";
+
+  return {
+    httpOnly: true,
+    secure: isHttps,
+    sameSite: isHttps ? "none" : "lax",
+    path: "/",
+  };
+};
+
 /* ================= CREATE USER ================= */
 const createUser = async (req, res) => {
   try {
@@ -63,7 +75,6 @@ const createUser = async (req, res) => {
 /* ================= LOGIN USER ================= */
 const loginUser = async (req, res) => {
   try {
-    const isProduction = process.env.NODE_ENV === "production";
     const { email, password, rememberMe, agreedToTerms } = req.body;
 
     /* if (!email || !password) {
@@ -81,7 +92,7 @@ const loginUser = async (req, res) => {
       }
     }
 
-    const user = await Users.findOne({ email }).select({password:1});
+    const user = await Users.findOne({ email }).select({ password: 1 });
 
     if (!user) {
       return res.status(400).json({
@@ -111,13 +122,10 @@ const loginUser = async (req, res) => {
       { expiresIn: rememberMe ? '30d' : '15d' })
 
     res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
+      ...refreshCookieOptions(req),
       maxAge: rememberMe ?
         30 * 24 * 60 * 60 * 1000 :
         15 * 24 * 60 * 60 * 1000,
-      path: "/",
     })
     return res.status(200).json({
       message: 'Login successful',
@@ -210,14 +218,7 @@ const refreshAccessToken = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    const isProduction = process.env.NODE_ENV === "production";
-
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
-      path: "/",
-    });
+    res.clearCookie("refreshToken", refreshCookieOptions(req));
 
     return res.status(200).json({
       message: "Logout successful",
@@ -320,7 +321,6 @@ const resetPassword = async (req, res) => {
 
 /* ================= GOOGLE LOGIN ================= */
 const GoogleLogin = async (req, res) => {
-  const isProduction = process.env.NODE_ENV === "production";
   try {
     const { fullname, email, photoURL, firebaseId } = req.body;
 
@@ -348,12 +348,9 @@ const GoogleLogin = async (req, res) => {
       { expiresIn: '15d' })
 
     res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
+      ...refreshCookieOptions(req),
       maxAge:
         15 * 24 * 60 * 60 * 1000,
-      path: "/",
     })
     return res.status(200).json({
       message: 'Login successful',
@@ -367,7 +364,7 @@ const GoogleLogin = async (req, res) => {
 
     });
 
-  }catch (error) {
+  } catch (error) {
     console.error('GoogleLogin error:', error);
     return res.status(500).json({
       message: 'Internal server error',

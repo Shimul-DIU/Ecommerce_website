@@ -24,7 +24,7 @@ export default function UserDashboardLayout() {
 
   return (
     // class="sticky top-0  z-40 bg-white border-b sm:border-b-0 sm:border-r border-slate-200 transition-all duration-300 w-full sm:h-screen sm:w-64 sm:flex sm:flex-col sm:justify-between sm:p-4"
-    <div className="flex max-w-7xl mx-auto  flex-col sm:flex-row h-[calc(100vh-87px)] mt-[43px] bg-gray-100 overflow-hidden relative">
+    <div className="flex max-w-7xl mx-auto  flex-col sm:flex-row h-[calc(100vh-87px)] mt-[33px] sm:mt-10 md:mt-0  overflow-hidden relative">
       {/* Sidebar Navigation */}
       <UserDashboardNavbar
         isExpanded={isExpanded}
