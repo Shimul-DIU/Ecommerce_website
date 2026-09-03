@@ -2,10 +2,8 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { useScroll } from "../../hooks/useScroll";
 
 const Sidebar = ({ isOpen, onClose }) => {
-  const isScrolled = useScroll();
   const [menOpen, setMenOpen] = useState(false);
   const [womenOpen, setWomenOpen] = useState(false);
   const [jewelryOpen, setJewelryOpen] = useState(false);
@@ -36,7 +34,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed left-0 w-72 bg-white shadow-2xl z-50 flex flex-col transform transition-all duration-300 ease-in-out border-r border-gray-100 top-[68px] h-[calc(100vh-68px)] ${isOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed left-0 w-72 bg-white shadow-2xl z-50 flex flex-col transform transition-all duration-300 ease-in-out border-r border-gray-100 top-17 h-[calc(100vh-68px)] ${isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
       >
         {/* Header */}

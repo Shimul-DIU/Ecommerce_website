@@ -17,7 +17,7 @@ const Userlayout = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full overflow-x-hidden">
       <ScrollToTop />
 
       <Sidebar
@@ -29,8 +29,7 @@ const Userlayout = () => {
         onMenuClick={handleMenuOpen}
       />
 
-      <main className="pb-20 md:pb-0">
-        isOpen={isOpen}
+      <main className="w-full min-w-0 pt-24 pb-20 md:pt-32 md:pb-0">
         <Outlet />
       </main>
 

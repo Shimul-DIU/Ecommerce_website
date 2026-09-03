@@ -89,7 +89,7 @@ const Login = () => {
   };
 
   return (
-    <div className="mt-3 sm:mt-12 md:mt-14 min-h-[calc(100vh-3.5rem)] sm:min-h-[calc(100vh-6rem)] bg-gray-100 flex items-center justify-center px-3 py-4 sm:px-4 sm:py-6">
+    <div className="mt-3  min-h-[calc(100vh-3.5rem)] sm:min-h-[calc(100vh-6rem)]  flex items-center justify-center px-3 py-4 sm:px-4 sm:py-6">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-4 sm:p-7">
 
         {/* Skeleton Loader State */}

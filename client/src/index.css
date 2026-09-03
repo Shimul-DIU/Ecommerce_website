@@ -6,6 +6,9 @@
   font-family: 'Black ops one';
   src: url('./assets/fonts/BlackOpsOne-Regular.ttf');
 }
+body{
+  background-color: rgba(164, 163, 164, 0.333);
+}
 :root{
   --black-ops-one:'Black ops one',sans-serif
 }
