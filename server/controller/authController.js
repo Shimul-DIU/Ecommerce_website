@@ -1,152 +1,38 @@
-import dotenv from 'dotenv';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
-import resend from '../config/mail.js';
-import Users from '../model/userModel.js';
+import dotenv from "dotenv";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import resend from "../config/mail.js";
+import Users from "../model/userModel.js";
 
 dotenv.config();
 
 const saltRounds = 10;
 
-const refreshCookieOptions = (req) => {
-  const isHttps =
-    req.secure || req.headers["x-forwarded-proto"] === "https";
+// =====================================================
+// REFRESH COOKIE OPTIONS
+// =====================================================
+
+const getRefreshCookieOptions = (req) => {
+  const isProduction =
+    process.env.NODE_ENV === "production";
 
   return {
     httpOnly: true,
-    secure: isHttps,
-    sameSite: isHttps ? "none" : "lax",
+
+    // Production HTTPS
+    secure: isProduction,
+
+    // Different frontend/backend domains
+    sameSite: isProduction ? "none" : "lax",
+
     path: "/",
   };
 };
 
-/* ================= CREATE USER ================= */
-const createUser = async (req, res) => {
-  try {
-    const { fullname, email, password, confirmPassword } = req.body;
-
-    const fields = { fullname, email, password, confirmPassword };
-
-    for (let [key, value] of Object.entries(fields)) {
-      if (!value) {
-        return res.status(400).json({
-          error: { [key]: `${key} is required` },
-        });
-      }
-    }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        error: { confirmPassword: 'Password not matched' },
-      });
-    }
-
-    const existingUser = await Users.findOne({ email });
-
-    if (existingUser) {
-      return res.status(400).json({
-        error: { email: 'Email is already registered' },
-      });
-    }
-
-    const hashpassword = await bcrypt.hash(password, saltRounds);
-
-    const user = new Users({
-      fullname,
-      email,
-      password: hashpassword,
-    });
-
-    await user.save();
-
-    return res.status(200).json({
-      message: 'User created successfully',
-    });
-
-  } catch (error) {
-    console.error('createUser error:', error);
-    return res.status(500).json({
-      message: 'Internal server error',
-    });
-  }
-};
-
-/* ================= LOGIN USER ================= */
-const loginUser = async (req, res) => {
-  try {
-    const { email, password, rememberMe, agreedToTerms } = req.body;
-
-    /* if (!email || !password) {
-      return res.status(400).json({
-        message: 'Email and password required',
-      });
-    } */
-    const fields = { email, password };
-
-    for (let [key, value] of Object.entries(fields)) {
-      if (!value) {
-        return res.status(400).json({
-          error: { [key]: `${key} is required` },
-        });
-      }
-    }
-
-    const user = await Users.findOne({ email }).select({ password: 1 });
-
-    if (!user) {
-      return res.status(400).json({
-        message: 'user not exists',
-      });
-    }
-    if (!agreedToTerms) {
-      return res.status(400).json({
-        message: "Please agree to Terms & Conditions",
-      });
-    }
-    if (!user.password) {
-      return res.status(400).json({
-        message: "Password not match",
-      });
-    }
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.status(400).json({
-        message: 'Invalid email or password',
-      });
-    }
-
-    const accessToken = jwt.sign({ id: user._id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
-    const refreshToken = jwt.sign({ id: user._id, email: user.email }, process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: rememberMe ? '30d' : '15d' })
-
-    res.cookie('refreshToken', refreshToken, {
-      ...refreshCookieOptions(req),
-      maxAge: rememberMe ?
-        30 * 24 * 60 * 60 * 1000 :
-        15 * 24 * 60 * 60 * 1000,
-    })
-    return res.status(200).json({
-      message: 'Login successful',
-      accessToken,
-      user: {
-        id: user._id,
-        fullname: user.fullname,
-        email: user.email,
-        avatar: user.avatar || null,
-      },
-
-    });
-
-  } catch (error) {
-    console.error('loginUser error:', error);
-    return res.status(500).json({
-      message: 'Internal server error',
-    });
-  }
-}
-// ================= CREATE ACCESS TOKEN =================
+// =====================================================
+// CREATE ACCESS TOKEN
+// =====================================================
 
 const createAccessToken = (user) => {
   return jwt.sign(
@@ -161,14 +47,216 @@ const createAccessToken = (user) => {
   );
 };
 
+// =====================================================
+// CREATE USER
+// =====================================================
 
-// ================= REFRESH TOKEN =================
+const createUser = async (req, res) => {
+  try {
+    const {
+      fullname,
+      email,
+      password,
+      confirmPassword,
+    } = req.body;
+
+    const fields = {
+      fullname,
+      email,
+      password,
+      confirmPassword,
+    };
+
+    for (const [key, value] of Object.entries(fields)) {
+      if (!value) {
+        return res.status(400).json({
+          error: {
+            [key]: `${key} is required`,
+          },
+        });
+      }
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        error: {
+          confirmPassword: "Password not matched",
+        },
+      });
+    }
+
+    const existingUser = await Users.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({
+        error: {
+          email: "Email is already registered",
+        },
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      password,
+      saltRounds
+    );
+
+    const user = new Users({
+      fullname,
+      email,
+      password: hashedPassword,
+    });
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "User created successfully",
+    });
+
+  } catch (error) {
+    console.error("createUser error:", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+// =====================================================
+// LOGIN
+// =====================================================
+
+const loginUser = async (req, res) => {
+  try {
+    const {
+      email,
+      password,
+      rememberMe,
+      agreedToTerms,
+    } = req.body;
+
+    const fields = {
+      email,
+      password,
+    };
+
+    for (const [key, value] of Object.entries(fields)) {
+      if (!value) {
+        return res.status(400).json({
+          error: {
+            [key]: `${key} is required`,
+          },
+        });
+      }
+    }
+
+    if (!agreedToTerms) {
+      return res.status(400).json({
+        message: "Please agree to Terms & Conditions",
+      });
+    }
+
+    const user = await Users.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid email or password",
+      });
+    }
+
+    if (!user.password) {
+      return res.status(400).json({
+        message: "Password not match",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Invalid email or password",
+      });
+    }
+
+    // -----------------------------------------------
+    // TOKENS
+    // -----------------------------------------------
+
+    const accessToken = createAccessToken(user);
+
+    const refreshToken = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+      },
+      process.env.REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: rememberMe ? "30d" : "15d",
+      }
+    );
+
+    // -----------------------------------------------
+    // COOKIE
+    // -----------------------------------------------
+
+    res.cookie(
+      "refreshToken",
+      refreshToken,
+      {
+        ...getRefreshCookieOptions(req),
+
+        maxAge: rememberMe
+          ? 30 * 24 * 60 * 60 * 1000
+          : 15 * 24 * 60 * 60 * 1000,
+      }
+    );
+
+    // -----------------------------------------------
+    // RESPONSE
+    // -----------------------------------------------
+
+    return res.status(200).json({
+      message: "Login successful",
+
+      accessToken,
+
+      user: {
+        id: user._id,
+        fullname: user.fullname,
+        email: user.email,
+        avatar: user.avatar || null,
+      },
+    });
+
+  } catch (error) {
+    console.error("loginUser error:", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+// =====================================================
+// REFRESH ACCESS TOKEN
+// =====================================================
 
 const refreshAccessToken = async (req, res) => {
   try {
 
-    // Get refresh token from cookie
-    const refreshToken = req.cookies?.refreshToken;
+    // -----------------------------------------------
+    // GET COOKIE
+    // -----------------------------------------------
+
+    const refreshToken =
+      req.cookies?.refreshToken;
+
+    console.log(
+      "Refresh cookie exists:",
+      Boolean(refreshToken)
+    );
 
     if (!refreshToken) {
       return res.status(401).json({
@@ -176,13 +264,19 @@ const refreshAccessToken = async (req, res) => {
       });
     }
 
-    // Verify refresh token
+    // -----------------------------------------------
+    // VERIFY TOKEN
+    // -----------------------------------------------
+
     const decoded = jwt.verify(
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
 
-    // Find user
+    // -----------------------------------------------
+    // FIND USER
+    // -----------------------------------------------
+
     const user = await Users.findById(decoded.id);
 
     if (!user) {
@@ -191,8 +285,16 @@ const refreshAccessToken = async (req, res) => {
       });
     }
 
-    // Create new access token
-    const newAccessToken = createAccessToken(user);
+    // -----------------------------------------------
+    // CREATE NEW ACCESS TOKEN
+    // -----------------------------------------------
+
+    const newAccessToken =
+      createAccessToken(user);
+
+    // -----------------------------------------------
+    // RESPONSE
+    // -----------------------------------------------
 
     return res.status(200).json({
       accessToken: newAccessToken,
@@ -201,30 +303,45 @@ const refreshAccessToken = async (req, res) => {
         id: user._id,
         fullname: user.fullname,
         email: user.email,
+        avatar: user.avatar || null,
       },
     });
 
   } catch (error) {
 
-    console.error("Refresh Error:", error);
+    console.error(
+      "Refresh Error:",
+      error.message
+    );
 
     return res.status(401).json({
       message: "Invalid or expired refresh token",
     });
   }
-};// =====================================================
+};
+
+// =====================================================
 // LOGOUT
 // =====================================================
 
 const logout = async (req, res) => {
   try {
-    res.clearCookie("refreshToken", refreshCookieOptions(req));
+
+    res.clearCookie(
+      "refreshToken",
+      getRefreshCookieOptions(req)
+    );
 
     return res.status(200).json({
       message: "Logout successful",
     });
+
   } catch (error) {
-    console.error("Logout Error:", error);
+
+    console.error(
+      "Logout Error:",
+      error
+    );
 
     return res.status(500).json({
       message: "Internal server error",
@@ -232,7 +349,10 @@ const logout = async (req, res) => {
   }
 };
 
-/* ================= FORGOT PASSWORD ================= */
+// =====================================================
+// FORGOT PASSWORD
+// =====================================================
+
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -245,28 +365,40 @@ const forgotPassword = async (req, res) => {
       });
     }
 
-    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetToken =
+      crypto.randomBytes(32).toString("hex");
 
     user.resetPasswordToken = resetToken;
-    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+
+    user.resetPasswordExpire =
+      Date.now() + 15 * 60 * 1000;
 
     await user.save();
 
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    const resetUrl =
+      `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
-    await resend.emails.send(
-      {
-        from: "onboarding@resend.dev",
-        to: email,
-        subject: "Password Reset Request",
-        html: `
-         <h2>Password Reset Request</h2>
-        <p>Click the link below to reset your password:</p>
-        <a href="${resetUrl}">Reset Password</a>
-        <p>This link will expire in 15 minutes.</p>
-      `
-      }
-    );
+    await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: email,
+      subject: "Password Reset Request",
+
+      html: `
+        <h2>Password Reset Request</h2>
+
+        <p>
+          Click the link below to reset your password:
+        </p>
+
+        <a href="${resetUrl}">
+          Reset Password
+        </a>
+
+        <p>
+          This link will expire in 15 minutes.
+        </p>
+      `,
+    });
 
     return res.json({
       success: true,
@@ -274,22 +406,40 @@ const forgotPassword = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('forgotPassword error:', error);
+
+    console.error(
+      "forgotPassword error:",
+      error
+    );
+
     return res.status(500).json({
-      message: "Something went wrong. Please try again later.",
+      message:
+        "Something went wrong. Please try again later.",
     });
   }
 };
 
-/* ================= RESET PASSWORD ================= */
+// =====================================================
+// RESET PASSWORD
+// =====================================================
+
 const resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
     const { password } = req.body;
 
+    if (!password) {
+      return res.status(400).json({
+        message: "Password is required",
+      });
+    }
+
     const user = await Users.findOne({
       resetPasswordToken: token,
-      resetPasswordExpire: { $gt: Date.now() },
+
+      resetPasswordExpire: {
+        $gt: Date.now(),
+      },
     });
 
     if (!user) {
@@ -298,9 +448,14 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword =
+      await bcrypt.hash(
+        password,
+        saltRounds
+      );
 
     user.password = hashedPassword;
+
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
 
@@ -312,67 +467,119 @@ const resetPassword = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('resetPassword error:', error);
+
+    console.error(
+      "resetPassword error:",
+      error
+    );
+
     return res.status(500).json({
-      message: "Something went wrong. Please try again later.",
+      message:
+        "Something went wrong. Please try again later.",
     });
   }
 };
 
-/* ================= GOOGLE LOGIN ================= */
+// =====================================================
+// GOOGLE LOGIN
+// =====================================================
+
 const GoogleLogin = async (req, res) => {
   try {
-    const { fullname, email, photoURL, firebaseId } = req.body;
+
+    const {
+      fullname,
+      email,
+      photoURL,
+      firebaseId,
+    } = req.body;
 
     if (!email || !firebaseId) {
       return res.status(400).json({
-        message: 'Email and firebaseId are required',
+        message:
+          "Email and firebaseId are required",
       });
     }
 
     let user = await Users.findOne({ email });
 
     if (!user) {
+
       user = new Users({
         email,
         fullname,
         avatar: photoURL,
         firebaseId,
-        provider: 'google',
+        provider: "google",
       });
+
       await user.save();
     }
 
-    const accessToken = jwt.sign({ id: user._id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
-    const refreshToken = jwt.sign({ id: user._id, email: user.email }, process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: '15d' })
+    // -----------------------------------------------
+    // TOKENS
+    // -----------------------------------------------
 
-    res.cookie('refreshToken', refreshToken, {
-      ...refreshCookieOptions(req),
-      maxAge:
-        15 * 24 * 60 * 60 * 1000,
-    })
+    const accessToken =
+      createAccessToken(user);
+
+    const refreshToken =
+      jwt.sign(
+        {
+          id: user._id,
+          email: user.email,
+        },
+        process.env.REFRESH_TOKEN_SECRET,
+        {
+          expiresIn: "15d",
+        }
+      );
+
+    // -----------------------------------------------
+    // COOKIE
+    // -----------------------------------------------
+
+    res.cookie(
+      "refreshToken",
+      refreshToken,
+      {
+        ...getRefreshCookieOptions(req),
+
+        maxAge:
+          15 * 24 * 60 * 60 * 1000,
+      }
+    );
+
     return res.status(200).json({
-      message: 'Login successful',
+      message: "Login successful",
+
       accessToken,
+
       user: {
         id: user._id,
         fullname: user.fullname,
         email: user.email,
         avatar: user.avatar || null,
       },
-
     });
 
   } catch (error) {
-    console.error('GoogleLogin error:', error);
+
+    console.error(
+      "GoogleLogin error:",
+      error
+    );
+
     return res.status(500).json({
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
 
-/* ================= EXPORT ================= */
+// =====================================================
+// EXPORT
+// =====================================================
+
 export {
   createUser,
   loginUser,
@@ -380,5 +587,5 @@ export {
   resetPassword,
   GoogleLogin,
   refreshAccessToken,
-  logout
+  logout,
 };

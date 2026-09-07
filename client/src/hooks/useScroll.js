@@ -2,13 +2,11 @@ import { useState, useEffect, useRef } from "react";
 
 /**
  * Returns true when the navbar's "collapsed" row should be hidden.
- * - Scrolling DOWN past `threshold` px  -> true (hide)
- * - Scrolling UP (any amount)          -> false (show)
- * - Near the top of the page           -> false (always show)
+ * - Past `threshold` px from the top -> true (hide)
+ * - Near the top of the page         -> false (show)
  */
 export const useScroll = (threshold = 80) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const lastScrollY = useRef(0);
   const ticking = useRef(false);
 
   useEffect(() => {
@@ -22,15 +20,11 @@ export const useScroll = (threshold = 80) => {
         if (currentScrollY <= threshold) {
           // near top -> always show
           setIsScrolled(false);
-        } else if (currentScrollY > lastScrollY.current) {
-          // scrolling down -> hide
+        } else {
+          // Keep the row hidden until the page is close to the top again.
           setIsScrolled(true);
-        } else if (currentScrollY < lastScrollY.current) {
-          // scrolling up -> show
-          setIsScrolled(false);
         }
 
-        lastScrollY.current = currentScrollY;
         ticking.current = false;
       });
     };

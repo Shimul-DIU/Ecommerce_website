@@ -21,6 +21,7 @@ import { CountContext } from "../../context/countContext";
 import { useScroll } from "../../hooks/useScroll";
 import { AuthContext } from '../../context/AuthContext'
 import { getInitials } from "../../utils/getInitials";
+import useProducts from "../../hooks/useProducts";
 
 const ICON_SM = "text-xs";
 const ICON_ACTION = "text-lg sm:text-xl md:text-lg";
@@ -44,6 +45,7 @@ const Navbar = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const isScrolled = useScroll(); // true যখন স্ক্রল ডাউন, false যখন উপরে
   const { wishlist, cart } = useContext(CountContext);
+  const [products] = useProducts();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -106,6 +108,27 @@ const Navbar = ({ onMenuClick }) => {
   const handleSearchClose = () => {
     setSearchOpen(false);
     setQuery("");
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const search = query.trim();
+    navigate(search ? `/products?search=${encodeURIComponent(search)}` : "/products");
+    setSearchOpen(false);
+    setSearchFocused(false);
+  };
+
+  const searchSuggestions = query.trim()
+    ? products
+      .filter((item) => item.name?.toLowerCase().includes(query.trim().toLowerCase()))
+      .slice(0, 5)
+    : [];
+
+  const handleSuggestionClick = (productName) => {
+    setQuery(productName);
+    navigate(`/products?search=${encodeURIComponent(productName)}`);
+    setSearchOpen(false);
+    setSearchFocused(false);
   };
 
   const handleUserIconClick = (isMobile = false) => {
@@ -191,16 +214,34 @@ const Navbar = ({ onMenuClick }) => {
             >
               <FontAwesomeIcon icon={faArrowLeft} className={ICON_ACTION} />
             </button>
-            <div className="flex-1 flex items-center bg-slate-50 rounded-full pl-4 pr-2 h-10 shadow-sm border border-slate-200">
-              <FontAwesomeIcon icon={faSearch} className="text-slate-400 text-sm mr-2 shrink-0" />
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search products..."
-                autoFocus
-                className="flex-1 h-full outline-none bg-transparent text-sm text-slate-800 placeholder:text-slate-400"
-              />
+            <div className="relative flex-1">
+              <form onSubmit={handleSearchSubmit} className="flex items-center bg-slate-50 rounded-full pl-4 pr-2 h-10 shadow-sm border border-slate-200">
+                <FontAwesomeIcon icon={faSearch} className="text-slate-400 text-sm mr-2 shrink-0" />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onFocus={() => setSearchFocused(true)}
+                  placeholder="Search products..."
+                  autoFocus
+                  className="flex-1 h-full outline-none bg-transparent text-sm text-slate-800 placeholder:text-slate-400"
+                />
+              </form>
+              {searchFocused && searchSuggestions.length > 0 && (
+                <div className="absolute top-12 left-0 right-0 z-50 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+                  {searchSuggestions.map((item) => (
+                    <button
+                      type="button"
+                      key={item._id}
+                      onMouseDown={() => handleSuggestionClick(item.name)}
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600"
+                    >
+                      <FontAwesomeIcon icon={faSearch} className="text-xs text-slate-400" />
+                      <span className="truncate">{item.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <button
               aria-label="Voice search"
@@ -219,26 +260,44 @@ const Navbar = ({ onMenuClick }) => {
                   <img src={logo} alt="logo" className="transition-all duration-300 h-10" />
                 </Link>
 
-                <div className="flex-1 flex justify-center">
-                  <div
+                <div className="relative flex-1 flex justify-center">
+                  <form
+                    onSubmit={handleSearchSubmit}
                     className={`flex items-center border rounded-full h-10 w-full max-w-sm transition-all duration-200 overflow-hidden ${searchFocused ? "border-orange-500 shadow-[0_0_0_2px_rgba(242,139,0,0.2)]" : "border-gray-200"
                       }`}
                   >
                     <FontAwesomeIcon icon={faSearch} className="text-slate-400 text-sm ml-4 shrink-0" />
                     <input
                       type="text"
+                      value={query}
                       placeholder={language === "BN" ? "পণ্য খুঁজুন..." : "Search products..."}
                       className="flex-1 h-full outline-none bg-transparent text-sm text-slate-800 placeholder:text-slate-400 px-2.5"
+                      onChange={(e) => setQuery(e.target.value)}
                       onFocus={() => setSearchFocused(true)}
                       onBlur={() => setSearchFocused(false)}
                     />
                     <button
-                      type="button"
+                      type="submit"
                       className="h-full px-4 text-white text-sm shrink-0 transition-colors bg-orange-500 hover:bg-red-500"
                     >
                       <FontAwesomeIcon icon={faSearch} />
                     </button>
-                  </div>
+                  </form>
+                  {searchFocused && searchSuggestions.length > 0 && (
+                    <div className="absolute top-12 left-1/2 z-50 w-full max-w-sm -translate-x-1/2 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+                      {searchSuggestions.map((item) => (
+                        <button
+                          type="button"
+                          key={item._id}
+                          onMouseDown={() => handleSuggestionClick(item.name)}
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600"
+                        >
+                          <FontAwesomeIcon icon={faSearch} className="text-xs text-slate-400" />
+                          <span className="truncate">{item.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-1 text-slate-500 shrink-0">
@@ -277,7 +336,7 @@ const Navbar = ({ onMenuClick }) => {
                         />
                       ) : (
                         <div
-                             title={user?.fullname}
+                          title={user?.fullname}
                           className={`cursor-pointer ${AVATAR_SIZE} rounded-full text-white flex items-center justify-center text-sm bg-orange-500`}
                         >
                           {getInitials(user?.fullname)}

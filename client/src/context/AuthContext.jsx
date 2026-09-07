@@ -6,6 +6,7 @@ import {
 } from "react";
 
 import axiosInstance from "../utils/axiosInstance";
+
 import {
   setAccessToken as saveTokenToManager,
   clearAccessToken as clearTokenFromManager,
@@ -22,39 +23,75 @@ export const AuthProvider = ({ children }) => {
   // LOGIN
   // ===================================================
 
-  const login = async (email, password, rememberMe, agreedToTerms) => {
-    const response = await axiosInstance.post("/api/auth/user/login", {
-      email,
-      password,
-      rememberMe,
-      agreedToTerms,
-    });
+  const login = async (
+    email,
+    password,
+    rememberMe,
+    agreedToTerms
+  ) => {
+    try {
+      const response = await axiosInstance.post(
+        "/api/auth/user/login",
+        {
+          email,
+          password,
+          rememberMe,
+          agreedToTerms,
+        }
+      );
 
-    const { accessToken, user } = response.data;
+      const newAccessToken =
+        response.data.accessToken;
 
-    setAccessToken(accessToken);       // React state (UI-এর জন্য)
-    saveTokenToManager(accessToken);   // ✅ axiosInstance যেটা আসলে ব্যবহার করে
-    setUser(user);
+      const userData =
+        response.data.user;
 
-    return response.data;
+      // Save token in React state
+      setAccessToken(newAccessToken);
+
+      // Save token in memory manager
+      saveTokenToManager(newAccessToken);
+
+      // Save user
+      setUser(userData);
+
+      return response.data;
+
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const googleLogin = (accessToken, user) => {
-    setAccessToken(accessToken);
-    saveTokenToManager(accessToken);
-    setUser(user);
+  // ===================================================
+  // GOOGLE LOGIN
+  // ===================================================
+
+  const googleLogin = (
+    newAccessToken,
+    userData
+  ) => {
+    setAccessToken(newAccessToken);
+    saveTokenToManager(newAccessToken);
+    setUser(userData);
   };
 
   // ===================================================
   // REGISTER
   // ===================================================
 
-  const register = async (fullname, email, password) => {
-    const response = await axiosInstance.post("/api/auth/user/register", {
-      fullname,
-      email,
-      password,
-    });
+  const register = async (
+    fullname,
+    email,
+    password
+  ) => {
+    const response = await axiosInstance.post(
+      "/api/auth/user/register",
+      {
+        fullname,
+        email,
+        password,
+      }
+    );
 
     return response.data;
   };
@@ -65,43 +102,91 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axiosInstance.post("/api/auth/user/logout");
+      await axiosInstance.post(
+        "/api/auth/user/logout"
+      );
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error(
+        "Logout error:",
+        error.response?.data ||
+        error.message
+      );
     } finally {
       setAccessToken(null);
-      clearTokenFromManager(); // ✅
+      clearTokenFromManager();
       setUser(null);
     }
   };
 
   // ===================================================
-  // RESTORE LOGIN SESSION
+  // RESTORE SESSION
   // ===================================================
 
   const restoreSession = async () => {
     try {
-      const response = await axiosInstance.post("/api/auth/user/refresh");
+      console.log(
+        "Trying to restore session..."
+      );
 
-      setAccessToken(response.data.accessToken);
-      saveTokenToManager(response.data.accessToken); // ✅
-      setUser(response.data.user);
+      const response =
+        await axiosInstance.post(
+          "/api/auth/user/refresh"
+        );
+
+      const newAccessToken =
+        response.data?.accessToken;
+
+      const userData =
+        response.data?.user;
+
+      if (!newAccessToken) {
+        throw new Error(
+          "Access token missing from refresh response"
+        );
+      }
+
+      // Save new access token
+      setAccessToken(newAccessToken);
+
+      saveTokenToManager(newAccessToken);
+
+      // Restore user
+      setUser(userData);
+
+      console.log(
+        "Session restored successfully"
+      );
+
     } catch (error) {
+
+      console.error(
+        "Session restore failed:",
+        error.response?.data ||
+        error.message
+      );
+
       setAccessToken(null);
-      clearTokenFromManager(); // ✅
+
+      clearTokenFromManager();
+
       setUser(null);
+
     } finally {
       setLoading(false);
     }
   };
 
   // ===================================================
-  // INITIAL APP LOAD
+  // INITIAL LOAD
   // ===================================================
 
   useEffect(() => {
     restoreSession();
   }, []);
+
+  // ===================================================
+  // CONTEXT
+  // ===================================================
 
   return (
     <AuthContext.Provider
@@ -109,10 +194,13 @@ export const AuthProvider = ({ children }) => {
         accessToken,
         user,
         loading,
+
         login,
         googleLogin,
         register,
         logout,
+
+        restoreSession,
       }}
     >
       {children}
@@ -120,3 +208,10 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// ===================================================
+// CUSTOM HOOK
+// ===================================================
+
+export const useAuth = () => {
+  return useContext(AuthContext);
+};

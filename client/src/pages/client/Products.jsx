@@ -9,7 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { CountContext } from "../../context/countContext";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import useProducts from "../../hooks/useProducts";
 import { useScroll } from "../../hooks/useScroll";
 
@@ -33,8 +33,10 @@ const Products = () => {
     useContext(CountContext);
   const [products, loading, error] = useProducts();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const initialFilter = location.state?.filter || "all";
+  const searchQuery = searchParams.get("search")?.trim().toLowerCase() || "";
 
   const [activeCategory, setActiveCategory] = useState(initialFilter);
   const [sortBy, setSortBy] = useState("default");
@@ -59,6 +61,21 @@ const Products = () => {
         ? [...products]
         : products.filter((item) => item.category === activeCategory);
 
+    if (searchQuery) {
+      const searchTerms = searchQuery.split(/\s+/).filter(Boolean);
+      const searchedProducts = result.filter((item) => {
+        const searchableText = [item.name, item.category, item.description]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        return searchTerms.every((term) => searchableText.includes(term));
+      });
+
+      // Keep the catalogue visible when the search has no result.
+      result = searchedProducts.length > 0 ? searchedProducts : [...products];
+    }
+
     if (inStockOnly) {
       result = result.filter((item) => item.stock > 0);
     }
@@ -74,7 +91,7 @@ const Products = () => {
     }
 
     return result;
-  }, [products, activeCategory, inStockOnly, minPrice, maxPrice, sortBy]);
+  }, [products, activeCategory, inStockOnly, minPrice, maxPrice, sortBy, searchQuery]);
 
   const resetFilters = () => {
     setActiveCategory("all");
@@ -212,7 +229,7 @@ const Products = () => {
 
   return (
     // ✅ FIX: Proper top padding to sit below the fixed navbar
-    <div className="min-h-screen pt-[104px] md:pt-[144px] pb-10 px-4 md:px-8">
+    <div className="min-h-screen mt-8 sm:mt-6 pb-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between mb-3">
           <h2 className="text-lg sm:text-2xl lg:hidden font-bold">Products</h2>
@@ -354,8 +371,8 @@ const Products = () => {
                                 : "Add to wishlist"
                             }
                             className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inWishlist
-                                ? "bg-red-500 text-white"
-                                : "bg-white/90 text-[#16241F]/60 hover:text-red-500 hover:bg-white"
+                              ? "bg-red-500 text-white"
+                              : "bg-white/90 text-[#16241F]/60 hover:text-red-500 hover:bg-white"
                               }`}
                           >
                             <FontAwesomeIcon
@@ -374,8 +391,8 @@ const Products = () => {
                               inCart ? "Remove from cart" : "Add to cart"
                             }
                             className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inCart
-                                ? "bg-[#16241F] text-[#B08946]"
-                                : "bg-white/90 text-[#16241F]/60 hover:text-[#16241F] hover:bg-white"
+                              ? "bg-[#16241F] text-[#B08946]"
+                              : "bg-white/90 text-[#16241F]/60 hover:text-[#16241F] hover:bg-white"
                               }`}
                           >
                             <FontAwesomeIcon
