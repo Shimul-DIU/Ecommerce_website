@@ -7,9 +7,9 @@ import {
   faTimes,
   faTag,
 } from "@fortawesome/free-solid-svg-icons";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { CountContext } from "../../context/countContext";
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import useProducts from "../../hooks/useProducts";
 import { useScroll } from "../../hooks/useScroll";
 
@@ -17,9 +17,10 @@ const CATEGORY_OPTIONS = [
   { key: "all", label: "All Categories" },
   { key: "deal", label: "Deal of the Day" },
   { key: "new-arrival", label: "New Arrival" },
+  { key: "perfume", label: "Perfume" },
+  { key: "jewellery", label: "Jewellery" },
   { key: "men", label: "Men's" },
   { key: "women", label: "Women's" },
-  { key: "jewellery", label: "Jewellery" },
   { key: "fishing", label: "Fishing" },
   { key: "Electronics", label: "Electronics" },
 ];
@@ -33,12 +34,15 @@ const Products = () => {
     useContext(CountContext);
   const [products, loading, error] = useProducts();
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const initialFilter = location.state?.filter || "all";
+  const initialFilter = searchParams.get("category") || location.state?.filter || "all";
+  const subcategoryQuery = searchParams.get("subcategory")?.trim().toLowerCase() || "";
   const searchQuery = searchParams.get("search")?.trim().toLowerCase() || "";
 
-  const [activeCategory, setActiveCategory] = useState(initialFilter);
+  const [selectedCategory, setSelectedCategory] = useState(initialFilter);
+  const activeCategory = searchParams.get("category") || selectedCategory;
   const [sortBy, setSortBy] = useState("default");
 
   const [minPrice, setMinPrice] = useState(MIN_LIMIT);
@@ -47,12 +51,6 @@ const Products = () => {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  useEffect(() => {
-    if (location.state?.filter) {
-      setActiveCategory(location.state.filter);
-    }
-  }, [location.state]);
-
   const filteredProducts = useMemo(() => {
     if (!products) return [];
 
@@ -60,6 +58,29 @@ const Products = () => {
       activeCategory === "all"
         ? [...products]
         : products.filter((item) => item.category === activeCategory);
+
+    if (result.length === 0) {
+      result = [...products];
+    }
+
+    if (subcategoryQuery) {
+      const subcategoryName = subcategoryQuery
+        .replace(`${activeCategory}-`, "")
+        .replace(/-/g, " ");
+
+      const subcategoryProducts = result.filter((item) => {
+        const productSubcategory = item.subCategory?.toLowerCase();
+        const productName = item.name?.toLowerCase() || "";
+
+        return (
+          productSubcategory === subcategoryQuery ||
+          productSubcategory === subcategoryName ||
+          productName.includes(subcategoryName)
+        );
+      });
+
+      result = subcategoryProducts.length > 0 ? subcategoryProducts : [...products];
+    }
 
     if (searchQuery) {
       const searchTerms = searchQuery.split(/\s+/).filter(Boolean);
@@ -91,10 +112,11 @@ const Products = () => {
     }
 
     return result;
-  }, [products, activeCategory, inStockOnly, minPrice, maxPrice, sortBy, searchQuery]);
+  }, [products, activeCategory, subcategoryQuery, inStockOnly, minPrice, maxPrice, sortBy, searchQuery]);
 
   const resetFilters = () => {
-    setActiveCategory("all");
+    setSelectedCategory("all");
+    navigate("/products");
     setSortBy("default");
     setMinPrice(MIN_LIMIT);
     setMaxPrice(MAX_LIMIT);
@@ -117,7 +139,11 @@ const Products = () => {
         </label>
         <select
           value={activeCategory}
-          onChange={(e) => setActiveCategory(e.target.value)}
+          onChange={(e) => {
+            const category = e.target.value;
+            setSelectedCategory(category);
+            navigate(`/products?category=${encodeURIComponent(category)}`);
+          }}
           className="w-full text-sm border border-[#E4DDCE] rounded-lg px-3 py-2 bg-[#FAF6EF] text-[#16241F] focus:outline-none focus:ring-2 focus:ring-[#B08946] transition"
         >
           {CATEGORY_OPTIONS.map((cat) => (

@@ -86,7 +86,7 @@ const Filter = ({ onFilterChange }) => {
     selectedRating;
 
   return (
-    <aside className="w-full max-w-xs bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+    <aside className="w-full max-w-xs bg-white rounded-2xl border border-gray-100 shadow-sm p-5 ">
       <div className="flex items-center justify-between mb-2 pb-3 border-b border-gray-100">
         <h2 className="text-lg font-bold text-gray-900">Filters</h2>
         {hasActiveFilters && (

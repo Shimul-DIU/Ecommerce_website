@@ -12,6 +12,7 @@ import {
 
 import {
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -95,13 +96,34 @@ const Women = () => {
   const searchQuery =
     searchParams.get("search")?.trim().toLowerCase() || "";
 
+  const categoryQuery = searchParams.get("category") || "women";
+
 
   /* =======================================================
      FILTER STATES
      ======================================================= */
 
   const [selectedCategory, setSelectedCategory] =
-    useState("women");
+    useState(categoryQuery);
+  const activeCategory = categoryQuery || selectedCategory;
+
+  useEffect(() => {
+    if (categoryQuery === "women") return undefined;
+
+    window.dispatchEvent(new Event("navbar:keep-visible"));
+
+    const frame = requestAnimationFrame(() => {
+      const productSection = document.getElementById("women-products");
+      if (productSection) {
+        window.scrollTo({
+          top: Math.max(productSection.offsetTop - 90, 0),
+          behavior: "auto",
+        });
+      }
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [categoryQuery]);
 
   const [sortBy, setSortBy] =
     useState("default");
@@ -136,6 +158,16 @@ const Women = () => {
     let result = products.filter(
       (item) => item.category === "women"
     );
+
+    if (activeCategory !== "women") {
+      const subCategoryName = activeCategory.replace("women-", "");
+      result = result.filter(
+        (item) =>
+          item.subCategory === activeCategory ||
+          item.subCategory === subCategoryName ||
+          item.name?.toLowerCase().includes(subCategoryName)
+      );
+    }
 
 
     /* =====================================================
@@ -207,6 +239,7 @@ const Women = () => {
   }, [
     products,
     searchQuery,
+    activeCategory,
     minPrice,
     maxPrice,
     inStockOnly,
@@ -259,7 +292,7 @@ const Women = () => {
         </label>
 
         <select
-          value={selectedCategory}
+          value={activeCategory}
           onChange={(e) =>
             setSelectedCategory(e.target.value)
           }
@@ -498,7 +531,7 @@ const Women = () => {
 
       <div
         id="women-products"
-        className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8"
+        className="mx-auto max-w-7xl px-4 pt-19 sm:px-6 lg:px-8"
       >
 
         {/* =================================================
@@ -604,8 +637,8 @@ const Women = () => {
 
           <aside
             className={`hidden w-60 shrink-0 rounded-2xl border border-[#E4DDCE] bg-white p-5 shadow-sm lg:block xl:w-64 ${isScrolled
-                ? "sticky top-[92px]"
-                : "sticky top-[76px]"
+              ? "sticky top-[92px]"
+              : "sticky top-[76px]"
               }`}
           >
 
@@ -864,8 +897,8 @@ const Women = () => {
                                   : "Add to wishlist"
                               }
                               className={`flex h-7 w-7 items-center justify-center rounded-full shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 sm:h-8 sm:w-8 ${inWishlist
-                                  ? "bg-red-500 text-white"
-                                  : "bg-white/90 text-[#16241F]/60 hover:bg-white hover:text-red-500"
+                                ? "bg-red-500 text-white"
+                                : "bg-white/90 text-[#16241F]/60 hover:bg-white hover:text-red-500"
                                 }`}
                             >
 
@@ -894,8 +927,8 @@ const Women = () => {
                                   : "Add to cart"
                               }
                               className={`flex h-7 w-7 items-center justify-center rounded-full shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 sm:h-8 sm:w-8 ${inCart
-                                  ? "bg-[#16241F] text-[#B08946]"
-                                  : "bg-white/90 text-[#16241F]/60 hover:bg-white hover:text-[#16241F]"
+                                ? "bg-[#16241F] text-[#B08946]"
+                                : "bg-white/90 text-[#16241F]/60 hover:bg-white hover:text-[#16241F]"
                                 }`}
                             >
 
@@ -1026,7 +1059,7 @@ const Women = () => {
 
       </div>
 
-    </div>
+    </div >
   );
 };
 

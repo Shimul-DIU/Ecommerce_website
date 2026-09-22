@@ -13,6 +13,7 @@ import {
 
 import {
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -92,13 +93,34 @@ const Fishing = () => {
   const searchQuery =
     searchParams.get("search")?.trim().toLowerCase() || "";
 
+  const categoryQuery = searchParams.get("category") || "fishing";
+
 
   /* =======================================================
      FILTER STATES
      ======================================================= */
 
   const [selectedCategory, setSelectedCategory] =
-    useState("fishing");
+    useState(categoryQuery);
+  const activeCategory = categoryQuery || selectedCategory;
+
+  useEffect(() => {
+    if (categoryQuery === "fishing") return undefined;
+
+    window.dispatchEvent(new Event("navbar:keep-visible"));
+
+    const frame = requestAnimationFrame(() => {
+      const productSection = document.getElementById("fishing-products");
+      if (productSection) {
+        window.scrollTo({
+          top: Math.max(productSection.offsetTop - 90, 0),
+          behavior: "auto",
+        });
+      }
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [categoryQuery]);
 
   const [sortBy, setSortBy] =
     useState("default");
@@ -139,9 +161,13 @@ const Fishing = () => {
        SUB CATEGORY
        ===================================================== */
 
-    if (selectedCategory !== "fishing") {
+    if (activeCategory !== "fishing") {
+      const subCategoryName = activeCategory.replace("fishing-", "").replace(/s$/, "");
       result = result.filter(
-        (item) => item.subCategory === selectedCategory
+        (item) =>
+          item.subCategory === activeCategory ||
+          item.subCategory === subCategoryName ||
+          item.name?.toLowerCase().includes(subCategoryName)
       );
     }
 
@@ -216,7 +242,7 @@ const Fishing = () => {
   }, [
     products,
     searchQuery,
-    selectedCategory,
+    activeCategory,
     minPrice,
     maxPrice,
     inStockOnly,
@@ -269,7 +295,7 @@ const Fishing = () => {
         </label>
 
         <select
-          value={selectedCategory}
+          value={activeCategory}
           onChange={(e) =>
             setSelectedCategory(e.target.value)
           }
@@ -509,7 +535,7 @@ const Fishing = () => {
 
       <div
         id="fishing-products"
-        className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8"
+        className="mx-auto max-w-7xl px-4 pt-19 sm:px-6 lg:px-8"
       >
 
 
@@ -618,11 +644,10 @@ const Fishing = () => {
           ================================================= */}
 
           <aside
-            className={`hidden w-60 shrink-0 rounded-2xl border border-[#E4DDCE] bg-white p-5 shadow-sm lg:block xl:w-64 ${
-  isScrolled
-    ? "sticky top-[92px]"
-    : "sticky top-[76px]"
-} `}
+            className={`hidden w-60 shrink-0 rounded-2xl border border-[#E4DDCE] bg-white p-5 shadow-sm lg:block xl:w-64 ${isScrolled
+              ? "sticky top-[92px]"
+              : "sticky top-[76px]"
+              } `}
           >
 
             {renderFilterContent()}
@@ -887,11 +912,10 @@ const Fishing = () => {
                                   ? "Remove from wishlist"
                                   : "Add to wishlist"
                               }
-                              className={`flex h - 7 w - 7 items - center justify - center rounded - full shadow - md backdrop - blur - md transition - all duration - 200 active: scale - 90 sm: h - 8 sm: w - 8 ${
-  inWishlist
-    ? "bg-red-500 text-white"
-    : "bg-white/90 text-[#16241F]/60 hover:bg-white hover:text-red-500"
-} `}
+                              className={`flex h - 7 w - 7 items - center justify - center rounded - full shadow - md backdrop - blur - md transition - all duration - 200 active: scale - 90 sm: h - 8 sm: w - 8 ${inWishlist
+                                ? "bg-red-500 text-white"
+                                : "bg-white/90 text-[#16241F]/60 hover:bg-white hover:text-red-500"
+                                } `}
                             >
 
                               <FontAwesomeIcon
@@ -920,11 +944,10 @@ const Fishing = () => {
                                   ? "Remove from cart"
                                   : "Add to cart"
                               }
-                              className={`flex h - 7 w - 7 items - center justify - center rounded - full shadow - md backdrop - blur - md transition - all duration - 200 active: scale - 90 sm: h - 8 sm: w - 8 ${
-  inCart
-    ? "bg-[#16241F] text-[#B08946]"
-    : "bg-white/90 text-[#16241F]/60 hover:bg-white hover:text-[#16241F]"
-} `}
+                              className={`flex h - 7 w - 7 items - center justify - center rounded - full shadow - md backdrop - blur - md transition - all duration - 200 active: scale - 90 sm: h - 8 sm: w - 8 ${inCart
+                                ? "bg-[#16241F] text-[#B08946]"
+                                : "bg-white/90 text-[#16241F]/60 hover:bg-white hover:text-[#16241F]"
+                                } `}
                             >
 
                               <FontAwesomeIcon
@@ -986,11 +1009,11 @@ const Fishing = () => {
                                   {originalPrice >
                                     item.price && (
 
-                                    <span className="text-[10px] font-medium text-[#16241F]/40 line-through sm:text-xs">
-                                      ৳{originalPrice}
-                                    </span>
+                                      <span className="text-[10px] font-medium text-[#16241F]/40 line-through sm:text-xs">
+                                        ৳{originalPrice}
+                                      </span>
 
-                                  )}
+                                    )}
 
                                 </div>
 
@@ -1007,11 +1030,11 @@ const Fishing = () => {
                               {savingsAmount > 0 &&
                                 !isOutOfStock && (
 
-                                <p className="text-[9px] font-semibold text-green-600 sm:text-[10px]">
-                                  Save ৳{savingsAmount}
-                                </p>
+                                  <p className="text-[9px] font-semibold text-green-600 sm:text-[10px]">
+                                    Save ৳{savingsAmount}
+                                  </p>
 
-                              )}
+                                )}
 
                             </div>
 
@@ -1055,7 +1078,7 @@ const Fishing = () => {
 
       </div>
 
-    </div>
+    </div >
   );
 };
 

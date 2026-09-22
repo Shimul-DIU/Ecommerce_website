@@ -8,8 +8,18 @@ import { useState, useEffect, useRef } from "react";
 export const useScroll = (threshold = 80) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const ticking = useRef(false);
+  const userScrollIntent = useRef(false);
 
   useEffect(() => {
+    const markUserScrollIntent = () => {
+      userScrollIntent.current = true;
+    };
+
+    const keepNavbarVisible = () => {
+      userScrollIntent.current = false;
+      setIsScrolled(false);
+    };
+
     const handleScroll = () => {
       if (ticking.current) return;
       ticking.current = true;
@@ -17,7 +27,7 @@ export const useScroll = (threshold = 80) => {
       window.requestAnimationFrame(() => {
         const currentScrollY = window.scrollY;
 
-        if (currentScrollY <= threshold) {
+        if (!userScrollIntent.current || currentScrollY <= threshold) {
           // near top -> always show
           setIsScrolled(false);
         } else {
@@ -29,8 +39,18 @@ export const useScroll = (threshold = 80) => {
       });
     };
 
+    window.addEventListener("wheel", markUserScrollIntent, { passive: true });
+    window.addEventListener("touchstart", markUserScrollIntent, { passive: true });
+    window.addEventListener("keydown", markUserScrollIntent);
+    window.addEventListener("navbar:keep-visible", keepNavbarVisible);
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("wheel", markUserScrollIntent);
+      window.removeEventListener("touchstart", markUserScrollIntent);
+      window.removeEventListener("keydown", markUserScrollIntent);
+      window.removeEventListener("navbar:keep-visible", keepNavbarVisible);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [threshold]);
 
   return isScrolled;

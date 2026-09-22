@@ -78,11 +78,11 @@ const Navbar = ({ onMenuClick }) => {
 
   // Products ক্যাটাগরির ড্রপডাউন ডাটা স্ট্রাকচার
   const productCategories = [
-    { name: language === "BN" ? "পারফিউম (Perfume)" : "Perfume", path: "/perfume" },
-    { name: language === "BN" ? "জুয়েলারি (Jewellery)" : "Jewellery", path: "/jewellery" },
-    { name: language === "BN" ? "নারী (Women)" : "Women", path: "/women" },
-    { name: language === "BN" ? "পুরুষ (Men)" : "Men", path: "/men" },
-    { name: language === "BN" ? "মাছ ধরা (Fishing)" : "Fishing", path: "/fishing" }
+    { name: language === "BN" ? "পারফিউম (Perfume)" : "Perfume", path: "/products?category=perfume" },
+    { name: language === "BN" ? "জুয়েলারি (Jewellery)" : "Jewellery", path: "/products?category=jewellery" },
+    { name: language === "BN" ? "নারী (Women)" : "Women", path: "/products?category=women" },
+    { name: language === "BN" ? "পুরুষ (Men)" : "Men", path: "/products?category=men" },
+    { name: language === "BN" ? "মাছ ধরা (Fishing)" : "Fishing", path: "/products?category=fishing" }
   ];
 
   // Category Sub-Items Config (Mega Menu for All Categories)
@@ -116,7 +116,7 @@ const Navbar = ({ onMenuClick }) => {
       hasDropdown: true,
       items: productCategories
     },
-    
+
     {
       id: "women",
       name: language === "BN" ? "নারী" : "Women",
@@ -134,7 +134,7 @@ const Navbar = ({ onMenuClick }) => {
     {
       id: "fishing",
       name: language === "BN" ? "মাছ ধরা" : "Fishing",
-    path: "/fishing",
+      path: "/fishing",
       hasDropdown: true,
       items: categoryItems.fishing
     },
@@ -164,6 +164,16 @@ const Navbar = ({ onMenuClick }) => {
     navigate(search ? `/products?search=${encodeURIComponent(search)}` : "/products");
     setSearchOpen(false);
     setSearchFocused(false);
+  };
+
+  const getCategoryLink = (category, subItem) => {
+    const subcategory = `${category}-${subItem.toLowerCase().replace(/ /g, "-")}`;
+
+    if (["men", "women", "fishing"].includes(category)) {
+      return `/${category}?category=${encodeURIComponent(subcategory)}`;
+    }
+
+    return `/products?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`;
   };
 
   const searchSuggestions = query.trim()
@@ -476,7 +486,7 @@ const Navbar = ({ onMenuClick }) => {
                                   {items.map((subItem) => (
                                     <Link
                                       key={subItem}
-                                      to={`/${category}/${subItem.toLowerCase().replace(/ /g, "-")}`}
+                                      to={getCategoryLink(category, subItem)}
                                       onClick={() => setActiveDropdown(null)}
                                       className="text-[11px] text-slate-600 transition-colors w-fit hover:text-orange-500"
                                     >
@@ -519,7 +529,7 @@ const Navbar = ({ onMenuClick }) => {
                             {item.items?.map((subItem) => (
                               <Link
                                 key={subItem}
-                                to={`/${item.id}/${subItem.toLowerCase().replace(/ /g, "-")}`}
+                                to={getCategoryLink(item.id, subItem)}
                                 onClick={() => setActiveDropdown(null)}
                                 className="text-sm text-slate-700 transition-colors hover:text-orange-500"
                               >
@@ -658,7 +668,7 @@ const Navbar = ({ onMenuClick }) => {
                             {items.map((subItem) => (
                               <Link
                                 key={subItem}
-                                to={`/${category}/${subItem.toLowerCase().replace(/ /g, "-")}`}
+                                to={getCategoryLink(category, subItem)}
                                 onClick={() => setMobileCategoryOpen(false)}
                                 className="text-sm text-slate-600 transition-colors w-fit hover:text-orange-500"
                               >
