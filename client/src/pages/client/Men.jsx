@@ -1,4 +1,3 @@
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
@@ -9,11 +8,11 @@ import {
   faTimes,
   faTag,
   faArrowRight,
-  faFire,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -33,46 +32,52 @@ import { useScroll } from "../../hooks/useScroll";
    ========================================================= */
 
 const MIN_LIMIT = 100;
-const MAX_LIMIT = 10000;
+const MAX_LIMIT = 3000;
 
 
 /* =========================================================
-   OFFER TYPES
+   MEN CATEGORIES
+
+   আপনার backend/category data অনুযায়ী এগুলো পরিবর্তন করতে পারেন।
    ========================================================= */
 
-const OFFER_TYPES = [
+const MEN_CATEGORIES = [
   {
-    key: "all",
-    label: "All Offers",
+    key: "men",
+    label: "All Men's",
   },
   {
-    key: "10",
-    label: "10% & Above",
+    key: "men-shirt",
+    label: "Shirt",
   },
   {
-    key: "20",
-    label: "20% & Above",
+    key: "men-tshirt",
+    label: "T-Shirt",
   },
   {
-    key: "30",
-    label: "30% & Above",
+    key: "men-pant",
+    label: "Pants",
   },
   {
-    key: "40",
-    label: "40% & Above",
+    key: "men-jeans",
+    label: "Jeans",
   },
   {
-    key: "50",
-    label: "50% & Above",
+    key: "men-shoes",
+    label: "Shoes",
+  },
+  {
+    key: "men-accessories",
+    label: "Accessories",
   },
 ];
 
 
 /* =========================================================
-   OFFER PAGE
+   MEN PAGE
    ========================================================= */
 
-const Offer = () => {
+const Men = () => {
   const isScrolled = useScroll();
 
   const {
@@ -86,19 +91,18 @@ const Offer = () => {
 
   const [searchParams] = useSearchParams();
 
+  /* Search query */
   const searchQuery =
     searchParams.get("search")?.trim().toLowerCase() || "";
-
 
   /* =======================================================
      FILTER STATES
      ======================================================= */
 
-  const [selectedOffer, setSelectedOffer] =
-    useState("all");
+  const [selectedCategory, setSelectedCategory] =
+    useState("men");
 
-  const [sortBy, setSortBy] =
-    useState("default");
+  const [sortBy, setSortBy] = useState("default");
 
   const [minPrice, setMinPrice] =
     useState(MIN_LIMIT);
@@ -114,71 +118,33 @@ const Offer = () => {
 
 
   /* =======================================================
-     CALCULATE DISCOUNT
-     ======================================================= */
+     FILTER MEN PRODUCTS
 
-  const getDiscountPercent = (item) => {
+     IMPORTANT:
 
-    /*
-      First priority:
-      If database has discountPercent,
-      use that value.
-    */
+     আপনার backend-এ যদি Men's category value
+     "men" হয় তাহলে এই logic কাজ করবে।
 
-    if (
-      item.discountPercent !== undefined &&
-      item.discountPercent !== null
-    ) {
-      return Number(item.discountPercent);
-    }
-
-
-    /*
-      Otherwise calculate discount
-      from originalPrice and price.
-    */
-
-    if (
-      item.originalPrice &&
-      item.originalPrice > item.price
-    ) {
-      return Math.round(
-        (
-          (item.originalPrice - item.price) /
-          item.originalPrice
-        ) * 100
-      );
-    }
-
-
-    /*
-      No discount
-    */
-
-    return 0;
-  };
-
-
-  /* =======================================================
-     FILTER OFFER PRODUCTS
+     যদি আপনার database-এ category অন্য নামে থাকে,
+     এখানে category matching পরিবর্তন করবেন।
      ======================================================= */
 
   const filteredProducts = useMemo(() => {
-
     if (!products) return [];
 
-
     /*
-      Only discounted products
+      প্রথমে শুধুমাত্র Men's products নিচ্ছি।
+
+      আপনার existing Products.jsx-এ:
+      item.category === activeCategory
+
+      ব্যবহার করা হয়েছে।
+      তাই এখানেও একই structure রাখা হয়েছে।
     */
 
-    let result = products.filter((item) => {
-
-      const discount = getDiscountPercent(item);
-
-      return discount > 0;
-
-    });
+    let result = products.filter(
+      (item) => item.category === "men"
+    );
 
 
     /* =====================================================
@@ -186,17 +152,14 @@ const Offer = () => {
        ===================================================== */
 
     if (searchQuery) {
-
       const searchTerms = searchQuery
         .split(/\s+/)
         .filter(Boolean);
 
-      result = result.filter((item) => {
-
+      const searchedProducts = result.filter((item) => {
         const searchableText = [
           item.name,
           item.category,
-          item.subCategory,
           item.description,
         ]
           .filter(Boolean)
@@ -206,35 +169,14 @@ const Offer = () => {
         return searchTerms.every((term) =>
           searchableText.includes(term)
         );
-
       });
 
+      result = searchedProducts;
     }
 
 
     /* =====================================================
-       OFFER TYPE
-       ===================================================== */
-
-    if (selectedOffer !== "all") {
-
-      const minimumDiscount =
-        Number(selectedOffer);
-
-      result = result.filter((item) => {
-
-        const discount =
-          getDiscountPercent(item);
-
-        return discount >= minimumDiscount;
-
-      });
-
-    }
-
-
-    /* =====================================================
-       PRICE
+       PRICE FILTER
        ===================================================== */
 
     result = result.filter(
@@ -245,15 +187,13 @@ const Offer = () => {
 
 
     /* =====================================================
-       STOCK
+       STOCK FILTER
        ===================================================== */
 
     if (inStockOnly) {
-
       result = result.filter(
         (item) => item.stock > 0
       );
-
     }
 
 
@@ -262,40 +202,21 @@ const Offer = () => {
        ===================================================== */
 
     if (sortBy === "price-low") {
-
       result = [...result].sort(
         (a, b) => a.price - b.price
       );
-
     }
 
-
     if (sortBy === "price-high") {
-
       result = [...result].sort(
         (a, b) => b.price - a.price
       );
-
     }
-
-
-    if (sortBy === "discount-high") {
-
-      result = [...result].sort(
-        (a, b) =>
-          getDiscountPercent(b) -
-          getDiscountPercent(a)
-      );
-
-    }
-
 
     return result;
-
   }, [
     products,
     searchQuery,
-    selectedOffer,
     minPrice,
     maxPrice,
     inStockOnly,
@@ -308,81 +229,88 @@ const Offer = () => {
      ======================================================= */
 
   const resetFilters = () => {
-
-    setSelectedOffer("all");
-
+    setSelectedCategory("men");
     setSortBy("default");
-
     setMinPrice(MIN_LIMIT);
-
     setMaxPrice(MAX_LIMIT);
-
     setInStockOnly(false);
-
   };
 
 
   /* =======================================================
+     PRICE SLIDER POSITION
+     ======================================================= */
+
+  const minPercent =
+    ((minPrice - MIN_LIMIT) /
+      (MAX_LIMIT - MIN_LIMIT)) *
+    100;
+
+  const maxPercent =
+    ((maxPrice - MIN_LIMIT) /
+      (MAX_LIMIT - MIN_LIMIT)) *
+    100;
+
+
+  /* =======================================================
      FILTER CONTENT
+
+     Desktop sidebar এবং mobile drawer
+     দু জায়গাতেই একই filter ব্যবহার হবে।
      ======================================================= */
 
   const renderFilterContent = () => (
-
     <div className="space-y-6">
 
-
-      {/* FILTER HEADER */}
+      {/* ===================================================
+          FILTER HEADER
+      =================================================== */}
 
       <div className="flex items-center gap-2 border-b border-[#E4DDCE] pb-3">
-
         <FontAwesomeIcon
           icon={faSliders}
           className="text-lg text-[#16241F]"
         />
 
         <h3 className="text-base font-bold text-[#16241F]">
-          Filter Offers
+          Filter Products
         </h3>
-
       </div>
 
 
-      {/* OFFER TYPE */}
+      {/* ===================================================
+          CATEGORY
+      =================================================== */}
 
       <div>
-
         <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#16241F]/70">
-          Discount
+          Category
         </label>
 
         <select
-          value={selectedOffer}
+          value={selectedCategory}
           onChange={(e) =>
-            setSelectedOffer(e.target.value)
+            setSelectedCategory(e.target.value)
           }
           className="w-full rounded-lg border border-[#E4DDCE] bg-[#FAF6EF] px-3 py-2.5 text-sm text-[#16241F] outline-none transition focus:border-[#B08946] focus:ring-2 focus:ring-[#B08946]/20"
         >
-
-          {OFFER_TYPES.map((offer) => (
-
+          {MEN_CATEGORIES.map((category) => (
             <option
-              key={offer.key}
-              value={offer.key}
+              key={category.key}
+              value={category.key}
             >
-              {offer.label}
+              {category.label}
             </option>
-
           ))}
-
         </select>
-
       </div>
 
 
-      {/* SORT */}
+      {/* ===================================================
+          SORT
+      =================================================== */}
 
       <div>
-
         <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#16241F]/70">
           Sort By
         </label>
@@ -394,13 +322,8 @@ const Offer = () => {
           }
           className="w-full rounded-lg border border-[#E4DDCE] bg-[#FAF6EF] px-3 py-2.5 text-sm text-[#16241F] outline-none transition focus:border-[#B08946] focus:ring-2 focus:ring-[#B08946]/20"
         >
-
           <option value="default">
-            Featured
-          </option>
-
-          <option value="discount-high">
-            Biggest Discount
+            Default
           </option>
 
           <option value="price-low">
@@ -410,18 +333,17 @@ const Offer = () => {
           <option value="price-high">
             Price: High → Low
           </option>
-
         </select>
-
       </div>
 
 
-      {/* PRICE */}
+      {/* ===================================================
+          PRICE RANGE
+      =================================================== */}
 
       <div>
 
         <div className="mb-2 flex items-center justify-between">
-
           <label className="text-[11px] font-bold uppercase tracking-wider text-[#16241F]/70">
             Price Range
           </label>
@@ -429,56 +351,80 @@ const Offer = () => {
           <span className="rounded-md border border-[#E4DDCE] bg-[#FAF6EF] px-2 py-1 text-[10px] font-bold text-[#B08946]">
             ৳{minPrice} - ৳{maxPrice}
           </span>
+        </div>
+
+
+        {/* Slider */}
+
+        <div className="relative flex h-8 w-full items-center">
+
+          {/* Background */}
+          <div className="pointer-events-none absolute h-1.5 w-full rounded-full bg-[#E4DDCE]" />
+
+
+          {/* Active range */}
+          <div
+            className="pointer-events-none absolute h-1.5 rounded-full bg-[#B08946]"
+            style={{
+              left: `${minPercent}%`,
+              width: `${maxPercent - minPercent}%`,
+            }}
+          />
+
+
+          {/* Minimum */}
+          <input
+            type="range"
+            min={MIN_LIMIT}
+            max={MAX_LIMIT}
+            step="10"
+            value={minPrice}
+            onChange={(e) => {
+              const value = Math.min(
+                Number(e.target.value),
+                maxPrice - 50
+              );
+
+              setMinPrice(value);
+            }}
+            className="absolute z-30 h-2 w-full appearance-none bg-transparent pointer-events-none accent-[#B08946] focus:outline-none [&::-moz-range-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:pointer-events-auto"
+          />
+
+
+          {/* Maximum */}
+          <input
+            type="range"
+            min={MIN_LIMIT}
+            max={MAX_LIMIT}
+            step="10"
+            value={maxPrice}
+            onChange={(e) => {
+              const value = Math.max(
+                Number(e.target.value),
+                minPrice + 50
+              );
+
+              setMaxPrice(value);
+            }}
+            className="absolute z-40 h-2 w-full appearance-none bg-transparent pointer-events-none accent-[#B08946] focus:outline-none [&::-moz-range-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:pointer-events-auto"
+          />
 
         </div>
 
 
-        <div className="flex gap-2">
-
-          <input
-            type="number"
-            min={MIN_LIMIT}
-            max={MAX_LIMIT}
-            value={minPrice}
-            onChange={(e) =>
-              setMinPrice(
-                Math.min(
-                  Number(e.target.value) ||
-                    MIN_LIMIT,
-                  maxPrice - 50
-                )
-              )
-            }
-            className="w-full rounded-lg border border-[#E4DDCE] bg-[#FAF6EF] px-2.5 py-2 text-xs outline-none focus:border-[#B08946]"
-          />
-
-
-          <input
-            type="number"
-            min={MIN_LIMIT}
-            max={MAX_LIMIT}
-            value={maxPrice}
-            onChange={(e) =>
-              setMaxPrice(
-                Math.max(
-                  Number(e.target.value) ||
-                    MAX_LIMIT,
-                  minPrice + 50
-                )
-              )
-            }
-            className="w-full rounded-lg border border-[#E4DDCE] bg-[#FAF6EF] px-2.5 py-2 text-xs outline-none focus:border-[#B08946]"
-          />
-
+        <div className="mt-1 flex justify-between text-[10px] font-medium text-[#16241F]/50">
+          <span>Min: ৳{MIN_LIMIT}</span>
+          <span>Max: ৳{MAX_LIMIT}</span>
         </div>
 
       </div>
 
 
-      {/* STOCK */}
+      {/* ===================================================
+          STOCK
+      =================================================== */}
 
       <label className="flex cursor-pointer select-none items-center gap-2">
-
         <input
           type="checkbox"
           checked={inStockOnly}
@@ -491,22 +437,22 @@ const Offer = () => {
         <span className="text-sm font-medium text-[#16241F]">
           In stock only
         </span>
-
       </label>
 
 
-      {/* RESET */}
+      {/* ===================================================
+          RESET
+      =================================================== */}
 
       <button
         type="button"
         onClick={resetFilters}
-        className="w-full rounded-lg border border-[#16241F]/20 py-2.5 text-xs font-bold uppercase tracking-wider text-[#16241F] transition hover:bg-[#16241F] hover:text-white"
+        className="w-full rounded-lg border border-[#16241F]/20 py-2.5 text-xs font-bold uppercase tracking-wider text-[#16241F] shadow-sm transition hover:bg-[#16241F] hover:text-white"
       >
         Reset Filters
       </button>
 
     </div>
-
   );
 
 
@@ -515,19 +461,13 @@ const Offer = () => {
      ======================================================= */
 
   if (error) {
-
     return (
-
       <div className="flex min-h-screen items-center justify-center bg-[#FAF6EF] px-4">
-
         <h2 className="font-semibold text-red-500">
           {error}
         </h2>
-
       </div>
-
     );
-
   }
 
 
@@ -536,31 +476,31 @@ const Offer = () => {
      ======================================================= */
 
   return (
-
     <div className="min-h-screen bg-white pb-12">
 
-
       {/* ===================================================
-          OFFER BANNER
+          TOP BANNER
       =================================================== */}
 
       <section className="relative overflow-hidden">
 
         <div className="relative h-[220px] sm:h-[280px] lg:h-[340px]">
 
+          {/* Banner image */}
+
           <img
-            src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=1800&q=85"
-            alt="Special Offers"
+            src="https://images.unsplash.com/photo-1516826957135-700dedea698c?w=1800&q=85"
+            alt="Men's Collection"
             className="h-full w-full object-cover"
           />
 
 
-          {/* Overlay */}
+          {/* Dark overlay */}
 
-          <div className="absolute inset-0 bg-gradient-to-r from-[#16241F]/95 via-[#16241F]/65 to-[#16241F]/10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#16241F]/90 via-[#16241F]/60 to-[#16241F]/20" />
 
 
-          {/* Banner Content */}
+          {/* Banner content */}
 
           <div className="absolute inset-0 flex items-center">
 
@@ -568,52 +508,30 @@ const Offer = () => {
 
               <div className="max-w-xl">
 
-
-                {/* Small Heading */}
-
-                <div className="flex items-center gap-2">
-
-                  <FontAwesomeIcon
-                    icon={faFire}
-                    className="text-[#D8B766]"
-                  />
-
-                  <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#D8B766] sm:text-xs">
-                    Special Offers
-                  </p>
-
-                </div>
-
-
-                {/* Main Heading */}
-
-                <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
-                  Big Savings, Better Shopping
-                </h1>
-
-
-                {/* Description */}
-
-                <p className="mt-3 max-w-md text-sm leading-6 text-white/75 sm:text-base">
-                  Grab amazing deals and exclusive discounts
-                  on your favorite products before they're gone.
+                <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#D8B766] sm:text-xs">
+                  Men's Collection
                 </p>
 
+                <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                  Style Made for You
+                </h1>
 
-                {/* Button */}
+                <p className="mt-3 max-w-md text-sm leading-6 text-white/75 sm:text-base">
+                  Discover our latest men's fashion,
+                  footwear and accessories.
+                </p>
 
-                <a
-                  href="#offer-products"
+                <Link
+                  to="/products"
                   className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#B08946] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#967238]"
                 >
-                  Shop Offers
+                  Explore Collection
 
                   <FontAwesomeIcon
                     icon={faArrowRight}
                     className="text-[10px]"
                   />
-
-                </a>
+                </Link>
 
               </div>
 
@@ -630,46 +548,36 @@ const Offer = () => {
           MAIN CONTENT
       =================================================== */}
 
-      <div
-        id="offer-products"
-        className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8"
-      >
-
+      <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
 
         {/* =================================================
-            MOBILE HEADER
+            MOBILE FILTER BUTTON
         ================================================= */}
 
         <div className="mb-5 flex items-center justify-between lg:hidden">
 
           <div>
-
             <h2 className="text-xl font-bold text-[#16241F]">
-              Special Offers
+              Men's Collection
             </h2>
 
             <p className="mt-0.5 text-xs text-[#16241F]/50">
-              {filteredProducts.length} offers available
+              {filteredProducts.length} products
             </p>
-
           </div>
 
 
           <button
             type="button"
-            onClick={() =>
-              setIsDrawerOpen(true)
-            }
+            onClick={() => setIsDrawerOpen(true)}
             className="flex items-center gap-2 rounded-lg border border-[#E4DDCE] bg-white px-3 py-2 text-sm font-semibold text-[#16241F] shadow-sm"
           >
-
             <FontAwesomeIcon
               icon={faFilter}
               className="text-[#B08946]"
             />
 
             Filters
-
           </button>
 
         </div>
@@ -680,17 +588,13 @@ const Offer = () => {
         ================================================= */}
 
         {isDrawerOpen && (
-
           <div className="fixed inset-0 z-[100] lg:hidden">
-
 
             {/* Overlay */}
 
             <div
               className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-              onClick={() =>
-                setIsDrawerOpen(false)
-              }
+              onClick={() => setIsDrawerOpen(false)}
             />
 
 
@@ -698,13 +602,11 @@ const Offer = () => {
 
             <div className="absolute left-0 top-0 h-full w-80 max-w-[88%] overflow-y-auto bg-white p-5 shadow-2xl">
 
-
               <div className="mb-6 flex items-center justify-between">
 
                 <h2 className="text-lg font-bold text-[#16241F]">
                   Filters
                 </h2>
-
 
                 <button
                   type="button"
@@ -713,11 +615,7 @@ const Offer = () => {
                   }
                   className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FAF6EF] text-[#16241F]"
                 >
-
-                  <FontAwesomeIcon
-                    icon={faTimes}
-                  />
-
+                  <FontAwesomeIcon icon={faTimes} />
                 </button>
 
               </div>
@@ -728,27 +626,24 @@ const Offer = () => {
             </div>
 
           </div>
-
         )}
 
 
         {/* =================================================
-            FILTER + PRODUCTS
+            DESKTOP: FILTER + PRODUCTS
         ================================================= */}
 
         <div className="flex items-start gap-6 lg:gap-8">
 
-
           {/* =================================================
-              LEFT FILTER
+              LEFT FILTER SIDEBAR
           ================================================= */}
 
           <aside
-            className={`hidden w-60 shrink-0 rounded-2xl border border-[#E4DDCE] bg-white p-5 shadow-sm lg:block xl:w-64 ${
-  isScrolled
-    ? "sticky top-[92px]"
-    : "sticky top-[76px]"
-} `}
+            className={`hidden w-60 shrink-0 rounded-2xl border border-[#E4DDCE] bg-white p-5 shadow-sm lg:block xl:w-64 ${isScrolled
+                ? "sticky top-[92px]"
+                : "sticky top-[76px]"
+              }`}
           >
 
             {renderFilterContent()}
@@ -757,30 +652,29 @@ const Offer = () => {
 
 
           {/* =================================================
-              PRODUCTS
+              RIGHT PRODUCT AREA
           ================================================= */}
 
           <main className="min-w-0 flex-1">
 
-
-            {/* TOOLBAR */}
+            {/* Product toolbar */}
 
             <div className="mb-5 flex items-center justify-between border-b border-[#E4DDCE] pb-4">
 
               <div>
 
                 <h2 className="text-xl font-bold text-[#16241F]">
-                  Today's Best Offers
+                  Men's Products
                 </h2>
 
                 <p className="mt-0.5 text-xs text-[#16241F]/50">
-                  Showing {filteredProducts.length} discounted products
+                  Showing {filteredProducts.length} products
                 </p>
 
               </div>
 
 
-              {/* Desktop Sort */}
+              {/* Desktop sort */}
 
               <div className="hidden items-center gap-2 sm:flex">
 
@@ -795,13 +689,8 @@ const Offer = () => {
                   }
                   className="rounded-lg border border-[#E4DDCE] bg-white px-3 py-2 text-xs font-semibold text-[#16241F] outline-none focus:border-[#B08946]"
                 >
-
                   <option value="default">
                     Featured
-                  </option>
-
-                  <option value="discount-high">
-                    Biggest Discount
                   </option>
 
                   <option value="price-low">
@@ -811,7 +700,6 @@ const Offer = () => {
                   <option value="price-high">
                     Price: High → Low
                   </option>
-
                 </select>
 
               </div>
@@ -820,15 +708,13 @@ const Offer = () => {
 
 
             {/* =================================================
-                LOADING
+                LOADING SKELETON
             ================================================= */}
 
             {loading && (
-
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
 
                 {[...Array(8)].map((_, index) => (
-
                   <div
                     key={index}
                     className="overflow-hidden rounded-2xl border border-[#E4DDCE]/60 bg-white p-2"
@@ -843,11 +729,9 @@ const Offer = () => {
                     <div className="mt-3 h-9 animate-pulse rounded-xl bg-[#E4DDCE]/50" />
 
                   </div>
-
                 ))}
 
               </div>
-
             )}
 
 
@@ -857,7 +741,6 @@ const Offer = () => {
 
             {!loading &&
               filteredProducts.length === 0 && (
-
                 <div className="flex min-h-[350px] flex-col items-center justify-center rounded-2xl border border-[#E4DDCE] bg-white p-6 text-center">
 
                   <FontAwesomeIcon
@@ -866,11 +749,12 @@ const Offer = () => {
                   />
 
                   <p className="font-semibold text-[#16241F]">
-                    No offers found
+                    No men's products found
                   </p>
 
                   <p className="mt-1 text-xs text-[#16241F]/50">
-                    Try changing your discount or price filters.
+                    Try changing your filters or price
+                    range.
                   </p>
 
                   <button
@@ -882,7 +766,6 @@ const Offer = () => {
                   </button>
 
                 </div>
-
               )}
 
 
@@ -892,53 +775,51 @@ const Offer = () => {
 
             {!loading &&
               filteredProducts.length > 0 && (
-
                 <div className="grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 sm:gap-x-4 sm:gap-y-8 lg:grid-cols-4">
 
                   {filteredProducts.map((item) => {
 
-
-                    /* Wishlist */
-
+                    /* Wishlist state */
                     const inWishlist =
                       wishlist?.includes(item._id);
 
-
-                    /* Cart */
-
+                    /* Cart state */
                     const inCart =
                       cart?.includes(item._id);
 
-
                     /* Stock */
-
                     const isOutOfStock =
                       item.stock <= 0;
 
 
-                    /* Original Price */
+                    /* Original price */
 
                     const originalPrice =
                       item.originalPrice ||
-                      Math.round(
-                        item.price * 1.25
-                      );
+                      Math.round(item.price * 1.25);
 
 
                     /* Discount */
 
                     const discountPercent =
-                      getDiscountPercent(item);
+                      item.discountPercent ||
+                      (
+                        originalPrice > item.price
+                          ? Math.round(
+                            (
+                              (originalPrice -
+                                item.price) /
+                              originalPrice
+                            ) * 100
+                          )
+                          : 0
+                      );
 
 
                     /* Savings */
 
                     const savingsAmount =
-                      Math.max(
-                        0,
-                        originalPrice -
-                          item.price
-                      );
+                      originalPrice - item.price;
 
 
                     return (
@@ -952,13 +833,11 @@ const Offer = () => {
                         className="group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-[#E4DDCE] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#B08946]/50 hover:shadow-xl"
                       >
 
-
                         {/* =================================================
-                            IMAGE
+                            PRODUCT IMAGE
                         ================================================= */}
 
                         <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden bg-[#FAF6EF]/60 p-1.5 sm:p-2">
-
 
                           <img
                             src={item.image}
@@ -968,52 +847,50 @@ const Offer = () => {
                           />
 
 
-                          {/* Discount Badge */}
+                          {/* =================================================
+                              DISCOUNT BADGE
+                          ================================================= */}
 
-                          <div className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-md bg-red-600 px-2 py-0.5 text-[9px] font-extrabold text-white shadow-md sm:text-[10px]">
+                          {discountPercent > 0 &&
+                            !isOutOfStock && (
+                              <div className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-md bg-red-600 px-2 py-0.5 text-[9px] font-extrabold text-white shadow-md sm:text-[10px]">
 
-                            <FontAwesomeIcon
-                              icon={faTag}
-                              className="text-[8px]"
-                            />
+                                <FontAwesomeIcon
+                                  icon={faTag}
+                                  className="text-[8px]"
+                                />
 
-                            <span>
-                              {discountPercent}% OFF
-                            </span>
+                                <span>
+                                  {discountPercent}% OFF
+                                </span>
 
-                          </div>
+                              </div>
+                            )}
 
 
                           {/* =================================================
-                              ACTION BUTTONS
+                              WISHLIST + CART
                           ================================================= */}
 
                           <div className="absolute right-2 top-2 z-20 flex flex-col gap-1.5">
-
 
                             {/* Wishlist */}
 
                             <button
                               type="button"
                               onClick={(e) => {
-
                                 e.preventDefault();
-
-                                toggleWishlist(
-                                  item._id
-                                );
-
+                                toggleWishlist(item._id);
                               }}
                               aria-label={
                                 inWishlist
                                   ? "Remove from wishlist"
                                   : "Add to wishlist"
                               }
-                              className={`flex h - 7 w - 7 items - center justify - center rounded - full shadow - md backdrop - blur - md transition - all duration - 200 active: scale - 90 sm: h - 8 sm: w - 8 ${
-  inWishlist
-    ? "bg-red-500 text-white"
-    : "bg-white/90 text-[#16241F]/60 hover:bg-white hover:text-red-500"
-} `}
+                              className={`flex h-7 w-7 items-center justify-center rounded-full shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 sm:h-8 sm:w-8 ${inWishlist
+                                  ? "bg-red-500 text-white"
+                                  : "bg-white/90 text-[#16241F]/60 hover:bg-white hover:text-red-500"
+                                }`}
                             >
 
                               <FontAwesomeIcon
@@ -1029,24 +906,18 @@ const Offer = () => {
                             <button
                               type="button"
                               onClick={(e) => {
-
                                 e.preventDefault();
-
-                                toggleCart(
-                                  item._id
-                                );
-
+                                toggleCart(item._id);
                               }}
                               aria-label={
                                 inCart
                                   ? "Remove from cart"
                                   : "Add to cart"
                               }
-                              className={`flex h - 7 w - 7 items - center justify - center rounded - full shadow - md backdrop - blur - md transition - all duration - 200 active: scale - 90 sm: h - 8 sm: w - 8 ${
-  inCart
-    ? "bg-[#16241F] text-[#B08946]"
-    : "bg-white/90 text-[#16241F]/60 hover:bg-white hover:text-[#16241F]"
-} `}
+                              className={`flex h-7 w-7 items-center justify-center rounded-full shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 sm:h-8 sm:w-8 ${inCart
+                                  ? "bg-[#16241F] text-[#B08946]"
+                                  : "bg-white/90 text-[#16241F]/60 hover:bg-white hover:text-[#16241F]"
+                                }`}
                             >
 
                               <FontAwesomeIcon
@@ -1059,10 +930,11 @@ const Offer = () => {
                           </div>
 
 
-                          {/* Out Of Stock */}
+                          {/* =================================================
+                              OUT OF STOCK
+                          ================================================= */}
 
                           {isOutOfStock && (
-
                             <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#16241F]/40 p-2 backdrop-blur-[2px]">
 
                               <span className="rounded-full border border-red-100 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-red-600 shadow-lg sm:text-xs">
@@ -1070,31 +942,30 @@ const Offer = () => {
                               </span>
 
                             </div>
-
                           )}
 
                         </div>
 
 
                         {/* =================================================
-                            PRODUCT INFO
+                            PRODUCT DETAILS
                         ================================================= */}
 
                         <div className="flex flex-1 flex-col justify-between p-2.5 sm:p-3.5">
 
+                          <div>
 
-                          {/* Product Name */}
+                            <h3
+                              title={item.name}
+                              className="line-clamp-1 text-xs font-semibold leading-snug text-[#16241F] transition-colors group-hover:text-[#B08946] sm:text-sm"
+                            >
+                              {item.name}
+                            </h3>
 
-                          <h3
-                            title={item.name}
-                            className="line-clamp-1 text-xs font-semibold leading-snug text-[#16241F] transition-colors group-hover:text-[#B08946] sm:text-sm"
-                          >
-                            {item.name}
-                          </h3>
+                          </div>
 
 
                           <div className="mt-2">
-
 
                             {/* Price */}
 
@@ -1110,15 +981,15 @@ const Offer = () => {
 
                                   {originalPrice >
                                     item.price && (
-
-                                    <span className="text-[10px] font-medium text-[#16241F]/40 line-through sm:text-xs">
-                                      ৳{originalPrice}
-                                    </span>
-
-                                  )}
+                                      <span className="text-[10px] font-medium text-[#16241F]/40 line-through sm:text-xs">
+                                        ৳{originalPrice}
+                                      </span>
+                                    )}
 
                                 </div>
 
+
+                                {/* Stock */}
 
                                 <span className="shrink-0 rounded border border-[#E4DDCE]/60 bg-[#FAF6EF] px-1 py-0.5 text-[9px] font-medium text-[#16241F]/50 sm:text-[10px]">
                                   Stock: {item.stock}
@@ -1131,17 +1002,15 @@ const Offer = () => {
 
                               {savingsAmount > 0 &&
                                 !isOutOfStock && (
-
-                                <p className="text-[9px] font-semibold text-green-600 sm:text-[10px]">
-                                  Save ৳{savingsAmount}
-                                </p>
-
-                              )}
+                                  <p className="text-[9px] font-semibold text-green-600 sm:text-[10px]">
+                                    Save ৳{savingsAmount}
+                                  </p>
+                                )}
 
                             </div>
 
 
-                            {/* Buy Now */}
+                            {/* Buy button */}
 
                             <button
                               type="button"
@@ -1151,13 +1020,11 @@ const Offer = () => {
                               }
                               className="flex h-8 w-full items-center justify-center gap-1.5 rounded-xl bg-[#16241F] text-xs font-bold text-[#FAF6EF] shadow-sm transition-all duration-200 hover:bg-[#0F1A16] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#16241F]/20 disabled:text-[#16241F]/40 sm:h-9"
                             >
-
                               <span>
                                 {isOutOfStock
                                   ? "Unavailable"
                                   : "Buy Now"}
                               </span>
-
                             </button>
 
                           </div>
@@ -1167,11 +1034,9 @@ const Offer = () => {
                       </Link>
 
                     );
-
                   })}
 
                 </div>
-
               )}
 
           </main>
@@ -1181,10 +1046,8 @@ const Offer = () => {
       </div>
 
     </div>
-
   );
-
 };
 
 
-export default Offer;
+export default Men;

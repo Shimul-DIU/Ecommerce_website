@@ -9,7 +9,6 @@ import {
   faTimes,
   faTag,
   faArrowRight,
-  faFire,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -33,46 +32,50 @@ import { useScroll } from "../../hooks/useScroll";
    ========================================================= */
 
 const MIN_LIMIT = 100;
-const MAX_LIMIT = 10000;
+const MAX_LIMIT = 3000;
 
 
 /* =========================================================
-   OFFER TYPES
+   FISHING CATEGORIES
    ========================================================= */
 
-const OFFER_TYPES = [
+const FISHING_CATEGORIES = [
   {
-    key: "all",
-    label: "All Offers",
+    key: "fishing",
+    label: "All Fishing",
   },
   {
-    key: "10",
-    label: "10% & Above",
+    key: "fishing-rods",
+    label: "Fishing Rods",
   },
   {
-    key: "20",
-    label: "20% & Above",
+    key: "fishing-reels",
+    label: "Fishing Reels",
   },
   {
-    key: "30",
-    label: "30% & Above",
+    key: "fishing-lines",
+    label: "Fishing Lines",
   },
   {
-    key: "40",
-    label: "40% & Above",
+    key: "fishing-hooks",
+    label: "Fishing Hooks",
   },
   {
-    key: "50",
-    label: "50% & Above",
+    key: "fishing-lures",
+    label: "Fishing Lures",
+  },
+  {
+    key: "fishing-accessories",
+    label: "Fishing Accessories",
   },
 ];
 
 
 /* =========================================================
-   OFFER PAGE
+   FISHING PAGE
    ========================================================= */
 
-const Offer = () => {
+const Fishing = () => {
   const isScrolled = useScroll();
 
   const {
@@ -94,8 +97,8 @@ const Offer = () => {
      FILTER STATES
      ======================================================= */
 
-  const [selectedOffer, setSelectedOffer] =
-    useState("all");
+  const [selectedCategory, setSelectedCategory] =
+    useState("fishing");
 
   const [sortBy, setSortBy] =
     useState("default");
@@ -114,71 +117,33 @@ const Offer = () => {
 
 
   /* =======================================================
-     CALCULATE DISCOUNT
-     ======================================================= */
-
-  const getDiscountPercent = (item) => {
-
-    /*
-      First priority:
-      If database has discountPercent,
-      use that value.
-    */
-
-    if (
-      item.discountPercent !== undefined &&
-      item.discountPercent !== null
-    ) {
-      return Number(item.discountPercent);
-    }
-
-
-    /*
-      Otherwise calculate discount
-      from originalPrice and price.
-    */
-
-    if (
-      item.originalPrice &&
-      item.originalPrice > item.price
-    ) {
-      return Math.round(
-        (
-          (item.originalPrice - item.price) /
-          item.originalPrice
-        ) * 100
-      );
-    }
-
-
-    /*
-      No discount
-    */
-
-    return 0;
-  };
-
-
-  /* =======================================================
-     FILTER OFFER PRODUCTS
+     FILTER FISHING PRODUCTS
      ======================================================= */
 
   const filteredProducts = useMemo(() => {
-
     if (!products) return [];
 
-
     /*
-      Only discounted products
+      IMPORTANT:
+
+      আপনার database-এ Fishing main category
+      যদি "fishing" নামে থাকে তাহলে এটি ঠিক থাকবে।
     */
 
-    let result = products.filter((item) => {
+    let result = products.filter(
+      (item) => item.category === "fishing"
+    );
 
-      const discount = getDiscountPercent(item);
 
-      return discount > 0;
+    /* =====================================================
+       SUB CATEGORY
+       ===================================================== */
 
-    });
+    if (selectedCategory !== "fishing") {
+      result = result.filter(
+        (item) => item.subCategory === selectedCategory
+      );
+    }
 
 
     /* =====================================================
@@ -186,13 +151,11 @@ const Offer = () => {
        ===================================================== */
 
     if (searchQuery) {
-
       const searchTerms = searchQuery
         .split(/\s+/)
         .filter(Boolean);
 
       result = result.filter((item) => {
-
         const searchableText = [
           item.name,
           item.category,
@@ -206,30 +169,7 @@ const Offer = () => {
         return searchTerms.every((term) =>
           searchableText.includes(term)
         );
-
       });
-
-    }
-
-
-    /* =====================================================
-       OFFER TYPE
-       ===================================================== */
-
-    if (selectedOffer !== "all") {
-
-      const minimumDiscount =
-        Number(selectedOffer);
-
-      result = result.filter((item) => {
-
-        const discount =
-          getDiscountPercent(item);
-
-        return discount >= minimumDiscount;
-
-      });
-
     }
 
 
@@ -249,11 +189,9 @@ const Offer = () => {
        ===================================================== */
 
     if (inStockOnly) {
-
       result = result.filter(
         (item) => item.stock > 0
       );
-
     }
 
 
@@ -262,40 +200,23 @@ const Offer = () => {
        ===================================================== */
 
     if (sortBy === "price-low") {
-
       result = [...result].sort(
         (a, b) => a.price - b.price
       );
-
     }
 
-
     if (sortBy === "price-high") {
-
       result = [...result].sort(
         (a, b) => b.price - a.price
       );
-
     }
-
-
-    if (sortBy === "discount-high") {
-
-      result = [...result].sort(
-        (a, b) =>
-          getDiscountPercent(b) -
-          getDiscountPercent(a)
-      );
-
-    }
-
 
     return result;
 
   }, [
     products,
     searchQuery,
-    selectedOffer,
+    selectedCategory,
     minPrice,
     maxPrice,
     inStockOnly,
@@ -308,17 +229,11 @@ const Offer = () => {
      ======================================================= */
 
   const resetFilters = () => {
-
-    setSelectedOffer("all");
-
+    setSelectedCategory("fishing");
     setSortBy("default");
-
     setMinPrice(MIN_LIMIT);
-
     setMaxPrice(MAX_LIMIT);
-
     setInStockOnly(false);
-
   };
 
 
@@ -327,13 +242,11 @@ const Offer = () => {
      ======================================================= */
 
   const renderFilterContent = () => (
-
-    <div className="space-y-6">
-
+    <div className="space-y-6 ">
 
       {/* FILTER HEADER */}
 
-      <div className="flex items-center gap-2 border-b border-[#E4DDCE] pb-3">
+      <div className="flex items-center gap-2 border-b border-[#E4DDCE] ">
 
         <FontAwesomeIcon
           icon={faSliders}
@@ -341,37 +254,35 @@ const Offer = () => {
         />
 
         <h3 className="text-base font-bold text-[#16241F]">
-          Filter Offers
+          Filter Products
         </h3>
 
       </div>
 
 
-      {/* OFFER TYPE */}
+      {/* CATEGORY */}
 
       <div>
 
         <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#16241F]/70">
-          Discount
+          Category
         </label>
 
         <select
-          value={selectedOffer}
+          value={selectedCategory}
           onChange={(e) =>
-            setSelectedOffer(e.target.value)
+            setSelectedCategory(e.target.value)
           }
           className="w-full rounded-lg border border-[#E4DDCE] bg-[#FAF6EF] px-3 py-2.5 text-sm text-[#16241F] outline-none transition focus:border-[#B08946] focus:ring-2 focus:ring-[#B08946]/20"
         >
 
-          {OFFER_TYPES.map((offer) => (
-
+          {FISHING_CATEGORIES.map((category) => (
             <option
-              key={offer.key}
-              value={offer.key}
+              key={category.key}
+              value={category.key}
             >
-              {offer.label}
+              {category.label}
             </option>
-
           ))}
 
         </select>
@@ -396,11 +307,7 @@ const Offer = () => {
         >
 
           <option value="default">
-            Featured
-          </option>
-
-          <option value="discount-high">
-            Biggest Discount
+            Default
           </option>
 
           <option value="price-low">
@@ -443,15 +350,13 @@ const Offer = () => {
             onChange={(e) =>
               setMinPrice(
                 Math.min(
-                  Number(e.target.value) ||
-                    MIN_LIMIT,
+                  Number(e.target.value) || MIN_LIMIT,
                   maxPrice - 50
                 )
               )
             }
             className="w-full rounded-lg border border-[#E4DDCE] bg-[#FAF6EF] px-2.5 py-2 text-xs outline-none focus:border-[#B08946]"
           />
-
 
           <input
             type="number"
@@ -461,8 +366,7 @@ const Offer = () => {
             onChange={(e) =>
               setMaxPrice(
                 Math.max(
-                  Number(e.target.value) ||
-                    MAX_LIMIT,
+                  Number(e.target.value) || MAX_LIMIT,
                   minPrice + 50
                 )
               )
@@ -506,7 +410,6 @@ const Offer = () => {
       </button>
 
     </div>
-
   );
 
 
@@ -515,9 +418,7 @@ const Offer = () => {
      ======================================================= */
 
   if (error) {
-
     return (
-
       <div className="flex min-h-screen items-center justify-center bg-[#FAF6EF] px-4">
 
         <h2 className="font-semibold text-red-500">
@@ -525,9 +426,7 @@ const Offer = () => {
         </h2>
 
       </div>
-
     );
-
   }
 
 
@@ -536,12 +435,11 @@ const Offer = () => {
      ======================================================= */
 
   return (
-
     <div className="min-h-screen bg-white pb-12">
 
 
       {/* ===================================================
-          OFFER BANNER
+          FISHING BANNER
       =================================================== */}
 
       <section className="relative overflow-hidden">
@@ -549,18 +447,18 @@ const Offer = () => {
         <div className="relative h-[220px] sm:h-[280px] lg:h-[340px]">
 
           <img
-            src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=1800&q=85"
-            alt="Special Offers"
+            src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1800&q=85"
+            alt="Fishing Collection"
             className="h-full w-full object-cover"
           />
 
 
           {/* Overlay */}
 
-          <div className="absolute inset-0 bg-gradient-to-r from-[#16241F]/95 via-[#16241F]/65 to-[#16241F]/10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#16241F]/90 via-[#16241F]/55 to-[#16241F]/10" />
 
 
-          {/* Banner Content */}
+          {/* Content */}
 
           <div className="absolute inset-0 flex items-center">
 
@@ -568,45 +466,24 @@ const Offer = () => {
 
               <div className="max-w-xl">
 
-
-                {/* Small Heading */}
-
-                <div className="flex items-center gap-2">
-
-                  <FontAwesomeIcon
-                    icon={faFire}
-                    className="text-[#D8B766]"
-                  />
-
-                  <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#D8B766] sm:text-xs">
-                    Special Offers
-                  </p>
-
-                </div>
-
-
-                {/* Main Heading */}
-
-                <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
-                  Big Savings, Better Shopping
-                </h1>
-
-
-                {/* Description */}
-
-                <p className="mt-3 max-w-md text-sm leading-6 text-white/75 sm:text-base">
-                  Grab amazing deals and exclusive discounts
-                  on your favorite products before they're gone.
+                <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#D8B766] sm:text-xs">
+                  Fishing Collection
                 </p>
 
+                <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                  Gear Up for Your Next Catch
+                </h1>
 
-                {/* Button */}
+                <p className="mt-3 max-w-md text-sm leading-6 text-white/75 sm:text-base">
+                  Explore quality fishing rods, reels, lines,
+                  hooks, lures and essential fishing accessories.
+                </p>
 
                 <a
-                  href="#offer-products"
+                  href="#fishing-products"
                   className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#B08946] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#967238]"
                 >
-                  Shop Offers
+                  Shop Fishing Collection
 
                   <FontAwesomeIcon
                     icon={faArrowRight}
@@ -631,7 +508,7 @@ const Offer = () => {
       =================================================== */}
 
       <div
-        id="offer-products"
+        id="fishing-products"
         className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8"
       >
 
@@ -645,11 +522,11 @@ const Offer = () => {
           <div>
 
             <h2 className="text-xl font-bold text-[#16241F]">
-              Special Offers
+              Fishing Collection
             </h2>
 
             <p className="mt-0.5 text-xs text-[#16241F]/50">
-              {filteredProducts.length} offers available
+              {filteredProducts.length} products
             </p>
 
           </div>
@@ -683,7 +560,6 @@ const Offer = () => {
 
           <div className="fixed inset-0 z-[100] lg:hidden">
 
-
             {/* Overlay */}
 
             <div
@@ -698,13 +574,11 @@ const Offer = () => {
 
             <div className="absolute left-0 top-0 h-full w-80 max-w-[88%] overflow-y-auto bg-white p-5 shadow-2xl">
 
-
               <div className="mb-6 flex items-center justify-between">
 
                 <h2 className="text-lg font-bold text-[#16241F]">
                   Filters
                 </h2>
-
 
                 <button
                   type="button"
@@ -757,7 +631,7 @@ const Offer = () => {
 
 
           {/* =================================================
-              PRODUCTS
+              RIGHT PRODUCTS
           ================================================= */}
 
           <main className="min-w-0 flex-1">
@@ -770,17 +644,15 @@ const Offer = () => {
               <div>
 
                 <h2 className="text-xl font-bold text-[#16241F]">
-                  Today's Best Offers
+                  Fishing Products
                 </h2>
 
                 <p className="mt-0.5 text-xs text-[#16241F]/50">
-                  Showing {filteredProducts.length} discounted products
+                  Showing {filteredProducts.length} products
                 </p>
 
               </div>
 
-
-              {/* Desktop Sort */}
 
               <div className="hidden items-center gap-2 sm:flex">
 
@@ -798,10 +670,6 @@ const Offer = () => {
 
                   <option value="default">
                     Featured
-                  </option>
-
-                  <option value="discount-high">
-                    Biggest Discount
                   </option>
 
                   <option value="price-low">
@@ -866,11 +734,11 @@ const Offer = () => {
                   />
 
                   <p className="font-semibold text-[#16241F]">
-                    No offers found
+                    No fishing products found
                   </p>
 
                   <p className="mt-1 text-xs text-[#16241F]/50">
-                    Try changing your discount or price filters.
+                    Try changing your filters or price range.
                   </p>
 
                   <button
@@ -897,7 +765,6 @@ const Offer = () => {
 
                   {filteredProducts.map((item) => {
 
-
                     /* Wishlist */
 
                     const inWishlist =
@@ -916,7 +783,7 @@ const Offer = () => {
                       item.stock <= 0;
 
 
-                    /* Original Price */
+                    /* Original price */
 
                     const originalPrice =
                       item.originalPrice ||
@@ -928,17 +795,24 @@ const Offer = () => {
                     /* Discount */
 
                     const discountPercent =
-                      getDiscountPercent(item);
+                      item.discountPercent ||
+                      (
+                        originalPrice > item.price
+                          ? Math.round(
+                            (
+                              (originalPrice -
+                                item.price) /
+                              originalPrice
+                            ) * 100
+                          )
+                          : 0
+                      );
 
 
                     /* Savings */
 
                     const savingsAmount =
-                      Math.max(
-                        0,
-                        originalPrice -
-                          item.price
-                      );
+                      originalPrice - item.price;
 
 
                     return (
@@ -959,7 +833,6 @@ const Offer = () => {
 
                         <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden bg-[#FAF6EF]/60 p-1.5 sm:p-2">
 
-
                           <img
                             src={item.image}
                             alt={item.name}
@@ -968,20 +841,25 @@ const Offer = () => {
                           />
 
 
-                          {/* Discount Badge */}
+                          {/* Discount */}
 
-                          <div className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-md bg-red-600 px-2 py-0.5 text-[9px] font-extrabold text-white shadow-md sm:text-[10px]">
+                          {discountPercent > 0 &&
+                            !isOutOfStock && (
 
-                            <FontAwesomeIcon
-                              icon={faTag}
-                              className="text-[8px]"
-                            />
+                              <div className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-md bg-red-600 px-2 py-0.5 text-[9px] font-extrabold text-white shadow-md sm:text-[10px]">
 
-                            <span>
-                              {discountPercent}% OFF
-                            </span>
+                                <FontAwesomeIcon
+                                  icon={faTag}
+                                  className="text-[8px]"
+                                />
 
-                          </div>
+                                <span>
+                                  {discountPercent}% OFF
+                                </span>
+
+                              </div>
+
+                            )}
 
 
                           {/* =================================================
@@ -1059,7 +937,7 @@ const Offer = () => {
                           </div>
 
 
-                          {/* Out Of Stock */}
+                          {/* Out of stock */}
 
                           {isOutOfStock && (
 
@@ -1081,9 +959,6 @@ const Offer = () => {
                         ================================================= */}
 
                         <div className="flex flex-1 flex-col justify-between p-2.5 sm:p-3.5">
-
-
-                          {/* Product Name */}
 
                           <h3
                             title={item.name}
@@ -1181,10 +1056,8 @@ const Offer = () => {
       </div>
 
     </div>
-
   );
-
 };
 
 
-export default Offer;
+export default Fishing;

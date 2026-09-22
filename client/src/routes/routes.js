@@ -35,6 +35,9 @@ import UserOrders from "../components/client/userDashboard/UserOrders.jsx";
 import Contact from "../pages/client/Contract.jsx";
 import Offer from "../pages/client/Offer.jsx";
 import CartPage from "../pages/client/userDashboard/CartPage.jsx";
+import Men from "../pages/client/Men.jsx";
+import Women from "../pages/client/Women.jsx";
+import Fishing from "../pages/client/Fishing.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -44,6 +47,9 @@ const Router = createBrowserRouter([
       { index: true, Component: Home },
       { path: "categories", Component: Categories },
       { path: "products", Component: Products },
+      { path: "men", Component: Men },
+      { path: "women", Component:Women },
+      { path: "fishing", Component: Fishing },
       { path: "offers", Component: Offer },
       { path: "contact", Component: Contact },
       { path: "card", Component: Card },

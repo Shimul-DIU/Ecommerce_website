@@ -19,11 +19,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { CountContext } from "../../context/countContext";
 import { useScroll } from "../../hooks/useScroll";
-import { AuthContext } from '../../context/AuthContext'
+import { AuthContext } from '../../context/AuthContext';
 import { getInitials } from "../../utils/getInitials";
 import useProducts from "../../hooks/useProducts";
 
-const ICON_SM = "text-xs";
 const ICON_ACTION = "text-lg sm:text-xl md:text-lg";
 const AVATAR_SIZE = "w-7 h-7 sm:w-10 sm:h-10";
 
@@ -43,12 +42,14 @@ const Navbar = ({ onMenuClick }) => {
   const { accessToken, logout, user } = useContext(AuthContext);
 
   const navigate = useNavigate();
-  const isScrolled = useScroll(); // true যখন স্ক্রল ডাউন, false যখন উপরে
+  const isScrolled = useScroll();
   const { wishlist, cart } = useContext(CountContext);
   const [products] = useProducts();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+
+  // Hover & Dropdown States
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
@@ -75,32 +76,79 @@ const Navbar = ({ onMenuClick }) => {
     };
   }, []);
 
-  const navItems = [
-    { name: language === "BN" ? "সব ক্যাটাগরি" : "All Categories", path: "/categories", dropdown: true },
-    { name: language === "BN" ? "হোম" : "Home", path: "/" },
-    { name: language === "BN" ? "পণ্যসমূহ" : "Products", path: "/products" },
-    { name: language === "BN" ? "পুরুষ" : "Men", path: "/men" },
-    { name: language === "BN" ? "নারী" : "Women", path: "/women" },
-    { name: language === "BN" ? "মাছ ধরা" : "Fishing", path: "/fishing" },
-    { name: language === "BN" ? "অফার" : "Offers", path: "/offers" },
+  // Products ক্যাটাগরির ড্রপডাউন ডাটা স্ট্রাকচার
+  const productCategories = [
+    { name: language === "BN" ? "পারফিউম (Perfume)" : "Perfume", path: "/perfume" },
+    { name: language === "BN" ? "জুয়েলারি (Jewellery)" : "Jewellery", path: "/jewellery" },
+    { name: language === "BN" ? "নারী (Women)" : "Women", path: "/women" },
+    { name: language === "BN" ? "পুরুষ (Men)" : "Men", path: "/men" },
+    { name: language === "BN" ? "মাছ ধরা (Fishing)" : "Fishing", path: "/fishing" }
   ];
 
+  // Category Sub-Items Config (Mega Menu for All Categories)
   const categoryItems = {
-    perfume: ["Men's Perfume", "Women's Perfume"],
-    jewellery: ["Ring", "Necklace", "Earring"],
+    all: {
+      perfume: ["Men's Perfume", "Women's Perfume", "Attar", "Body Spray"],
+      jewellery: ["Ring", "Necklace", "Earring", "Bracelet"],
+      women: ["Dress", "Saree", "Bag", "Shoes"],
+      men: ["T-Shirt", "Shirt", "Pant", "Shoes", "Watch"],
+      fishing: ['Reel', 'Wheel', 'Rod', 'Hook', 'Bait']
+    },
+    perfume: ["Men's Perfume", "Women's Perfume", "Attar", "Body Spray"],
+    jewellery: ["Ring", "Necklace", "Earring", "Bracelet"],
     women: ["Dress", "Saree", "Bag", "Shoes"],
-    men: ["T-Shirt", "Shirt", "Pant", "Shoes", "Watch"],
-    fishing: ['reel', 'wheel', 'rod', 'hook']
+    men: ["T-Shirt", "Shirt", "Pant", "Shoes"],
+    fishing: ['Reel', 'Wheel', 'Rod', 'Hook']
   };
 
-  const handleMouseEnter = () => {
+  const navItems = [
+    {
+      id: "all",
+      name: language === "BN" ? "সব ক্যাটাগরি" : "All Categories",
+      path: "/categories",
+      hasDropdown: true
+    },
+    { id: "home", name: language === "BN" ? "হোম" : "Home", path: "/" },
+    {
+      id: "products",
+      name: language === "BN" ? "পণ্যসমূহ" : "Products",
+      path: "/products",
+      hasDropdown: true,
+      items: productCategories
+    },
+    
+    {
+      id: "women",
+      name: language === "BN" ? "নারী" : "Women",
+      path: "/women",
+      hasDropdown: true,
+      items: categoryItems.women
+    },
+    {
+      id: "men",
+      name: language === "BN" ? "পুরুষ" : "Men",
+      path: "/men",
+      hasDropdown: true,
+      items: categoryItems.men
+    },
+    {
+      id: "fishing",
+      name: language === "BN" ? "মাছ ধরা" : "Fishing",
+    path: "/fishing",
+      hasDropdown: true,
+      items: categoryItems.fishing
+    },
+    { id: "offers", name: language === "BN" ? "অফার" : "Offers", path: "/offers" },
+  ];
+
+  const handleMouseEnter = (itemId) => {
     clearTimeout(closeTimer.current);
-    setIsCategoryOpen(true);
+    setActiveDropdown(itemId);
   };
 
   const handleMouseLeave = () => {
     closeTimer.current = setTimeout(() => {
-      setIsCategoryOpen(false);
+      setActiveDropdown(null);
     }, 150);
   };
 
@@ -150,7 +198,6 @@ const Navbar = ({ onMenuClick }) => {
     navigate("/login");
   };
 
-  // স্ক্রল ডাউন করলে লুকাবে, স্ক্রল আপ করলে দেখাবে
   const collapsedClass = isScrolled
     ? "max-h-0 opacity-0 py-0 pointer-events-none overflow-hidden"
     : "max-h-20 opacity-100";
@@ -181,7 +228,7 @@ const Navbar = ({ onMenuClick }) => {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="bg-transparent outline-none cursor-pointer text-xs sm:text-xs text-slate-500"
+                  className="bg-transparent outline-none cursor-pointer text-xs text-slate-500"
                 >
                   <option value="EN">English (EN)</option>
                   <option value="BN">বাংলা (BN)</option>
@@ -252,10 +299,10 @@ const Navbar = ({ onMenuClick }) => {
           </nav>
         ) : (
           <>
-            {/* ================= DESKTOP NAVBAR (2 ROWS) ================= */}
+            {/* ================= DESKTOP NAVBAR ================= */}
             <div className="hidden max-w-7xl mx-auto md:block bg-white">
-              {/* ROW 1: Logo + Search + Actions (সবসময় visible) */}
-              <nav className={`h-14 flex items-center px-5 ${isScrolled ? 'bg-white' : 'bg-white'} gap-8`}>
+              {/* ROW 1: Logo + Search + Actions */}
+              <nav className="h-14 flex items-center px-5 bg-white gap-8">
                 <Link to="/" className="shrink-0 flex items-center">
                   <img src={logo} alt="logo" className="transition-all duration-300 h-10" />
                 </Link>
@@ -345,7 +392,7 @@ const Navbar = ({ onMenuClick }) => {
                     </div>
 
                     {accessToken && isUserMenuOpen && (
-                      <div className="absolute -right-2  top-full border w-48 bg-white rounded-xl shadow-xl z-50 text-sm">
+                      <div className="absolute -right-2 top-full border w-48 bg-white rounded-xl shadow-xl z-50 text-sm">
                         <Link
                           to="/userDashboard"
                           onClick={() => setIsUserMenuOpen(false)}
@@ -380,77 +427,107 @@ const Navbar = ({ onMenuClick }) => {
                 </div>
               </nav>
 
-              {/* ROW 2: Nav Items (orange background) - স্ক্রল ডাউনে লুকায়, উপরে এলেই দেখায় */}
+              {/* ROW 2: Nav Items (Orange Background) */}
               <div
                 className={`overflow-visible transition-all duration-300 bg-orange-500 ${collapsedClass}`}
               >
-                <div className="flex items-center justify-between gap-2 text-sm sm:text-base font-medium h-11 md:h-12 lg:h-13 px-4">
+                <div className="flex items-center justify-between gap-1 sm:gap-2 text-xs sm:text-sm font-medium h-11 md:h-12 lg:h-13 px-4">
                   {navItems.map((item) => (
                     <div
-                      key={item.path}
-                      className="relative"
-                      onMouseEnter={item.dropdown ? handleMouseEnter : undefined}
-                      onMouseLeave={item.dropdown ? handleMouseLeave : undefined}
+                      key={item.id}
+                      className="relative flex items-center h-full"
+                      onMouseEnter={() => item.hasDropdown && handleMouseEnter(item.id)}
+                      onMouseLeave={() => item.hasDropdown && handleMouseLeave()}
                     >
-                      {item.dropdown ? (
-                        <>
-                          <button
-                            className={`flex items-center gap-1.5 transition-colors text-black/60 hover:text-white ${item.name === 'All Categories' || item.name === 'সব ক্যাটাগরি'
-                              ? 'text-xl md:text-2xl ms-3 text-white'
-                              : 'text-base'
+                      <NavLink
+                        to={item.path}
+                        className={({ isActive }) =>
+                          `flex items-center gap-1 transition-colors ${item.id === "all"
+                            ? "text-lg md:text-xl font-semibold text-white"
+                            : isActive
+                              ? "text-white font-bold"
+                              : "text-black/80 hover:text-white"
+                          }`
+                        }
+                      >
+                        {item.name}
+                        {item.hasDropdown && (
+                          <FontAwesomeIcon
+                            icon={faChevronDown}
+                            className={`text-[10px] sm:text-xs transition-transform duration-200 ${activeDropdown === item.id ? "rotate-180 text-white" : ""
                               }`}
-                            aria-expanded={isCategoryOpen}
-                          >
-                            {item.name}
-                            <FontAwesomeIcon
-                              icon={faChevronDown}
-                              className={`text-base transition-transform duration-200 ${isCategoryOpen ? "rotate-180 text-white" : ""
-                                }`}
-                            />
-                          </button>
+                          />
+                        )}
+                      </NavLink>
 
-                          {isCategoryOpen && (
-                            <div
-                              className="absolute top-10 translate-x-0 mt-0 shadow-xl rounded-xl py-5 px-2 border border-slate-100 z-50"
-                              style={{ width: "440px", background: "#F5F5F5" }}
-                            >
-                              <div className="grid grid-cols-5 gap-3">
-                                {Object.entries(categoryItems).map(([category, items]) => (
-                                  <div key={category} className="">
-                                    <div className="font-semibold text-slate-900 capitalize text-base tracking-wide mb-2">
-                                      {category}
-                                    </div>
-                                    <div className="flex flex-col gap-1.5">
-                                      {items.map((subItem) => (
-                                        <Link
-                                          key={subItem}
-                                          to={`/${category}/${subItem.toLowerCase().replace(/ /g, "-")}`}
-                                          onClick={() => setIsCategoryOpen(false)}
-                                          className="text-base text-slate-600 transition-colors w-fit hover:text-orange-500"
-                                        >
-                                          {subItem}
-                                        </Link>
-                                      ))}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <NavLink
-                          to={item.path}
-                          onClick={() => setIsCategoryOpen(false)}
-                          className={({ isActive }) =>
-                            `relative block transition-colors ${isActive
-                              ? "text-white after:absolute after:left-0 after:right-0 after:-bottom-2 after:h-0.5 after:bg-white"
-                              : "text-black/60 hover:text-white"
-                            }`
-                          }
+                      {/* Mega Dropdown Menu for "All Categories" */}
+                      {item.id === "all" && activeDropdown === "all" && (
+                        <div
+                          className="absolute top-full left-0 mt-0 shadow-xl rounded-xl py-5 px-4 border border-slate-100 z-50"
+                          style={{ width: "520px", background: "#F5F5F5" }}
                         >
-                          {item.name}
-                        </NavLink>
+                          <div className="grid grid-cols-5 gap-3">
+                            {Object.entries(categoryItems.all).map(([category, items]) => (
+                              <div key={category}>
+                                <div className="font-semibold text-slate-900 capitalize text-xs tracking-wide mb-2">
+                                  {category}
+                                </div>
+                                <div className="flex flex-col gap-1.5">
+                                  {items.map((subItem) => (
+                                    <Link
+                                      key={subItem}
+                                      to={`/${category}/${subItem.toLowerCase().replace(/ /g, "-")}`}
+                                      onClick={() => setActiveDropdown(null)}
+                                      className="text-[11px] text-slate-600 transition-colors w-fit hover:text-orange-500"
+                                    >
+                                      {subItem}
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Dropdown Menu for "Products" */}
+                      {item.id === "products" && activeDropdown === "products" && (
+                        <div
+                          className="absolute top-full left-0 mt-0 shadow-xl rounded-xl py-3 px-4 border border-slate-100 z-50 bg-white min-w-[200px]"
+                        >
+                          <div className="flex flex-col gap-2">
+                            {productCategories.map((cat) => (
+                              <Link
+                                key={cat.path}
+                                to={cat.path}
+                                onClick={() => setActiveDropdown(null)}
+                                className="text-sm text-slate-700 transition-colors hover:text-orange-500 font-medium"
+                              >
+                                {cat.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Dropdown Menu for Specific Categories (Perfume, Jewellery, Women, Men, Fishing) */}
+                      {item.id !== "all" && item.id !== "products" && item.hasDropdown && activeDropdown === item.id && (
+                        <div
+                          className="absolute top-full left-0 mt-0 shadow-xl rounded-xl py-3 px-4 border border-slate-100 z-50 bg-white min-w-[170px]"
+                        >
+                          <div className="flex flex-col gap-2">
+                            {item.items?.map((subItem) => (
+                              <Link
+                                key={subItem}
+                                to={`/${item.id}/${subItem.toLowerCase().replace(/ /g, "-")}`}
+                                onClick={() => setActiveDropdown(null)}
+                                className="text-sm text-slate-700 transition-colors hover:text-orange-500"
+                              >
+                                {subItem}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
                       )}
                     </div>
                   ))}
@@ -460,7 +537,6 @@ const Navbar = ({ onMenuClick }) => {
 
             {/* ================= MOBILE NAVBAR ================= */}
             <div className="md:hidden">
-              {/* Top mobile nav (সবসময় visible) */}
               <nav className="h-12 md:h-14 bg-white shadow-sm border-b border-slate-200 flex items-center justify-between px-3 transition-all duration-300">
                 <Link to="/">
                   <img src={logo} alt="logo" className="transition-all basis-2/6 duration-300 h-12 md:h-14" />
@@ -557,7 +633,7 @@ const Navbar = ({ onMenuClick }) => {
                 </div>
               </nav>
 
-              {/* Mobile Category Bar - স্ক্রল ডাউনে লুকায়, উপরে এলেই দেখায় */}
+              {/* Mobile Category Bar */}
               <div className={`bg-orange-500 w-full transition-all duration-300 ${collapsedClass}`}>
                 <button
                   onClick={toggleMobileCategory}
@@ -570,11 +646,10 @@ const Navbar = ({ onMenuClick }) => {
                   />
                 </button>
 
-                {/* Mobile Category Dropdown */}
                 {mobileCategoryOpen && (
                   <div className="bg-white p-4 shadow-lg border-t border-gray-200">
                     <div className="grid grid-cols-2 gap-4">
-                      {Object.entries(categoryItems).map(([category, items]) => (
+                      {Object.entries(categoryItems.all).map(([category, items]) => (
                         <div key={category}>
                           <div className="font-semibold text-slate-900 capitalize text-sm tracking-wide mb-2">
                             {category}
