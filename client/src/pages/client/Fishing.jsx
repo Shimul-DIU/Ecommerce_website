@@ -102,7 +102,7 @@ const Fishing = () => {
 
   const [selectedCategory, setSelectedCategory] =
     useState(categoryQuery);
-  const activeCategory = categoryQuery || selectedCategory;
+  const activeCategory = selectedCategory;
 
   useEffect(() => {
     if (categoryQuery === "fishing") return undefined;
@@ -162,12 +162,14 @@ const Fishing = () => {
        ===================================================== */
 
     if (activeCategory !== "fishing") {
-      const subCategoryName = activeCategory.replace("fishing-", "").replace(/s$/, "");
+      const selectedFishingCategory = FISHING_CATEGORIES.find(
+        (category) => category.key === activeCategory
+      );
+      const subCategoryName = selectedFishingCategory?.label.toLowerCase() || "";
+
       result = result.filter(
         (item) =>
-          item.subCategory === activeCategory ||
-          item.subCategory === subCategoryName ||
-          item.name?.toLowerCase().includes(subCategoryName)
+          item.subCategory?.trim().toLowerCase() === subCategoryName
       );
     }
 

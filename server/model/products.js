@@ -14,6 +14,12 @@ const productSchema = new mongoose.Schema(
       trim: true,
     },
 
+    subCategory: {
+      type: String,
+      required: [true, "Sub category is required"],
+      trim: true,
+    },
+
     price: {
       type: Number,
       required: [true, "Price is required"],
@@ -49,6 +55,6 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-const Product=mongoose.model('Product',productSchema)
+const Product = mongoose.model('Product', productSchema)
 
 export default Product;

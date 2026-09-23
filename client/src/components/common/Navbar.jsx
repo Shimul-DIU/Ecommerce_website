@@ -92,13 +92,13 @@ const Navbar = ({ onMenuClick }) => {
       jewellery: ["Ring", "Necklace", "Earring", "Bracelet"],
       women: ["Dress", "Saree", "Bag", "Shoes"],
       men: ["T-Shirt", "Shirt", "Pant", "Shoes", "Watch"],
-      fishing: ['Reel', 'Wheel', 'Rod', 'Hook', 'Bait']
+      fishing: ["Fishing Rods", "Fishing Reels", "Fishing Lines", "Fishing Hooks", "Fishing Lures", "Fishing Accessories"]
     },
     perfume: ["Men's Perfume", "Women's Perfume", "Attar", "Body Spray"],
     jewellery: ["Ring", "Necklace", "Earring", "Bracelet"],
     women: ["Dress", "Saree", "Bag", "Shoes"],
     men: ["T-Shirt", "Shirt", "Pant", "Shoes"],
-    fishing: ['Reel', 'Wheel', 'Rod', 'Hook']
+    fishing: ["Fishing Rods", "Fishing Reels", "Fishing Lines", "Fishing Hooks", "Fishing Lures", "Fishing Accessories"]
   };
 
   const navItems = [
@@ -167,7 +167,11 @@ const Navbar = ({ onMenuClick }) => {
   };
 
   const getCategoryLink = (category, subItem) => {
-    const subcategory = `${category}-${subItem.toLowerCase().replace(/ /g, "-")}`;
+    const normalizedSubItem = subItem
+      .toLowerCase()
+      .replace(/^fishing\s*-?/, "")
+      .replace(/ /g, "-");
+    const subcategory = `${category}-${normalizedSubItem}`;
 
     if (["men", "women", "fishing"].includes(category)) {
       return `/${category}?category=${encodeURIComponent(subcategory)}`;

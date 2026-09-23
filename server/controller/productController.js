@@ -1,11 +1,19 @@
 import Product from "../model/products.js";
 export const productController = async (req, res) => {
   try {
-    const { name, category, status, price, stock, description } = req.body;
-    const fields = { name, category, status, price, stock, description };
+    const {
+      name,
+      category,
+      subCategory,
+      status,
+      price,
+      stock,
+      description,
+    } = req.body || {};
+    const fields = { name, category, subCategory, status, price, stock };
 
     for (const [key, value] of Object.entries(fields)) {
-      if (!value) {
+      if (value === undefined || value === null || value === "") {
         return res.status(400).json({
           success: false,
           error: { [key]: `${key} is required` },
@@ -24,6 +32,7 @@ export const productController = async (req, res) => {
     const newProduct = new Product({
       name,
       category,
+      subCategory,
       status,
       price,
       stock,
@@ -40,9 +49,24 @@ export const productController = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+
+    if (error.name === "ValidationError") {
+      const validationErrors = Object.fromEntries(
+        Object.entries(error.errors).map(([key, value]) => [key, value.message])
+      );
+
+      return res.status(400).json({
+        success: false,
+        error: validationErrors,
+      });
+    }
+
     return res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Internal Server Error",
     });
   }
 };
