@@ -1,9 +1,9 @@
 import { Outlet } from "react-router-dom";
 import ScrollToTop from "../components/common/ScrollToTop";
 import Sidebar from "../components/common/Sidebar";
-import { useState } from "react";
-import Navbar from './../components/common/Navbar';
+import Navbar from "../components/common/Navbar";
 import Footer from "../components/client/footer/Footer";
+import { useState } from "react";
 
 const Userlayout = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,20 +20,21 @@ const Userlayout = () => {
     <div className="min-h-screen w-full overflow-x-hidden">
       <ScrollToTop />
 
+      {/* Mobile Sidebar */}
       <Sidebar
         isOpen={isOpen}
         onClose={handleMenuClose}
       />
 
-      <Navbar
-        onMenuClick={handleMenuOpen}
-      />
+      {/* Navbar */}
+      <Navbar onMenuClick={handleMenuOpen} />
 
-      <main className="w-full min-w-0 pt-24 pb-20 md:pt-32 md:pb-0">
+      {/* Main Content */}
+      <main className="w-full min-w-0 overflow-x-hidden pt-24 pb-20 md:pt-32 md:pb-0">
         <Outlet />
       </main>
 
-
+      {/* Footer */}
       <Footer />
     </div>
   );
