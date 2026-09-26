@@ -1,4 +1,9 @@
 @import "tailwindcss";
+@theme {
+  /* Give wide desktop screens more room; the default 7xl cap left the whole
+     storefront unusually narrow on production monitors. */
+  --container-7xl: 90rem;
+}
 /* input[type="search"]::-webkit-search-cancel-button {
   display: none;
 } */
