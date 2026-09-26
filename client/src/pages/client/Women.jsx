@@ -484,7 +484,7 @@ const Women = () => {
 
           <div className="absolute inset-0 flex items-center">
 
-            <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto w-full max-w-none px-4 sm:px-6 lg:px-8">
 
               <div className="max-w-xl">
 
@@ -531,7 +531,7 @@ const Women = () => {
 
       <div
         id="women-products"
-        className="mx-auto max-w-7xl px-4 pt-19 sm:px-6 lg:px-8"
+        className="mx-auto w-full max-w-none px-4 pt-19 sm:px-6 lg:px-8"
       >
 
         {/* =================================================

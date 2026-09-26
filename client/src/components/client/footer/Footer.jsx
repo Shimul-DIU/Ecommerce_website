@@ -51,10 +51,10 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="max-w-7xl mx-auto  bg-slate-950 text-slate-300">
+    <footer className="w-full bg-slate-950 text-slate-300">
       {/* Trust strip */}
       <div className="border-b border-slate-800">
-        <div className="max-w-6xl mx-auto px-6 py-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="w-full max-w-none mx-auto px-6 py-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="flex items-center gap-3">
             <FontAwesomeIcon icon={faTruck} className="w-5 h-5 text-amber-400 shrink-0" />
             <div>
@@ -80,7 +80,7 @@ export default function Footer() {
       </div>
 
       {/* Main footer */}
-      <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-5 gap-10">
+      <div className="w-full max-w-none mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-5 gap-10">
         {/* Brand + newsletter */}
         <div className="md:col-span-2">
           <h2 className="text-2xl font-bold text-white tracking-tight">
@@ -141,7 +141,7 @@ export default function Footer() {
       </div>
 
       {/* Contact + socials */}
-      <div className="max-w-6xl mx-auto px-6 py-6 border-t border-slate-800 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div className="w-full max-w-none mx-auto px-6 py-6 border-t border-slate-800 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-sm text-slate-400">
           <span className="flex items-center gap-2">
             <FontAwesomeIcon icon={faPhone} className="w-4 h-4 text-amber-400" /> +880 1922773703
@@ -169,7 +169,7 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-slate-800">
-        <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="w-full max-w-none mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-slate-500">
             © {new Date().getFullYear()} Shimul_shop. All rights reserved.
           </p>

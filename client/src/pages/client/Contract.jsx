@@ -63,7 +63,7 @@ const Contact = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full max-w-none mx-auto">
 
         {/* ================= HEADER SECTION ================= */}
         <div className="text-center max-w-2xl mx-auto mb-12">

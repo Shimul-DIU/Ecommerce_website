@@ -6,7 +6,7 @@ import TopCategories from '../../components/client/TopCategories';
 import SidebarCategories from '../../components/client/SidebarCategories';
 
 const Home = () => (
-  <div className="max-w-7xl mx-auto px-1 sm:px-2 md:px-3 pt-10 space-y-5">
+  <div className="w-full max-w-none mx-auto px-1 sm:px-2 md:px-3 pt-10 space-y-5">
     <DevelopmentPopup />
 
     <HeroBanner />

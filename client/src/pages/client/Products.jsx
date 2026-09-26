@@ -256,7 +256,7 @@ const Products = () => {
   return (
     // ✅ FIX: Proper top padding to sit below the fixed navbar
     <div className="min-h-screen mt-8 sm:mt-6 pb-10 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full max-w-none mx-auto">
         <div className="flex justify-between mb-3">
           <h2 className="text-lg sm:text-2xl lg:hidden font-bold">Products</h2>
           <div className="lg:hidden flex items-center sm:w-auto">

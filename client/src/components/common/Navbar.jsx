@@ -222,10 +222,10 @@ const Navbar = ({ onMenuClick }) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 translate-y-0">
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full max-w-none mx-auto">
         {/* ================= TOP UTILITY BAR ================= */}
         <div
-          className={`max-w-7xl rounded-t-md mx-auto px-1 sm:px-2 md:px-4 lg:px-6 bg-white border-b border-gray-200 text-slate-500 text-xs transition-all duration-300 ${collapsedClass}`}
+          className={`w-full rounded-t-md mx-auto px-1 sm:px-2 md:px-4 lg:px-6 bg-white border-b border-gray-200 text-slate-500 text-xs transition-all duration-300 ${collapsedClass}`}
         >
           <div className="flex items-center justify-between py-1">
             <div className="flex items-center gap-1 text-xs">
@@ -314,7 +314,7 @@ const Navbar = ({ onMenuClick }) => {
         ) : (
           <>
             {/* ================= DESKTOP NAVBAR ================= */}
-            <div className="hidden max-w-7xl mx-auto md:block bg-white">
+            <div className="hidden w-full mx-auto md:block bg-white">
               {/* ROW 1: Logo + Search + Actions */}
               <nav className="h-14 flex items-center px-5 bg-white gap-8">
                 <Link to="/" className="shrink-0 flex items-center">

@@ -296,7 +296,7 @@ const Checkout = () => {
   return (
     <div className="min-h-screen mt-[45px] sm:mt-[50px] py-4 sm:py-8 px-3 sm:px-4 md:px-8">
       {/* HEADER */}
-      <div className="max-w-6xl mx-auto w-full flex flex-row items-center justify-between mb-3 sm:pb-4 gap-2">
+      <div className="w-full max-w-none mx-auto flex flex-row items-center justify-between mb-3 sm:pb-4 gap-2">
         <div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#16241F] tracking-tight">
             Checkout
@@ -313,7 +313,7 @@ const Checkout = () => {
 
       {/* SERVER MESSAGE */}
       {serverMessage && (
-        <div className="max-w-6xl mx-auto w-full mb-4 sm:mb-6">
+        <div className="w-full max-w-none mx-auto mb-4 sm:mb-6">
           <div
             className={`p-3 sm:p-4 rounded-xl flex items-center gap-2.5 sm:gap-3 text-sm sm:text-base shadow-sm ${serverMessageType === "success"
               ? "bg-green-50 border border-green-200 text-green-800"
@@ -329,7 +329,7 @@ const Checkout = () => {
       )}
 
       {/* MAIN */}
-      <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-start">
+      <div className="w-full max-w-none mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-start">
         {/* LEFT */}
         <div className="lg:col-span-5 flex flex-col gap-4 sm:gap-5">
           {/* PRODUCT */}

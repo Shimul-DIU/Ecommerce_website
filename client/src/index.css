@@ -14,6 +14,22 @@
 body{
   background-color: rgba(164, 163, 164, 0.333);
 }
+@media (max-width: 767px) {
+  html {
+    font-size: 90%;
+  }
+}
+@media (min-width: 1281px) {
+  html {
+    font-size: clamp(16px, 1.25vw, 19px);
+  }
+}
+@media (min-width: 1281px) {
+  .max-w-none {
+    width: 80%;
+    margin-inline: auto;
+  }
+}
 :root{
   --black-ops-one:'Black ops one',sans-serif
 }

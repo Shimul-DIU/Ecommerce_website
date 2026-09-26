@@ -147,8 +147,8 @@ function DealCard({ deal }) {
 
 const DealOfTheDay = () => {
   return (
-    <section className="max-w-7xl mx-auto ">
-      <div className="max-w-6xl mx-auto">
+    <section className="w-full mx-auto ">
+      <div className="w-full mx-auto">
         <div className="flex items-baseline justify-between mb-3 sm:mb-8">
           <h2 className="text-xl md:text-2xl lg:text-3xl font-medium text-[#16241F]">
             Deal of the Day

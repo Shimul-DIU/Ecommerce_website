@@ -100,7 +100,7 @@ const HeroBanner = () => {
 
   return (
     <div
-      className="max-w-7xl mx-auto px-2  mt-2 "
+      className="w-full mx-auto px-2  mt-2 "
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}

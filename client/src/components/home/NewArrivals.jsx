@@ -59,7 +59,7 @@ const NewArrivals = () => {
   const visibleProductsList = products?.slice(0, itemsPerRow);
 
   return (
-    <section className="max-w-7xl mx-auto ">
+    <section className="w-full mx-auto ">
       {/* Section Header */}
       <div className="flex items-center justify-between pb-3 ">
         <div className="flex items-center gap-2 ">
