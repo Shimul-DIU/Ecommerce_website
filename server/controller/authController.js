@@ -14,17 +14,12 @@ const saltRounds = 10;
 // =====================================================
 
 const getRefreshCookieOptions = (req) => {
-  const isProduction =
-    process.env.NODE_ENV === "production";
+  const isSecure = req.secure;
 
   return {
     httpOnly: true,
-
-    // Production HTTPS
-    secure: isProduction,
-
-    // Different frontend/backend domains
-    sameSite: isProduction ? "none" : "lax",
+    secure: isSecure,
+    sameSite: isSecure ? "none" : "lax",
 
     path: "/",
   };
