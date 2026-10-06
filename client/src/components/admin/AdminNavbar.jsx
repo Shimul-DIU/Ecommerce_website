@@ -9,11 +9,13 @@ import {
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function AdminNavbar({ toggleSidebar }) {
   const navigate=useNavigate()
-  const handleLogout=()=>{
-    localStorage.removeItem('adminToken')
+  const { logoutAdmin } = useAuth();
+  const handleLogout=async ()=>{
+    await logoutAdmin();
     navigate('/admin/login')
   }
   const [profileOpen, setProfileOpen] = useState(false);

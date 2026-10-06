@@ -1,6 +1,7 @@
 // tokenManager.js
 
 let accessToken = null;
+let adminAccessToken = null;
 
 // Get access token
 export const getAccessToken = () => {
@@ -15,4 +16,16 @@ export const setAccessToken = (token) => {
 // Clear access token
 export const clearAccessToken = () => {
   accessToken = null;
+};
+
+export const getAdminAccessToken = () => {
+  return adminAccessToken;
+};
+
+export const setAdminAccessToken = (token) => {
+  adminAccessToken = token;
+};
+
+export const clearAdminAccessToken = () => {
+  adminAccessToken = null;
 };

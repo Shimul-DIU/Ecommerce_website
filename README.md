@@ -1,88 +1,61 @@
 # 🛒 ShimulShopping – Full Stack E-commerce Website
 
-**ShimulShopping** is a modern, responsive, full-stack e-commerce web application where customers can browse products, search and filter products, manage their cart and wishlist, place orders, and manage their accounts. It also includes an admin dashboard for managing products, categories, users, and orders.
+**ShimulShopping** is a responsive, full-stack e-commerce web application built with the MERN stack. Customers can browse and search products, manage a cart and wishlist, place orders and manage their account. A separate admin panel lets administrators manage products, customers and orders.
+
+🌐 **Live Demo:** https://shimulshopping.web.app/
+📂 **Repository:** https://github.com/Shimul-DIU/Ecommerce_website
 
 ---
 
-## 🌐 Live Website
+## 📑 Table of Contents
 
-🔗 **Live Demo:** https://shimulshopping.web.app/
-
----
-
-## 📂 Repository
-
-🔗 **GitHub:** https://github.com/Shimul-DIU/Ecommerce_website
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+- [Environment Variables](#-environment-variables)
+- [API Overview](#-api-overview)
+- [Security](#-security)
+- [Deployment](#-deployment)
+- [Screenshots](#-screenshots)
+- [Author](#-author)
 
 ---
 
 ## ✨ Features
 
-### 👤 Customer Features
+### 👤 Customer
+- Register / login with email and password, or **Google sign-in**
+- Forgot and reset password via email
+- Browse products by category (Men, Women, Fishing, Offers and more)
+- Search and filter products
+- Product reviews
+- Shopping cart with quantity update and remove
+- Wishlist
+- Checkout and order placement, order success page
+- Order history
+- User dashboard: overview, orders, cart, wishlist, saved addresses, profile
+- Language / currency and theme context support
+- Fully responsive (mobile, tablet, desktop)
 
-* User registration and login
-* Secure authentication
-* Browse products by category
-* Product search functionality
-* Product filtering
-* Product details
-* Add products to cart
-* Update cart quantity
-* Remove products from cart
-* Wishlist functionality
-* Place orders
-* View order history
-* Manage user profile
-* Manage saved addresses
-* Responsive design for mobile, tablet, and desktop
-
-### 🛠️ Admin Features
-
-* Admin authentication
-* Admin dashboard
-* Product management
-* Add, update, and delete products
-* Category management
-* User management
-* Order management
-* View order details
-* Manage product inventory
+### 🛠️ Admin
+- Separate admin login with its own JWT strategy and password reset
+- Admin dashboard
+- Product management: add, edit and manage products with image upload (Cloudinary)
+- Customer list
+- Order management
+- Protected admin routes
 
 ---
 
-## 🧑‍💻 Technologies Used
+## 🧑‍💻 Tech Stack
 
-### Frontend
-
-* React.js
-* JavaScript (ES6+)
-* React Router
-* Tailwind CSS
-* Axios
-* Firebase
-* Font Awesome
-* Lucide React
-* Vite
-
-### Backend
-
-* Node.js
-* Express.js
-* MongoDB
-* Mongoose
-* JWT Authentication
-* Passport.js
-* REST API
-* Multer
-
-### Tools & Services
-
-* Git
-* GitHub
-* VS Code
-* Postman
-* Firebase Hosting
-* Render
+| Layer | Technologies |
+|---|---|
+| **Frontend** | React 19, Vite, React Router v7, Tailwind CSS v4, Axios, Firebase (Auth + Hosting), Font Awesome, Lucide React, React Icons |
+| **Backend** | Node.js, Express 5, MongoDB, Mongoose, Passport (JWT), bcrypt, Multer + Cloudinary, Nodemailer / Resend |
+| **Security** | Helmet, express-rate-limit, xss-clean, CORS, HTTP-only cookies |
+| **Tools & Hosting** | Git, GitHub, GitHub Actions, VS Code, Postman, Firebase Hosting (frontend), Render (backend) |
 
 ---
 
@@ -90,235 +63,224 @@
 
 ```text
 Ecommerce_website/
-│
-├── client/                 # React frontend
-│   ├── src/
+├── .github/workflows/          # Firebase Hosting CI/CD (merge + pull request)
+├── client/                     # React frontend (Vite)
 │   ├── public/
-│   └── ...
+│   └── src/
+│       ├── assets/             # fonts, images
+│       ├── auth/               # Login, Register, Admin login, reset password
+│       ├── components/
+│       │   ├── admin/          # AdminNavbar, AdminSidebar
+│       │   ├── client/         # footer, categories, user dashboard components
+│       │   ├── common/         # Navbar, ProductCard, HeroBanner, Card ...
+│       │   └── home/           # DealOfTheDay, NewArrivals
+│       ├── context/            # Auth, Count, Language, Theme contexts
+│       ├── firebase/           # Firebase config
+│       ├── hooks/              # useProducts, useScroll, useGoogleSignIn
+│       ├── layout/             # Userlayout, Adminlayout
+│       ├── pages/
+│       │   ├── admin/          # Dashboard, Orders, Customers, Setting, product/
+│       │   └── client/         # Home, Products, Checkout ... userDashboard/
+│       ├── routes/             # router + protected routes
+│       └── utils/              # axiosInstance, tokenManager, helpers
 │
-├── server/                 # Node.js & Express backend
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   └── ...
+├── server/                     # Node.js + Express backend
+│   ├── config/                 # db, cloudinary, mail, passport JWT strategies
+│   ├── controller/             # auth, user, admin, product, order, review
+│   ├── middleware/             # authMiddleware, upload (Multer)
+│   ├── model/                  # user, admin, products, order, review
+│   ├── routes/                 # API route definitions
+│   ├── app.js                  # Express app, middleware, route mounting
+│   ├── server.js               # Entry point (DB connect + listen)
+│   └── seedAdmin.js            # Script to create the first admin
 │
-├── public/
-├── .github/
 ├── firebase.json
-├── .gitignore
+├── .firebaserc
 └── README.md
 ```
 
 ---
 
-## 🔐 Authentication
+## 🚀 Getting Started
 
-The application implements authentication and authorization for both customers and administrators.
+### Prerequisites
+- Node.js 18+ and npm
+- A MongoDB database (local or MongoDB Atlas)
+- A Firebase project (Auth + Hosting)
+- A Cloudinary account (product image uploads)
 
-Authentication-related features include:
-
-* JWT-based authentication
-* Protected routes
-* Admin authorization
-* User authorization
-* Secure refresh-token handling
-* Password protection
-* Login and logout functionality
-
----
-
-## 🛍️ Product Management
-
-Customers can:
-
-* Browse products
-* Search products
-* Filter products
-* View product details
-* Add products to cart
-* Add products to wishlist
-
-Administrators can:
-
-* Add products
-* Update products
-* Delete products
-* Manage categories
-* Manage product information
-
----
-
-## 🛒 Shopping Cart & Wishlist
-
-The shopping cart allows users to:
-
-* Add products
-* Increase or decrease quantity
-* Remove products
-* View cart totals
-
-Users can also save products to their wishlist and manage saved products.
-
----
-
-## 📦 Order Management
-
-Customers can:
-
-* Place orders
-* View previous orders
-* View order details
-* Track order status
-
-Administrators can:
-
-* View customer orders
-* View order details
-* Manage order status
-
----
-
-## 📱 Responsive Design
-
-The website is designed to work across different screen sizes:
-
-* 📱 Mobile
-* 💻 Desktop
-* 📟 Tablet
-
-The UI uses responsive layouts and Tailwind CSS utilities to provide a consistent shopping experience across devices.
-
----
-
-## ⚙️ Installation & Setup
-
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Shimul-DIU/Ecommerce_website.git
-```
-
-### 2. Navigate to the Project
-
-```bash
 cd Ecommerce_website
 ```
 
----
-
-## 🚀 Frontend Setup
-
-```bash
-cd client
-npm install
-```
-
-Create a `.env` file inside the `client` directory:
-
-```env
-VITE_API_URL=your_backend_api_url
-```
-
-Start the frontend development server:
-
-```bash
-npm run dev
-```
-
----
-
-## 🖥️ Backend Setup
-
-Open another terminal:
+### 2. Backend setup
 
 ```bash
 cd server
 npm install
 ```
 
-Create a `.env` file inside the `server` directory:
+Create a `.env` file in `server/` (see [Environment Variables](#-environment-variables)), then:
 
-```env
-PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-CLIENT_URL=http://localhost:5173
+```bash
+# (optional) create the first admin account
+node seedAdmin.js
+
+# start the server
+npm start
 ```
 
-Start the backend server:
+The API runs at `http://localhost:5000`.
+
+### 3. Frontend setup
+
+Open a second terminal:
+
+```bash
+cd client
+npm install
+```
+
+Create a `.env` file in `client/`, then:
 
 ```bash
 npm run dev
 ```
 
----
+The app runs at `http://localhost:5173`.
 
-## 🔗 API
+### Available scripts
 
-The backend provides RESTful APIs for:
-
-* Authentication
-* Users
-* Products
-* Categories
-* Orders
-* Admin operations
-
-The frontend communicates with the backend using Axios.
+| Location | Command | Description |
+|---|---|---|
+| `client` | `npm run dev` | Start Vite dev server |
+| `client` | `npm run build` | Production build |
+| `client` | `npm run preview` | Preview production build |
+| `client` | `npm run lint` | Run ESLint |
+| `server` | `npm start` | Start the API server |
 
 ---
 
-## 🎯 Project Goals
+## 🔑 Environment Variables
 
-The main goals of this project are:
+> ⚠️ Never commit real `.env` files or secrets. Use placeholders only.
 
-* Build a complete full-stack e-commerce application
-* Practice modern React development
-* Implement RESTful APIs
-* Work with MongoDB and Mongoose
-* Implement authentication and authorization
-* Build an admin management system
-* Create responsive and user-friendly interfaces
-* Deploy a real-world web application
+### `server/.env`
+
+```env
+PORT=5000
+NODE_ENV=development
+DB_URL=your_mongodb_connection_string
+CLIENT_URL=http://localhost:5173
+
+# JWT
+ACCESS_TOKEN_SECRET=your_access_token_secret
+JWT_ACCESS_SECRET=your_access_secret
+REFRESH_TOKEN_SECRET=your_refresh_token_secret
+ADMIN_JWT_SECRET=your_admin_jwt_secret
+
+# Admin seeding
+SECRET_KEY=initial_admin_password
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# Email
+RESEND_API_KEY=your_resend_api_key
+FORGOT_PASSWORD=your_mail_config
+```
+
+### `client/.env`
+
+```env
+VITE_API_URL=http://localhost:5000
+
+VITE_APIKEY=your_firebase_api_key
+VITE_AUTHDOMAIN=your_project.firebaseapp.com
+VITE_PROJECTID=your_project_id
+VITE_STORAGEBUCKET=your_project.appspot.com
+VITE_MESSAGINGSENDERID=your_sender_id
+VITE_APPID=your_app_id
+VITE_MEASUREMENTID=your_measurement_id
+```
 
 ---
 
-## 📸 Project Preview
+## 🔗 API Overview
 
-Add screenshots of the following pages here:
+Base URL: `/api`
 
-* Home Page
-* Product Listing
-* Product Details
-* Shopping Cart
-* Wishlist
-* User Dashboard
-* Admin Dashboard
+| Route prefix | Purpose |
+|---|---|
+| `/api/auth` | User and admin register, login, refresh token, logout, forgot / reset password, Google login |
+| `/api/user` | User profile (protected) |
+| `/api/admin` | Admin operations such as adding products (protected) |
+| `/api/products` | List and display products |
+| `/api/orders` | Create orders and fetch order details (protected) |
+| `/api/reviews` | Create and fetch product reviews |
 
-Example:
+---
+
+## 🔐 Security
+
+- Separate JWT strategies (Passport) for users and admins
+- Access + refresh token flow with cookies
+- Passwords hashed with bcrypt
+- Helmet, rate limiting on login, XSS sanitization
+- Protected routes on both client and server
+- CORS restricted to the configured client origin
+
+---
+
+## ☁️ Deployment
+
+- **Frontend:** Firebase Hosting, deployed automatically through GitHub Actions on merge to `main`
+- **Backend:** Render
+- **Database:** MongoDB Atlas
+- **Media:** Cloudinary
+
+---
+
+## 📸 Screenshots
+
+Add screenshots to a `screenshots/` folder and reference them here:
 
 ```md
 ![Home Page](./screenshots/home.png)
 ![Products Page](./screenshots/products.png)
 ![Cart Page](./screenshots/cart.png)
+![User Dashboard](./screenshots/user-dashboard.png)
 ![Admin Dashboard](./screenshots/admin-dashboard.png)
 ```
 
 ---
 
-## 👨‍💻 Developer
+## 🎯 What I Learned
 
-### Md. Shimul Mia
+- Building a complete MERN application with separate user and admin roles
+- Designing REST APIs with Express and Mongoose
+- Implementing JWT authentication with access / refresh tokens
+- Handling image uploads with Multer and Cloudinary
+- Structuring a scalable React project (layouts, contexts, hooks, protected routes)
+- CI/CD with GitHub Actions and deploying to Firebase Hosting and Render
 
-**Aspiring Software Developer | Full-Stack Developer**
+---
 
-* GitHub: https://github.com/Shimul-DIU
-* LinkedIn: https://www.linkedin.com/in/md-shimul-71a4b331/
-* Portfolio: https://shimulportfolio.netlify.app/
+## 👨‍💻 Author
+
+**Md. Shimul Mia** – Aspiring Full Stack Developer
+
+- GitHub: https://github.com/Shimul-DIU
+- LinkedIn: https://www.linkedin.com/in/md-shimul-71a4b331/
+- Portfolio: https://shimul-portfolio.web.app
 
 ---
 
 ## ⭐ Support
 
-If you find this project useful, consider giving the repository a ⭐ on GitHub.
+If you find this project useful, please give it a ⭐ on GitHub.

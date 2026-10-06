@@ -19,6 +19,10 @@ const opts = {
 passport.use(
   'admin-jwt',
   new JwtStrategy(opts, async (jwt_payload, done) => {
+    if (jwt_payload.tokenType !== 'access') {
+      return done(null, false);
+    }
+
     try {
       const admin = await Admin.findById(jwt_payload.id);
 

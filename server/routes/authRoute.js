@@ -2,7 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import rateLimit from 'express-rate-limit';
 import { createUser,logout, loginUser ,forgotPassword,resetPassword, GoogleLogin, refreshAccessToken} from '../controller/authController.js';
-import { ForgotPassword, loginAdmin, ResetPassword } from '../controller/adminController.js';
+import { ForgotPassword, loginAdmin, logoutAdmin, refreshAdminAccessToken, ResetPassword } from '../controller/adminController.js';
 
 const authRouter = express.Router();
 
@@ -35,6 +35,8 @@ authRouter.post('/user/google-login',GoogleLogin)
 
 // ====adminRoute================
 authRouter.post('/admin/login', loginAdmin);
+authRouter.post('/admin/refresh', refreshAdminAccessToken);
+authRouter.post('/admin/logout', logoutAdmin);
 authRouter.post('/admin/forgot-password',ForgotPassword)
 authRouter.post("/admin/reset-password", ResetPassword);
 

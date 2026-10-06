@@ -1,7 +1,7 @@
-import axios from "axios";
 import axiosInstance from "../utils/axiosInstance";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 const AdminLogin = () => {
   const [message, setMessage] = useState('')
   const [formData, setFormData] = useState({
@@ -9,6 +9,7 @@ const AdminLogin = () => {
 
   })
   const navigate = useNavigate()
+  const { loginAdmin } = useAuth();
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -48,13 +49,8 @@ const AdminLogin = () => {
   const submitHandler = async (e) => {
     try {
       e.preventDefault();
-      const res = await axiosInstance.post("/api/admin/login",
-        formData,
-      );
-      console.log(res)
-      localStorage.setItem('adminToken', res.data.token)
+      await loginAdmin(formData.email, formData.password);
       navigate("/admin", { replace: true });
-      console.log(res.data);
     }
     catch (error) {
       setMessage(

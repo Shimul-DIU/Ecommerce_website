@@ -1,6 +1,30 @@
 import Admin from "../model/adminModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import resend from "../config/mail.js";
+
+const getAdminRefreshCookieOptions = (req) => {
+    const isSecure = req.secure;
+
+    return {
+        httpOnly: true,
+        secure: isSecure,
+        sameSite: isSecure ? "none" : "lax",
+        path: "/",
+    };
+};
+
+const createAdminAccessToken = (admin) => jwt.sign(
+    {
+        id: admin._id,
+        email: admin.email,
+        role: admin.role,
+        tokenType: "access",
+    },
+    process.env.ADMIN_JWT_SECRET,
+    { expiresIn: "15m" }
+);
+
 export const loginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -10,8 +34,6 @@ export const loginAdmin = async (req, res) => {
                 message: "Email and password are required",
             });
         }
-
-        console.log(email, password);
 
         const existingAdmin = await Admin.findOne({ email }).select("+password");
 
@@ -29,19 +51,31 @@ export const loginAdmin = async (req, res) => {
             });
         }
 
-        const token = jwt.sign(
+        const accessToken = createAdminAccessToken(existingAdmin);
+        const refreshToken = jwt.sign(
             {
                 id: existingAdmin._id,
                 email: existingAdmin.email,
                 role: existingAdmin.role,
+                tokenType: "refresh",
             },
             process.env.ADMIN_JWT_SECRET,
-            { expiresIn: "1000d" }
+            { expiresIn: "30d" }
         );
+
+        res.cookie("adminRefreshToken", refreshToken, {
+            ...getAdminRefreshCookieOptions(req),
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+        });
 
         return res.status(200).json({
             message: "Login successful",
-            token: "Bearer " + token,
+            accessToken,
+            admin: {
+                id: existingAdmin._id,
+                email: existingAdmin.email,
+                role: existingAdmin.role,
+            },
         });
     } catch (error) {
         console.log(error);
@@ -51,7 +85,45 @@ export const loginAdmin = async (req, res) => {
     }
 };
 
-import resend from "../config/mail.js";
+export const refreshAdminAccessToken = async (req, res) => {
+    try {
+        const refreshToken = req.cookies?.adminRefreshToken;
+
+        if (!refreshToken) {
+            return res.status(401).json({ message: "Admin refresh token not found" });
+        }
+
+        const decoded = jwt.verify(refreshToken, process.env.ADMIN_JWT_SECRET);
+        if (decoded.tokenType !== "refresh") {
+            res.clearCookie("adminRefreshToken", getAdminRefreshCookieOptions(req));
+            return res.status(401).json({ message: "Invalid admin refresh token" });
+        }
+
+        const admin = await Admin.findById(decoded.id);
+        if (!admin) {
+            res.clearCookie("adminRefreshToken", getAdminRefreshCookieOptions(req));
+            return res.status(401).json({ message: "Admin not found" });
+        }
+
+        return res.status(200).json({
+            accessToken: createAdminAccessToken(admin),
+            admin: {
+                id: admin._id,
+                email: admin.email,
+                role: admin.role,
+            },
+        });
+    } catch (error) {
+        console.error("refreshAdminAccessToken error:", error.message);
+        res.clearCookie("adminRefreshToken", getAdminRefreshCookieOptions(req));
+        return res.status(401).json({ message: "Invalid or expired admin refresh token" });
+    }
+};
+
+export const logoutAdmin = (req, res) => {
+    res.clearCookie("adminRefreshToken", getAdminRefreshCookieOptions(req));
+    return res.status(200).json({ message: "Logout successful" });
+};
 
 export const ForgotPassword = async (req, res) => {
     try {
