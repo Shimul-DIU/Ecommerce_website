@@ -2,6 +2,7 @@ import React, {
   useState,
   useEffect,
   useContext,
+  useCallback,
 } from "react";
 import {
   useLocation,
@@ -32,7 +33,7 @@ const Checkout = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const product = state?.product;
-  const { accessToken, user } = useContext(AuthContext);
+  const { accessToken } = useContext(AuthContext);
 
   const [formdata, setFormdata] = useState({
     name: "",
@@ -74,23 +75,27 @@ const Checkout = () => {
     }
   }, [product]);
 
-  // REMOVED: Auto-fill name from user context - now shows placeholder
+  // ===== Reviews fetch (server থেকে) =====
+  const fetchReviews = useCallback(async () => {
+    if (!product?._id) return;
+    try {
+      const { data } = await axiosInstance.get(
+        `/api/reviews/product/${product._id}`
+      );
+      setReviewsList(data.reviews || []);
+    } catch (err) {
+      // error হলে list খালি করবেন না, শুধু log করুন
+      console.error(
+        "Fetch reviews error:",
+        err.response?.status,
+        err.response?.data || err.message
+      );
+    }
+  }, [product?._id]);
 
   useEffect(() => {
-    const fetchReviews = async () => {
-      if (!product?._id) return;
-      try {
-        const response = await axiosInstance.get(
-          `/api/reviews/product/${product._id}`
-        );
-        setReviewsList(response.data.reviews || []);
-      } catch (error) {
-        console.error("Fetch reviews error:", error.response?.data || error.message);
-        setReviewsList([]);
-      }
-    };
     fetchReviews();
-  }, [product?._id]);
+  }, [fetchReviews]);
 
   if (!product) {
     return (
@@ -166,18 +171,16 @@ const Checkout = () => {
         rating: userRating,
         comment: comment,
       };
-      const response = await axiosInstance.post(
-        "/api/reviews",
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      if (response.data.review) {
-        setReviewsList((prev) => [response.data.review, ...prev]);
-      }
+
+      await axiosInstance.post("/api/reviews", payload, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // local state-এ push না করে server থেকে আবার আনুন
+      await fetchReviews();
+
       setUserRating(0);
       setReviewComment("");
       setReviewSubmitted(true);
@@ -560,7 +563,7 @@ const Checkout = () => {
               </h3>
             </div>
             <form className="space-y-3.5 sm:space-y-5" onSubmit={submitHandler} id="checkout-form">
-              {/* NAME - Now shows placeholder instead of auto-filling */}
+              {/* NAME */}
               <div>
                 <label className="block text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#16241F]/80 mb-1 sm:mb-1.5">
                   Full Name <span className="text-red-500">*</span>
@@ -640,7 +643,6 @@ const Checkout = () => {
                 <label className="block text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#16241F]/80 mb-1.5 sm:mb-2">
                   Payment Method <span className="text-red-500">*</span>
                 </label>
-                {/* Responsive grid: 1 column on mobile, 2 on tablet, 3 on desktop */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-2.5">
                   {["bkash", "nagad", "cod"].map((method) => (
                     <div key={method}>
