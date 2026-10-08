@@ -1,4 +1,4 @@
-import { useState, useRef, useContext, useEffect } from "react";
+﻿import { useState, useRef, useContext, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo1.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,6 +25,8 @@ import useProducts from "../../hooks/useProducts";
 
 const ICON_ACTION = "text-lg sm:text-xl md:text-lg";
 const AVATAR_SIZE = "w-7 h-7 sm:w-10 sm:h-10";
+
+const CONTAINER = "w-full min-[1281px]:w-[80%] mx-auto";
 
 const CountBadge = ({ count, color }) => {
   if (!count) return null;
@@ -79,7 +81,7 @@ const Navbar = ({ onMenuClick }) => {
   // Products ক্যাটাগরির ড্রপডাউন ডাটা স্ট্রাকচার
   const productCategories = [
     { name: language === "BN" ? "পারফিউম (Perfume)" : "Perfume", path: "/products?category=perfume" },
-    { name: language === "BN" ? "জুয়েলারি (Jewellery)" : "Jewellery", path: "/products?category=jewellery" },
+    { name: language === "BN" ? "জুয়েলারি (Jewellery)" : "Jewellery", path: "/products?category=jewellery" },
     { name: language === "BN" ? "নারী (Women)" : "Women", path: "/products?category=women" },
     { name: language === "BN" ? "পুরুষ (Men)" : "Men", path: "/products?category=men" },
     { name: language === "BN" ? "মাছ ধরা (Fishing)" : "Fishing", path: "/products?category=fishing" }
@@ -221,13 +223,13 @@ const Navbar = ({ onMenuClick }) => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 translate-y-0">
-      <div className="w-full max-w-none mx-auto">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full">
+      <div className="w-full">
         {/* ================= TOP UTILITY BAR ================= */}
         <div
-          className={`w-full rounded-t-md mx-auto px-1 sm:px-2 md:px-4 lg:px-6 bg-white border-b border-gray-200 text-slate-500 text-xs transition-all duration-300 ${collapsedClass}`}
+          className={`w-full bg-white border-b border-gray-200 text-slate-500 text-xs transition-all duration-300 ${collapsedClass}`}
         >
-          <div className="flex items-center justify-between py-1">
+          <div className={`${CONTAINER} flex items-center justify-between py-1 px-2 sm:px-4 lg:px-6`}>
             <div className="flex items-center gap-1 text-xs">
               <Link to="/help" className="hover:text-orange-500 transition-colors">Help</Link>
               <span className="text-slate-300">|</span>
@@ -267,185 +269,189 @@ const Navbar = ({ onMenuClick }) => {
 
         {/* ================= MOBILE SEARCH ================= */}
         {searchOpen ? (
-          <nav className="md:hidden bg-white px-3 md:px-6 py-3 flex items-center gap-3 shadow-sm">
-            <button
-              onClick={handleSearchClose}
-              aria-label="Close search"
-              className="text-slate-700 hover:text-slate-900 transition-colors shrink-0 p-2 -m-2"
-            >
-              <FontAwesomeIcon icon={faArrowLeft} className={ICON_ACTION} />
-            </button>
-            <div className="relative flex-1">
-              <form onSubmit={handleSearchSubmit} className="flex items-center bg-slate-50 rounded-full pl-4 pr-2 h-10 shadow-sm border border-slate-200">
-                <FontAwesomeIcon icon={faSearch} className="text-slate-400 text-sm mr-2 shrink-0" />
-                <input
-                  type="search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onFocus={() => setSearchFocused(true)}
-                  placeholder="Search products..."
-                  autoFocus
-                  className="flex-1 h-full outline-none bg-transparent text-sm text-slate-800 placeholder:text-slate-400"
-                />
-              </form>
-              {searchFocused && searchSuggestions.length > 0 && (
-                <div className="absolute top-12 left-0 right-0 z-50 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
-                  {searchSuggestions.map((item) => (
-                    <button
-                      type="button"
-                      key={item._id}
-                      onMouseDown={() => handleSuggestionClick(item.name)}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600"
-                    >
-                      <FontAwesomeIcon icon={faSearch} className="text-xs text-slate-400" />
-                      <span className="truncate">{item.name}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
+          <nav className="md:hidden w-full bg-white shadow-sm">
+            <div className={`${CONTAINER} px-3 py-3 flex items-center gap-3`}>
+              <button
+                onClick={handleSearchClose}
+                aria-label="Close search"
+                className="text-slate-700 hover:text-slate-900 transition-colors shrink-0 p-2 -m-2"
+              >
+                <FontAwesomeIcon icon={faArrowLeft} className={ICON_ACTION} />
+              </button>
+              <div className="relative flex-1">
+                <form onSubmit={handleSearchSubmit} className="flex items-center bg-slate-50 rounded-full pl-4 pr-2 h-10 shadow-sm border border-slate-200">
+                  <FontAwesomeIcon icon={faSearch} className="text-slate-400 text-sm mr-2 shrink-0" />
+                  <input
+                    type="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onFocus={() => setSearchFocused(true)}
+                    placeholder="Search products..."
+                    autoFocus
+                    className="flex-1 h-full outline-none bg-transparent text-sm text-slate-800 placeholder:text-slate-400"
+                  />
+                </form>
+                {searchFocused && searchSuggestions.length > 0 && (
+                  <div className="absolute top-12 left-0 right-0 z-50 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+                    {searchSuggestions.map((item) => (
+                      <button
+                        type="button"
+                        key={item._id}
+                        onMouseDown={() => handleSuggestionClick(item.name)}
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600"
+                      >
+                        <FontAwesomeIcon icon={faSearch} className="text-xs text-slate-400" />
+                        <span className="truncate">{item.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <button
+                aria-label="Voice search"
+                className="text-slate-700 hover:text-slate-900 transition-colors shrink-0 p-2 -m-2"
+              >
+                <FontAwesomeIcon icon={faMicrophone} className={ICON_ACTION} />
+              </button>
             </div>
-            <button
-              aria-label="Voice search"
-              className="text-slate-700 hover:text-slate-900 transition-colors shrink-0 p-2 -m-2"
-            >
-              <FontAwesomeIcon icon={faMicrophone} className={ICON_ACTION} />
-            </button>
           </nav>
         ) : (
           <>
             {/* ================= DESKTOP NAVBAR ================= */}
-            <div className="hidden w-full mx-auto md:block bg-white">
+            <div className="hidden w-full md:block bg-white">
               {/* ROW 1: Logo + Search + Actions */}
-              <nav className="h-14 flex items-center px-5 bg-white gap-8">
-                <Link to="/" className="shrink-0 flex items-center">
-                  <img src={logo} alt="logo" className="transition-all duration-300 h-10" />
-                </Link>
-
-                <div className="relative flex-1 flex justify-center">
-                  <form
-                    onSubmit={handleSearchSubmit}
-                    className={`flex items-center border rounded-full h-10 w-full max-w-sm transition-all duration-200 overflow-hidden ${searchFocused ? "border-orange-500 shadow-[0_0_0_2px_rgba(242,139,0,0.2)]" : "border-gray-200"
-                      }`}
-                  >
-                    <FontAwesomeIcon icon={faSearch} className="text-slate-400 text-sm ml-4 shrink-0" />
-                    <input
-                      type="text"
-                      value={query}
-                      placeholder={language === "BN" ? "পণ্য খুঁজুন..." : "Search products..."}
-                      className="flex-1 h-full outline-none bg-transparent text-sm text-slate-800 placeholder:text-slate-400 px-2.5"
-                      onChange={(e) => setQuery(e.target.value)}
-                      onFocus={() => setSearchFocused(true)}
-                      onBlur={() => setSearchFocused(false)}
-                    />
-                    <button
-                      type="submit"
-                      className="h-full px-4 text-white text-sm shrink-0 transition-colors bg-orange-500 hover:bg-red-500"
-                    >
-                      <FontAwesomeIcon icon={faSearch} />
-                    </button>
-                  </form>
-                  {searchFocused && searchSuggestions.length > 0 && (
-                    <div className="absolute top-12 left-1/2 z-50 w-full max-w-sm -translate-x-1/2 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
-                      {searchSuggestions.map((item) => (
-                        <button
-                          type="button"
-                          key={item._id}
-                          onMouseDown={() => handleSuggestionClick(item.name)}
-                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600"
-                        >
-                          <FontAwesomeIcon icon={faSearch} className="text-xs text-slate-400" />
-                          <span className="truncate">{item.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-1 text-slate-500 shrink-0">
-                  <Link
-                    to="/userDashboard/wishlist"
-                    className="relative transition-colors p-2 rounded-full hover:bg-slate-50 hover:text-orange-500"
-                    aria-label="Wishlist"
-                  >
-                    <FontAwesomeIcon icon={faHeart} className={ICON_ACTION} />
-                    <CountBadge count={wishlist.length} color="#F92400" />
+              <nav className="w-full bg-white">
+                <div className={`${CONTAINER} h-14 flex items-center px-4 lg:px-6 gap-8`}>
+                  <Link to="/" className="shrink-0 flex items-center">
+                    <img src={logo} alt="logo" className="transition-all duration-300 h-10" />
                   </Link>
 
-                  <Link
-                    to="/userDashboard/cart"
-                    className="relative transition-colors p-2 rounded-full hover:bg-slate-50 hover:text-orange-500"
-                    aria-label="Cart"
-                  >
-                    <FontAwesomeIcon icon={faCartShopping} className={ICON_ACTION} />
-                    <CountBadge count={cart.length} color="#F28B00" />
-                  </Link>
-
-                  <div className="relative ml-1" onMouseLeave={() => setIsUserMenuOpen(false)}>
-                    <div
-                      onClick={() => handleUserIconClick(false)}
-                      className="cursor-pointer"
-                      role="button"
-                      aria-haspopup="true"
-                      aria-expanded={isUserMenuOpen}
-                      aria-label="User menu"
+                  <div className="relative flex-1 flex justify-center">
+                    <form
+                      onSubmit={handleSearchSubmit}
+                      className={`flex items-center border rounded-full h-10 w-full max-w-sm transition-all duration-200 overflow-hidden ${searchFocused ? "border-orange-500 shadow-[0_0_0_2px_rgba(242,139,0,0.2)]" : "border-gray-200"
+                        }`}
                     >
-                      {user?.avatar ? (
-                        <img
-                          src={user.avatar}
-                          alt={user.fullname}
-                          className={`${AVATAR_SIZE} rounded-full object-cover`}
-                        />
-                      ) : (
-                        <div
-                          title={user?.fullname}
-                          className={`cursor-pointer ${AVATAR_SIZE} rounded-full text-white flex items-center justify-center text-sm bg-orange-500`}
-                        >
-                          {getInitials(user?.fullname)}
+                      <FontAwesomeIcon icon={faSearch} className="text-slate-400 text-sm ml-4 shrink-0" />
+                      <input
+                        type="text"
+                        value={query}
+                        placeholder={language === "BN" ? "পণ্য খুঁজুন..." : "Search products..."}
+                        className="flex-1 h-full outline-none bg-transparent text-sm text-slate-800 placeholder:text-slate-400 px-2.5"
+                        onChange={(e) => setQuery(e.target.value)}
+                        onFocus={() => setSearchFocused(true)}
+                        onBlur={() => setSearchFocused(false)}
+                      />
+                      <button
+                        type="submit"
+                        className="h-full px-4 text-white text-sm shrink-0 transition-colors bg-orange-500 hover:bg-red-500"
+                      >
+                        <FontAwesomeIcon icon={faSearch} />
+                      </button>
+                    </form>
+                    {searchFocused && searchSuggestions.length > 0 && (
+                      <div className="absolute top-12 left-1/2 z-50 w-full max-w-sm -translate-x-1/2 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+                        {searchSuggestions.map((item) => (
+                          <button
+                            type="button"
+                            key={item._id}
+                            onMouseDown={() => handleSuggestionClick(item.name)}
+                            className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600"
+                          >
+                            <FontAwesomeIcon icon={faSearch} className="text-xs text-slate-400" />
+                            <span className="truncate">{item.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1 text-slate-500 shrink-0">
+                    <Link
+                      to="/userDashboard/wishlist"
+                      className="relative transition-colors p-2 rounded-full hover:bg-slate-50 hover:text-orange-500"
+                      aria-label="Wishlist"
+                    >
+                      <FontAwesomeIcon icon={faHeart} className={ICON_ACTION} />
+                      <CountBadge count={wishlist.length} color="#F92400" />
+                    </Link>
+
+                    <Link
+                      to="/userDashboard/cart"
+                      className="relative transition-colors p-2 rounded-full hover:bg-slate-50 hover:text-orange-500"
+                      aria-label="Cart"
+                    >
+                      <FontAwesomeIcon icon={faCartShopping} className={ICON_ACTION} />
+                      <CountBadge count={cart.length} color="#F28B00" />
+                    </Link>
+
+                    <div className="relative ml-1" onMouseLeave={() => setIsUserMenuOpen(false)}>
+                      <div
+                        onClick={() => handleUserIconClick(false)}
+                        className="cursor-pointer"
+                        role="button"
+                        aria-haspopup="true"
+                        aria-expanded={isUserMenuOpen}
+                        aria-label="User menu"
+                      >
+                        {user?.avatar ? (
+                          <img
+                            src={user.avatar}
+                            alt={user.fullname}
+                            className={`${AVATAR_SIZE} rounded-full object-cover`}
+                          />
+                        ) : (
+                          <div
+                            title={user?.fullname}
+                            className={`cursor-pointer ${AVATAR_SIZE} rounded-full text-white flex items-center justify-center text-sm bg-orange-500`}
+                          >
+                            {getInitials(user?.fullname)}
+                          </div>
+                        )}
+                      </div>
+
+                      {accessToken && isUserMenuOpen && (
+                        <div className="absolute -right-2 top-full border w-48 bg-white rounded-xl shadow-xl z-50 text-sm">
+                          <Link
+                            to="/userDashboard"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                          >
+                            <FontAwesomeIcon icon={faUser} className="text-xs w-3.5 text-orange-500" /> My Profile
+                          </Link>
+                          <Link
+                            to="/admin/login"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                          >
+                            <FontAwesomeIcon icon={faUserShield} className="text-xs w-3.5 text-orange-500" /> Admin
+                          </Link>
+                          <Link
+                            to="/orders"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                          >
+                            <FontAwesomeIcon icon={faBoxOpen} className="text-xs w-3.5 text-orange-500" /> Orders
+                          </Link>
+                          <hr className="my-1 border-slate-100" />
+                          <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center gap-2.5 px-4 py-2.5 hover:bg-slate-50 text-left transition-colors text-red-500"
+                          >
+                            <FontAwesomeIcon icon={faSignOutAlt} className="text-xs w-3.5" /> Logout
+                          </button>
                         </div>
                       )}
                     </div>
-
-                    {accessToken && isUserMenuOpen && (
-                      <div className="absolute -right-2 top-full border w-48 bg-white rounded-xl shadow-xl z-50 text-sm">
-                        <Link
-                          to="/userDashboard"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
-                        >
-                          <FontAwesomeIcon icon={faUser} className="text-xs w-3.5 text-orange-500" /> My Profile
-                        </Link>
-                        <Link
-                          to="/admin/login"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
-                        >
-                          <FontAwesomeIcon icon={faUserShield} className="text-xs w-3.5 text-orange-500" /> Admin
-                        </Link>
-                        <Link
-                          to="/orders"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
-                        >
-                          <FontAwesomeIcon icon={faBoxOpen} className="text-xs w-3.5 text-orange-500" /> Orders
-                        </Link>
-                        <hr className="my-1 border-slate-100" />
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center gap-2.5 px-4 py-2.5 hover:bg-slate-50 text-left transition-colors text-red-500"
-                        >
-                          <FontAwesomeIcon icon={faSignOutAlt} className="text-xs w-3.5" /> Logout
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </div>
               </nav>
 
               {/* ROW 2: Nav Items (Orange Background) */}
               <div
-                className={`overflow-visible transition-all duration-300 bg-orange-500 ${collapsedClass}`}
+                className={`w-full overflow-visible transition-all duration-300 bg-orange-500 ${collapsedClass}`}
               >
-                <div className="flex items-center justify-between gap-1 sm:gap-2 text-xs sm:text-sm font-medium h-11 md:h-12 lg:h-13 px-4">
+                <div className={`${CONTAINER} flex items-center justify-between gap-1 sm:gap-2 text-xs sm:text-sm font-medium h-11 md:h-12 lg:h-[52px] px-4 lg:px-6`}>
                   {navItems.map((item) => (
                     <div
                       key={item.id}
@@ -524,7 +530,7 @@ const Navbar = ({ onMenuClick }) => {
                         </div>
                       )}
 
-                      {/* Dropdown Menu for Specific Categories (Perfume, Jewellery, Women, Men, Fishing) */}
+                      {/* Dropdown Menu for Specific Categories (Women, Men, Fishing) */}
                       {item.id !== "all" && item.id !== "products" && item.hasDropdown && activeDropdown === item.id && (
                         <div
                           className="absolute top-full left-0 mt-0 shadow-xl rounded-xl py-3 px-4 border border-slate-100 z-50 bg-white min-w-[170px]"
@@ -550,100 +556,102 @@ const Navbar = ({ onMenuClick }) => {
             </div>
 
             {/* ================= MOBILE NAVBAR ================= */}
-            <div className="md:hidden">
-              <nav className="h-12 md:h-14 bg-white shadow-sm border-b border-slate-200 flex items-center justify-between px-3 transition-all duration-300">
-                <Link to="/">
-                  <img src={logo} alt="logo" className="transition-all basis-2/6 duration-300 h-12 md:h-14" />
-                </Link>
-
-                <div className="flex items-center justify-around basis-4/6 gap-1 text-slate-600">
-                  <button
-                    onClick={handleSearchOpen}
-                    aria-label="Search"
-                    className="rounded-full hover:bg-slate-50 p-1"
-                  >
-                    <FontAwesomeIcon icon={faSearch} className={ICON_ACTION} />
-                  </button>
-
-                  <Link
-                    to="/userDashboard/wishlist"
-                    className="relative p-1 rounded-full hover:bg-slate-50 transition-colors"
-                    aria-label="Wishlist"
-                  >
-                    <FontAwesomeIcon icon={faHeart} className={ICON_ACTION} />
-                    <CountBadge count={wishlist.length} color="#F92400" />
+            <div className="md:hidden w-full">
+              <nav className="w-full bg-white shadow-sm border-b border-slate-200 transition-all duration-300">
+                <div className={`${CONTAINER} h-12 flex items-center justify-between px-3`}>
+                  <Link to="/">
+                    <img src={logo} alt="logo" className="transition-all basis-2/6 duration-300 h-12 md:h-14" />
                   </Link>
 
-                  <Link
-                    to="/userDashboard/cart"
-                    className="relative p-1 rounded-full hover:bg-slate-50 transition-colors"
-                    aria-label="Cart"
-                  >
-                    <FontAwesomeIcon icon={faCartShopping} className={ICON_ACTION} />
-                    <CountBadge count={cart.length} color="#F28B00" />
-                  </Link>
-
-                  <div className="flex items-center relative" ref={mobileMenuRef}>
-                    <div
-                      onClick={() => handleUserIconClick(true)}
-                      className="cursor-pointer p-1"
-                      role="button"
-                      aria-haspopup="true"
-                      aria-expanded={mobileUserMenuOpen}
-                      aria-label="User menu"
+                  <div className="flex items-center justify-around basis-4/6 gap-1 text-slate-600">
+                    <button
+                      onClick={handleSearchOpen}
+                      aria-label="Search"
+                      className="rounded-full hover:bg-slate-50 p-1"
                     >
-                      {user?.avatar ? (
-                        <img
-                          src={user.avatar}
-                          alt={user.fullname}
-                          className={`${AVATAR_SIZE} rounded-full object-cover`}
-                        />
-                      ) : (
-                        <div
-                          className={`cursor-pointer ${AVATAR_SIZE} rounded-full text-white flex items-center justify-center text-sm bg-orange-500`}
-                        >
-                          {getInitials(user?.fullname)}
+                      <FontAwesomeIcon icon={faSearch} className={ICON_ACTION} />
+                    </button>
+
+                    <Link
+                      to="/userDashboard/wishlist"
+                      className="relative p-1 rounded-full hover:bg-slate-50 transition-colors"
+                      aria-label="Wishlist"
+                    >
+                      <FontAwesomeIcon icon={faHeart} className={ICON_ACTION} />
+                      <CountBadge count={wishlist.length} color="#F92400" />
+                    </Link>
+
+                    <Link
+                      to="/userDashboard/cart"
+                      className="relative p-1 rounded-full hover:bg-slate-50 transition-colors"
+                      aria-label="Cart"
+                    >
+                      <FontAwesomeIcon icon={faCartShopping} className={ICON_ACTION} />
+                      <CountBadge count={cart.length} color="#F28B00" />
+                    </Link>
+
+                    <div className="flex items-center relative" ref={mobileMenuRef}>
+                      <div
+                        onClick={() => handleUserIconClick(true)}
+                        className="cursor-pointer p-1"
+                        role="button"
+                        aria-haspopup="true"
+                        aria-expanded={mobileUserMenuOpen}
+                        aria-label="User menu"
+                      >
+                        {user?.avatar ? (
+                          <img
+                            src={user.avatar}
+                            alt={user.fullname}
+                            className={`${AVATAR_SIZE} rounded-full object-cover`}
+                          />
+                        ) : (
+                          <div
+                            className={`cursor-pointer ${AVATAR_SIZE} rounded-full text-white flex items-center justify-center text-sm bg-orange-500`}
+                          >
+                            {getInitials(user?.fullname)}
+                          </div>
+                        )}
+                      </div>
+
+                      {accessToken && mobileUserMenuOpen && (
+                        <div className="absolute right-0 top-full mt-1.5 w-48 bg-white border border-slate-100 rounded-lg shadow-xl z-50 text-sm overflow-hidden">
+                          <Link
+                            to="/userDashboard"
+                            onClick={() => setMobileUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                          >
+                            <FontAwesomeIcon icon={faUser} className="text-sm w-4 text-orange-500" /> My Profile
+                          </Link>
+                          <Link
+                            to="/admin/login"
+                            onClick={() => setMobileUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                          >
+                            <FontAwesomeIcon icon={faUserShield} className="text-sm w-4 text-orange-500" /> Admin
+                          </Link>
+                          <Link
+                            to="/orders"
+                            onClick={() => setMobileUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
+                          >
+                            <FontAwesomeIcon icon={faBoxOpen} className="text-sm w-4 text-orange-500" /> Orders
+                          </Link>
+                          <hr className="my-0.5 border-slate-100" />
+                          <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center gap-2.5 px-4 py-2.5 hover:bg-slate-50 text-left transition-colors text-red-500"
+                          >
+                            <FontAwesomeIcon icon={faSignOutAlt} className="text-sm w-4" /> Logout
+                          </button>
                         </div>
                       )}
                     </div>
 
-                    {accessToken && mobileUserMenuOpen && (
-                      <div className="absolute right-0 top-full mt-1.5 w-48 bg-white border border-slate-100 rounded-lg shadow-xl z-50 text-sm overflow-hidden">
-                        <Link
-                          to="/userDashboard"
-                          onClick={() => setMobileUserMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
-                        >
-                          <FontAwesomeIcon icon={faUser} className="text-sm w-4 text-orange-500" /> My Profile
-                        </Link>
-                        <Link
-                          to="/admin/login"
-                          onClick={() => setMobileUserMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
-                        >
-                          <FontAwesomeIcon icon={faUserShield} className="text-sm w-4 text-orange-500" /> Admin
-                        </Link>
-                        <Link
-                          to="/orders"
-                          onClick={() => setMobileUserMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
-                        >
-                          <FontAwesomeIcon icon={faBoxOpen} className="text-sm w-4 text-orange-500" /> Orders
-                        </Link>
-                        <hr className="my-0.5 border-slate-100" />
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center gap-2.5 px-4 py-2.5 hover:bg-slate-50 text-left transition-colors text-red-500"
-                        >
-                          <FontAwesomeIcon icon={faSignOutAlt} className="text-sm w-4" /> Logout
-                        </button>
-                      </div>
-                    )}
+                    <button onClick={onMenuClick} aria-label="Open menu" className="rounded-full hover:bg-slate-50 p-1">
+                      <FontAwesomeIcon icon={faBars} className={ICON_ACTION} />
+                    </button>
                   </div>
-
-                  <button onClick={onMenuClick} aria-label="Open menu" className="rounded-full hover:bg-slate-50 p-1">
-                    <FontAwesomeIcon icon={faBars} className={ICON_ACTION} />
-                  </button>
                 </div>
               </nav>
 
@@ -651,7 +659,7 @@ const Navbar = ({ onMenuClick }) => {
               <div className={`bg-orange-500 w-full transition-all duration-300 ${collapsedClass}`}>
                 <button
                   onClick={toggleMobileCategory}
-                  className="w-full h-12 flex items-center justify-between px-4 text-white text-xl font-medium"
+                  className={`${CONTAINER} h-12 flex items-center justify-between px-4 text-white text-xl font-medium`}
                 >
                   <span>{language === "BN" ? "সব ক্যাটাগরি" : "All Categories"}</span>
                   <FontAwesomeIcon
@@ -661,27 +669,29 @@ const Navbar = ({ onMenuClick }) => {
                 </button>
 
                 {mobileCategoryOpen && (
-                  <div className="bg-white p-4 shadow-lg border-t border-gray-200">
-                    <div className="grid grid-cols-2 gap-4">
-                      {Object.entries(categoryItems.all).map(([category, items]) => (
-                        <div key={category}>
-                          <div className="font-semibold text-slate-900 capitalize text-sm tracking-wide mb-2">
-                            {category}
+                  <div className="bg-white shadow-lg border-t border-gray-200">
+                    <div className={`${CONTAINER} p-4`}>
+                      <div className="grid grid-cols-2 gap-4">
+                        {Object.entries(categoryItems.all).map(([category, items]) => (
+                          <div key={category}>
+                            <div className="font-semibold text-slate-900 capitalize text-sm tracking-wide mb-2">
+                              {category}
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              {items.map((subItem) => (
+                                <Link
+                                  key={subItem}
+                                  to={getCategoryLink(category, subItem)}
+                                  onClick={() => setMobileCategoryOpen(false)}
+                                  className="text-sm text-slate-600 transition-colors w-fit hover:text-orange-500"
+                                >
+                                  {subItem}
+                                </Link>
+                              ))}
+                            </div>
                           </div>
-                          <div className="flex flex-col gap-1.5">
-                            {items.map((subItem) => (
-                              <Link
-                                key={subItem}
-                                to={getCategoryLink(category, subItem)}
-                                onClick={() => setMobileCategoryOpen(false)}
-                                className="text-sm text-slate-600 transition-colors w-fit hover:text-orange-500"
-                              >
-                                {subItem}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
