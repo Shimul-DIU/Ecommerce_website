@@ -1,6 +1,6 @@
 import Product from "../model/products.js";
 import Review from "../model/reviewModel.js";
-
+import User from "../model/userModel.js";
 
 export const createReview = async (req, res) => {
   try {
