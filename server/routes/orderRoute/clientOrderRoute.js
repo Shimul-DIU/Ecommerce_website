@@ -5,7 +5,7 @@ import passport from 'passport';
 
 const orderRouter = express.Router();
 
-orderRouter.post('/', passport.authenticate("jwt", { session: false }), createOrder);
-orderRouter.get('/order-details', passport.authenticate('jwt', { session: false }), ordersDetails);
+orderRouter.post('/', passport.authenticate("user-jwt", { session: false }), createOrder);
+orderRouter.get('/order-details', passport.authenticate('user-jwt', { session: false }), ordersDetails);
 
 export default orderRouter;

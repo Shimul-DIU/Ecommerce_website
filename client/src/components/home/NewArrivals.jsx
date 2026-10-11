@@ -106,8 +106,8 @@ const NewArrivals = () => {
       {!loading && (
         <div className={`grid ${gridColsClass} gap-3 sm:gap-4.5`}>
           {visibleProductsList?.map((item) => {
-            const inWishlist = wishlist?.includes(item._id);
-            const inCart = cart?.includes(item._id);
+            const inWishlist = wishlist?.includes(String(item._id));
+            const inCart = cart?.includes(String(item._id));
             const isOutOfStock = item.stock <= 0;
 
             const originalPrice = item.originalPrice || Math.round(item.price * 1.25);
@@ -149,7 +149,7 @@ const NewArrivals = () => {
                       type="button"
                       onClick={(e) => {
                         e.preventDefault();
-                        toggleWishlist(item._id);
+                        toggleWishlist(String(item._id));
                       }}
                       aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
                       className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inWishlist
@@ -167,7 +167,7 @@ const NewArrivals = () => {
                       type="button"
                       onClick={(e) => {
                         e.preventDefault();
-                        toggleCart(item._id);
+                        toggleCart(String(item._id));
                       }}
                       aria-label={inCart ? "Remove from cart" : "Add to cart"}
                       className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inCart

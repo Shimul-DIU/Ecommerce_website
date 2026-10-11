@@ -16,7 +16,7 @@ import productRouter from './routes/product.route.js';
 import orderRouter from './routes/orderRoute/clientOrderRoute.js';
 import authRouter from './routes/authRoute.js';
 import reviewRouter from './routes/reviewRouter.js';
-
+import wishlistRouter from './routes/wishlist.route.js';
 
 const app = express();
 
@@ -49,6 +49,6 @@ app.use('/api/orders', orderRouter);
 
 
 app.use("/api/reviews", reviewRouter);
-
+app.use('/api/wishlist', wishlistRouter);
 
 export default app;

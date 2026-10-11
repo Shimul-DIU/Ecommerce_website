@@ -343,8 +343,8 @@ const Products = () => {
             {!loading && filteredProducts.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4.5">
                 {filteredProducts.map((item) => {
-                  const inWishlist = wishlist?.includes(item._id);
-                  const inCart = cart?.includes(item._id);
+                  const inWishlist = wishlist?.includes(String(item._id));
+                  const inCart = cart?.includes(String(item._id));
                   const isOutOfStock = item.stock <= 0;
 
                   const originalPrice =
@@ -389,7 +389,8 @@ const Products = () => {
                             type="button"
                             onClick={(e) => {
                               e.preventDefault();
-                              toggleWishlist(item._id);
+                              e.stopPropagation();
+                              toggleWishlist(String(item._id));
                             }}
                             aria-label={
                               inWishlist
@@ -411,7 +412,8 @@ const Products = () => {
                             type="button"
                             onClick={(e) => {
                               e.preventDefault();
-                              toggleCart(item._id);
+                              e.stopPropagation();
+                              toggleCart(String(item._id));
                             }}
                             aria-label={
                               inCart ? "Remove from cart" : "Add to cart"

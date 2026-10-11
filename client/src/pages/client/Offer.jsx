@@ -901,13 +901,13 @@ const Offer = () => {
                     /* Wishlist */
 
                     const inWishlist =
-                      wishlist?.includes(item._id);
+                      wishlist?.includes(String(item._id));
 
 
                     /* Cart */
 
                     const inCart =
-                      cart?.includes(item._id);
+                      cart?.includes(String(item._id));
 
 
                     /* Stock */
@@ -1000,7 +1000,7 @@ const Offer = () => {
                                 e.preventDefault();
 
                                 toggleWishlist(
-                                  item._id
+                                  String(item._id)
                                 );
 
                               }}
@@ -1033,7 +1033,7 @@ const Offer = () => {
                                 e.preventDefault();
 
                                 toggleCart(
-                                  item._id
+                                  String(item._id)
                                 );
 
                               }}

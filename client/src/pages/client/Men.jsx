@@ -816,11 +816,11 @@ const Men = () => {
 
                     /* Wishlist state */
                     const inWishlist =
-                      wishlist?.includes(item._id);
+                      wishlist?.includes(String(item._id));
 
                     /* Cart state */
                     const inCart =
-                      cart?.includes(item._id);
+                      cart?.includes(String(item._id));
 
                     /* Stock */
                     const isOutOfStock =
@@ -915,7 +915,7 @@ const Men = () => {
                               type="button"
                               onClick={(e) => {
                                 e.preventDefault();
-                                toggleWishlist(item._id);
+                                toggleWishlist(String(item._id));
                               }}
                               aria-label={
                                 inWishlist
@@ -942,7 +942,7 @@ const Men = () => {
                               type="button"
                               onClick={(e) => {
                                 e.preventDefault();
-                                toggleCart(item._id);
+                                toggleCart(String(item._id));
                               }}
                               aria-label={
                                 inCart

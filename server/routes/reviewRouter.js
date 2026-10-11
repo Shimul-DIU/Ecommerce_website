@@ -7,7 +7,7 @@ const reviewRouter = express.Router();
 
 reviewRouter.post(
   "/",
-  passport.authenticate("jwt", { session: false }),
+  passport.authenticate("user-jwt", { session: false }),
   createReview
 );
 reviewRouter.get(
