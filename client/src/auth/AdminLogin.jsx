@@ -6,7 +6,7 @@ const AdminLogin = () => {
   const [message, setMessage] = useState('')
   const [formData, setFormData] = useState({
     email: '',
-
+    password: '',
   })
   const navigate = useNavigate()
   const { loginAdmin } = useAuth();
@@ -17,7 +17,7 @@ const AdminLogin = () => {
       [e.target.name]: e.target.value,
     }));
 
-    if (e.target.name === "email" && e.target.value.trim() !== "") {
+    if (e.target.value.trim() !== "") {
       setMessage("");
     }
   };
@@ -49,12 +49,15 @@ const AdminLogin = () => {
   const submitHandler = async (e) => {
     try {
       e.preventDefault();
+      setMessage("");
       await loginAdmin(formData.email, formData.password);
       navigate("/admin", { replace: true });
     }
     catch (error) {
       setMessage(
-        error.response?.data?.message || "Login failed"
+        error.response?.data?.message ||
+        error.message ||
+        "Login failed"
       );
     }
 

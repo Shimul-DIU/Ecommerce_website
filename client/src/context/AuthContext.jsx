@@ -10,6 +10,8 @@ import axiosInstance from "../utils/axiosInstance";
 import {
   setAccessToken as saveTokenToManager,
   clearAccessToken as clearTokenFromManager,
+  setAdminAccessToken,
+  clearAdminAccessToken,
 } from "../utils/tokenManager";
 
 export const AuthContext = createContext(null);
@@ -18,6 +20,8 @@ export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [admin, setAdmin] = useState(null);
+  const [adminLoading, setAdminLoading] = useState(true);
 
   // ===================================================
   // LOGIN
@@ -73,6 +77,58 @@ export const AuthProvider = ({ children }) => {
     setAccessToken(newAccessToken);
     saveTokenToManager(newAccessToken);
     setUser(userData);
+  };
+
+  // ===================================================
+  // ADMIN LOGIN
+  // ===================================================
+
+  const loginAdmin = async (email, password) => {
+    const response = await axiosInstance.post(
+      "/api/auth/admin/login",
+      {
+        email,
+        password,
+      }
+    );
+
+    const newAccessToken =
+      response.data?.accessToken;
+
+    if (!newAccessToken) {
+      throw new Error(
+        "Access token missing from admin login response"
+      );
+    }
+
+    // Save admin access token in memory manager
+    setAdminAccessToken(newAccessToken);
+
+    // Save admin data
+    setAdmin(response.data.admin);
+
+    return response.data;
+  };
+
+  // ===================================================
+  // ADMIN LOGOUT
+  // ===================================================
+
+  const logoutAdmin = async () => {
+    try {
+      await axiosInstance.post(
+        "/api/auth/admin/logout"
+      );
+    } catch (error) {
+      console.error(
+        "Admin logout error:",
+        error.response?.data ||
+        error.message
+      );
+    } finally {
+      clearAdminAccessToken();
+      setAdmin(null);
+    }
   };
 
   // ===================================================
@@ -177,11 +233,85 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ===================================================
+  // RESTORE ADMIN SESSION
+  // ===================================================
+
+  const restoreAdminSession = async () => {
+    try {
+      const response =
+        await axiosInstance.post(
+          "/api/auth/admin/refresh"
+        );
+
+      const newAccessToken =
+        response.data?.accessToken;
+
+      if (!newAccessToken) {
+        throw new Error(
+          "Access token missing from admin refresh response"
+        );
+      }
+
+      setAdminAccessToken(newAccessToken);
+      setAdmin(response.data.admin);
+
+    } catch (error) {
+
+      // 401 simply means "no active admin session" - not an error
+      if (error.response?.status !== 401) {
+        console.error(
+          "Admin session restore failed:",
+          error.response?.data ||
+          error.message
+        );
+      }
+
+      clearAdminAccessToken();
+      setAdmin(null);
+
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
+  // ===================================================
   // INITIAL LOAD
   // ===================================================
 
   useEffect(() => {
+    const handleUserSessionExpired = () => {
+      setAccessToken(null);
+      setUser(null);
+    };
+
+    const handleAdminSessionExpired = () => {
+      setAdmin(null);
+    };
+
+    window.addEventListener(
+      "user-session-expired",
+      handleUserSessionExpired
+    );
+
+    window.addEventListener(
+      "admin-session-expired",
+      handleAdminSessionExpired
+    );
+
     restoreSession();
+    restoreAdminSession();
+
+    return () => {
+      window.removeEventListener(
+        "user-session-expired",
+        handleUserSessionExpired
+      );
+
+      window.removeEventListener(
+        "admin-session-expired",
+        handleAdminSessionExpired
+      );
+    };
   }, []);
 
   // ===================================================
@@ -194,9 +324,13 @@ export const AuthProvider = ({ children }) => {
         accessToken,
         user,
         loading,
+        admin,
+        adminLoading,
 
         login,
         googleLogin,
+        loginAdmin,
+        logoutAdmin,
         register,
         logout,
 

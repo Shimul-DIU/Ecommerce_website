@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 
+// যেসব category-তে sub category নেই
+export const NO_SUBCATEGORY = ["deal", "new-arrival"];
+
 const productSchema = new mongoose.Schema(
   {
     name: {
@@ -16,8 +19,14 @@ const productSchema = new mongoose.Schema(
 
     subCategory: {
       type: String,
-      required: [true, "Sub category is required"],
       trim: true,
+      default: "",
+      required: [
+        function () {
+          return !NO_SUBCATEGORY.includes(this.category);
+        },
+        "Sub category is required",
+      ],
     },
 
     price: {
@@ -26,11 +35,31 @@ const productSchema = new mongoose.Schema(
       min: 0,
     },
 
+    // শুধু deal-এর জন্য (আগের দাম)
+    oldPrice: {
+      type: Number,
+      min: 0,
+      default: null,
+    },
+
     stock: {
       type: Number,
       required: [true, "Stock is required"],
       min: 0,
       default: 0,
+    },
+
+    // কতগুলো বিক্রি হয়েছে (deal progress bar-এর জন্য)
+    sold: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+
+    // শুধু deal-এর জন্য (শেষ হওয়ার সময়)
+    dealEndsAt: {
+      type: Date,
+      default: null,
     },
 
     status: {
@@ -55,6 +84,6 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-const Product = mongoose.model('Product', productSchema)
+const Product = mongoose.model("Product", productSchema);
 
 export default Product;
