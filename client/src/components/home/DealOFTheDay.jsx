@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart, faBolt } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "../../utils/axiosInstance"; // path নিজের মতো ঠিক করো
+import { CountContext } from "../../context/CountContext"; // path নিজের মতো ঠিক করো
 
 // ============================================================
 // IMAGE URL
@@ -62,6 +64,9 @@ function DealCard({ deal }) {
   const { name, description, price, oldPrice, sold = 0, stock = 0 } = deal;
   const image = getImageUrl(deal.image);
 
+  const navigate = useNavigate();
+  const { cart, toggleCart } = useContext(CountContext);
+
   // ছবির আসল aspect ratio (load হওয়ার পর সেট হবে)
   const [ratio, setRatio] = useState(1);
 
@@ -72,12 +77,44 @@ function DealCard({ deal }) {
   const total = sold + stock;
   const soldPercent = total > 0 ? Math.min((sold / total) * 100, 100) : 0;
   const outOfStock = stock <= 0;
+  const unavailable = expired || outOfStock;
+  const inCart = cart.includes(deal._id);
+
+  // Add to cart বাটন: না থাকলে যোগ হবে, থাকলে remove হবে
+  // (deal শেষ বা stock না থাকলেও cart এ থাকা item remove করা যাবে)
+  const handleToggleCart = () => {
+    if (!inCart && unavailable) return;
+    toggleCart(deal._id);
+  };
+
+  // ছবিতে ক্লিক: cart এ না থাকলে যোগ করে checkout এ নিয়ে যাবে
+  // ছবিতে ক্লিক: cart এ না থাকলে যোগ করে checkout এ product সহ নিয়ে যাবে
+  const handleImageClick = () => {
+    if (unavailable) return;
+    if (!inCart) toggleCart(deal._id);
+
+    navigate("/checkout", {
+      state: {
+        product: {
+          _id: deal._id,
+          name,
+          price,
+          originalPrice: oldPrice, // Checkout এ এই নামে পড়া হয়
+          stock,
+          image, // getImageUrl দিয়ে বানানো full URL
+          quantity: 1,
+        },
+      },
+    });
+  };
 
   return (
     <div className="bg-white rounded-lg sm:rounded-2xl border border-[#E4DDCE] overflow-hidden flex flex-col sm:flex-row sm:items-stretch transition-all hover:shadow-md">
       {/* Image: mobile এ উপরে full width, sm+ এ বাঁ দিকে ছবির ratio অনুযায়ী */}
       <div
-        className="relative w-full bg-[#d0ceca] sm:bg-transparent sm:w-auto sm:shrink-0 sm:self-stretch sm:min-h-[200px] sm:max-w-[55%] sm:[aspect-ratio:var(--ratio)]"
+        onClick={handleImageClick}
+        className={`relative w-full bg-[#d0ceca] sm:bg-transparent sm:w-auto sm:shrink-0 sm:self-stretch sm:min-h-[200px] sm:max-w-[55%] sm:[aspect-ratio:var(--ratio)] ${unavailable ? "cursor-not-allowed" : "cursor-pointer"
+          }`}
         style={{ "--ratio": ratio }}
       >
         <img
@@ -159,11 +196,16 @@ function DealCard({ deal }) {
 
         {/* Action */}
         <button
-          disabled={expired || outOfStock}
+          onClick={handleToggleCart}
+          disabled={!inCart && unavailable}
           className="mt-3 sm:mt-6 w-full sm:w-auto self-start flex items-center justify-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-md sm:rounded-lg bg-[#16241F] hover:bg-[#0F1A16] disabled:bg-[#16241F]/30 disabled:cursor-not-allowed text-[#FAF6EF] text-sm sm:text-base font-medium transition"
         >
           <FontAwesomeIcon icon={faShoppingCart} className="text-xs sm:text-sm" />
-          {outOfStock ? "Out of stock" : "Add to cart"}
+          {inCart
+            ? "Remove from cart"
+            : unavailable
+              ? "Out of stock"
+              : "Add to cart"}
         </button>
       </div>
     </div>
@@ -198,8 +240,7 @@ const DealOfTheDay = () => {
   if (loading || deals.length === 0) return null;
 
   return (
-
-    <section className="w-full  py-6 px-3 sm:py-10 sm:px-6">
+    <section className="w-full py-6 px-3 sm:py-10 sm:px-6">
       <div className="w-full mx-auto">
         <div className="flex items-baseline justify-between mb-3 sm:mb-8">
           <h2 className="text-xl md:text-2xl lg:text-3xl font-medium text-[#16241F]">
@@ -217,7 +258,6 @@ const DealOfTheDay = () => {
         </div>
       </div>
     </section>
-
   );
 };
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
-import { CountContext } from '../../context/countContext'; // নিজের ফোল্ডার অনুযায়ী পাথ ঠিক করুন
+import { CountContext } from '../../context/CountContext'; // নিজের ফোল্ডার অনুযায়ী পাথ ঠিক করুন
 
 const ProductCard = ({ product }) => {
   const { wishlist, cart, toggleWishlist, toggleCart } = useContext(CountContext);

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "../../../utils/axiosInstance";
-import { CountContext } from "../../../context/countContext";
+import { CountContext } from "../../../context/CountContext";
 
 export default function Wishlist() {
   const { wishlist, cart, toggleWishlist, toggleCart } =

@@ -8,7 +8,7 @@ import {
   faCartShopping,
   faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
-import { CountContext } from "../../../context/countContext";
+import { CountContext } from "../../../context/CountContext";
 import useProducts from "../../../hooks/useProducts";
 
 const QTY_KEY = "cartQty";

@@ -2,7 +2,16 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import axiosInstance from "../utils/axiosInstance";
 
-export const CountContext = createContext();
+// Default value is a no-op fallback so a component rendered outside
+// CountProvider fails gracefully (empty cart/wishlist) instead of crashing.
+const noop = () => {};
+
+export const CountContext = createContext({
+  wishlist: [],
+  cart: [],
+  toggleWishlist: noop,
+  toggleCart: noop,
+});
 
 const readLocal = (key) => {
   try {

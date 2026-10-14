@@ -8,7 +8,7 @@ import {
   faTag,
 } from "@fortawesome/free-solid-svg-icons";
 import useProducts from "../../hooks/useProducts";
-import { CountContext } from "../../context/countContext";
+import { CountContext } from "../../context/CountContext";
 
 
 const getItemsCount = (width) => {

@@ -8,7 +8,7 @@ import {
   faTag,
 } from "@fortawesome/free-solid-svg-icons";
 import { useContext, useMemo, useState } from "react";
-import { CountContext } from "../../context/countContext";
+import { CountContext } from "../../context/CountContext";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import useProducts from "../../hooks/useProducts";
 import { useScroll } from "../../hooks/useScroll";

@@ -17,7 +17,7 @@ import {
   faBoxOpen,
   faUserShield
 } from "@fortawesome/free-solid-svg-icons";
-import { CountContext } from "../../context/countContext";
+import { CountContext } from "../../context/CountContext";
 import { useScroll } from "../../hooks/useScroll";
 import { AuthContext } from '../../context/AuthContext';
 import { getInitials } from "../../utils/getInitials";

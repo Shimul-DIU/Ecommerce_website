@@ -22,7 +22,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 
-import { CountContext } from "../../context/countContext";
+import { CountContext } from "../../context/CountContext";
 import useProducts from "../../hooks/useProducts";
 import { useScroll } from "../../hooks/useScroll";
 
