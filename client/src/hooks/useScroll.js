@@ -10,7 +10,7 @@ import { useState, useEffect, useRef } from "react";
  */
 export const useScroll = (
   threshold = 80,
-  fastDistance = 350,
+  fastDistance = 370,
   windowMs = 300
 ) => {
   const [isScrolled, setIsScrolled] = useState(false);
