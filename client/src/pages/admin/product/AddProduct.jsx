@@ -9,6 +9,8 @@ const categoryItems = {
   jewellery: ["Ring", "Necklace", "Earring", "Bracelet"],
   women: ["Dress", "Saree", "Bag", "Shoes"],
   men: ["T-Shirt", "Shirt", "Pant", "Shoes", "Watch"],
+  bags: ["Backpack", "Handbag"],
+  glasses: ["Sunglasses"],
   fishing: [
     "Fishing Rods",
     "Fishing Reels",
@@ -173,6 +175,8 @@ const AddProduct = () => {
                   <option value="jewellery">Jewellery</option>
                   <option value="women">Women Fashion</option>
                   <option value="men">Men Fashion</option>
+                  <option value="bags">Bags & Luggage</option>
+                  <option value="glasses">Glasses & Eyewear</option>
                   <option value="fishing">Fishing</option>
                   <option value="electronics">Electronics</option>
                   <option value="deal">Deal of the Day</option>

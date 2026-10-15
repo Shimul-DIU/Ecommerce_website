@@ -4,6 +4,7 @@ import DealOfTheDay from '../../components/home/DealOFTheDay';
 import DevelopmentPopup from '../../components/common/DevelopmentPopup';
 import TopCategories from '../../components/client/TopCategories';
 import SidebarCategories from '../../components/client/SidebarCategories';
+import BestSellers from '../../components/home/BestSellers';
 
 const Home = () => (
   <div className="w-full max-w-none mx-auto px-1 sm:px-2 md:px-3 pt-10 space-y-5">
@@ -15,8 +16,8 @@ const Home = () => (
 
     <TopCategories />
 
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4  items-start">
-      <aside className="lg:col-span-3 w-full ">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+      <aside className="lg:col-span-3 w-full">
         <SidebarCategories />
       </aside>
 
@@ -24,6 +25,9 @@ const Home = () => (
         <NewArrivals />
       </main>
     </div>
+
+    {/* গ্রিডের বাইরে, পুরো প্রস্থে */}
+    <BestSellers />
   </div>
 );
 

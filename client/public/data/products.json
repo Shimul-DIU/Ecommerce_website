@@ -1,0 +1,76 @@
+{
+  "products": [
+    {
+      "_id": "1",
+      "name": "Men's Cotton Panjabi - Premium Quality",
+      "image": "https://picsum.photos/seed/panjabi1/400/400",
+      "price": 1450,
+      "originalPrice": 1800,
+      "stock": 25,
+      "sold": 520
+    },
+    {
+      "_id": "2",
+      "name": "Wireless Bluetooth Earbuds with Charging Case",
+      "image": "https://picsum.photos/seed/earbuds2/400/400",
+      "price": 1299,
+      "originalPrice": 1999,
+      "stock": 40,
+      "sold": 910
+    },
+    {
+      "_id": "3",
+      "name": "Women's Printed Three Piece Set",
+      "image": "https://picsum.photos/seed/threepiece3/400/400",
+      "price": 2250,
+      "originalPrice": 2800,
+      "stock": 12,
+      "sold": 310
+    },
+    {
+      "_id": "4",
+      "name": "Leather Wallet for Men - Brown",
+      "image": "https://picsum.photos/seed/wallet4/400/400",
+      "price": 650,
+      "originalPrice": 850,
+      "stock": 60,
+      "sold": 740
+    },
+    {
+      "_id": "5",
+      "name": "Smart Watch Series 7 - Black",
+      "image": "https://picsum.photos/seed/watch5/400/400",
+      "price": 3490,
+      "originalPrice": 4500,
+      "stock": 0,
+      "sold": 680
+    },
+    {
+      "_id": "6",
+      "name": "Running Sneakers - Lightweight",
+      "image": "https://picsum.photos/seed/shoes6/400/400",
+      "price": 2100,
+      "originalPrice": 2600,
+      "stock": 18,
+      "sold": 430
+    },
+    {
+      "_id": "7",
+      "name": "Stainless Steel Water Bottle 750ml",
+      "image": "https://picsum.photos/seed/bottle7/400/400",
+      "price": 480,
+      "originalPrice": 600,
+      "stock": 85,
+      "sold": 860
+    },
+    {
+      "_id": "8",
+      "name": "Backpack - Waterproof Laptop Bag",
+      "image": "https://picsum.photos/seed/bag8/400/400",
+      "price": 1550,
+      "originalPrice": 1990,
+      "stock": 30,
+      "sold": 390
+    }
+  ]
+}

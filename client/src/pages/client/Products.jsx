@@ -21,12 +21,22 @@ const CATEGORY_OPTIONS = [
   { key: "jewellery", label: "Jewellery" },
   { key: "men", label: "Men's" },
   { key: "women", label: "Women's" },
+  { key: "bags", label: "Bags & Luggage" },
+  { key: "glasses", label: "Glasses & Eyewear" },
   { key: "fishing", label: "Fishing" },
-  { key: "Electronics", label: "Electronics" },
+  { key: "electronics", label: "Electronics" },
 ];
 
 const MIN_LIMIT = 100;
 const MAX_LIMIT = 3000;
+
+// "Men's Perfume" -> "mens-perfume", "Attar & Oils" -> "attar-oils"
+const normalize = (str = "") =>
+  String(str)
+    .toLowerCase()
+    .replace(/['’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 
 const Products = () => {
   const isScrolled = useScroll();
@@ -37,8 +47,9 @@ const Products = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const initialFilter = searchParams.get("category") || location.state?.filter || "all";
-  const subcategoryQuery = searchParams.get("subcategory")?.trim().toLowerCase() || "";
+  const initialFilter =
+    searchParams.get("category") || location.state?.filter || "all";
+  const subcategoryQuery = normalize(searchParams.get("subcategory") || "");
   const searchQuery = searchParams.get("search")?.trim().toLowerCase() || "";
 
   const [selectedCategory, setSelectedCategory] = useState(initialFilter);
@@ -54,37 +65,27 @@ const Products = () => {
   const filteredProducts = useMemo(() => {
     if (!products) return [];
 
+    // 1) Category filter (case-insensitive)
     let result =
       activeCategory === "all"
         ? [...products]
-        : products.filter((item) => item.category === activeCategory);
-
-    if (result.length === 0) {
-      result = [...products];
-    }
-
-    if (subcategoryQuery) {
-      const subcategoryName = subcategoryQuery
-        .replace(`${activeCategory}-`, "")
-        .replace(/-/g, " ");
-
-      const subcategoryProducts = result.filter((item) => {
-        const productSubcategory = item.subCategory?.toLowerCase();
-        const productName = item.name?.toLowerCase() || "";
-
-        return (
-          productSubcategory === subcategoryQuery ||
-          productSubcategory === subcategoryName ||
-          productName.includes(subcategoryName)
+        : products.filter(
+          (item) => normalize(item.category) === normalize(activeCategory)
         );
-      });
 
-      result = subcategoryProducts.length > 0 ? subcategoryProducts : [...products];
+    // 2) Subcategory filter (sidebar theke)
+    if (subcategoryQuery) {
+      result = result.filter((item) => {
+        const sub = normalize(item.subCategory);
+        const name = normalize(item.name);
+        return sub === subcategoryQuery || name.includes(subcategoryQuery);
+      });
     }
 
+    // 3) Search filter
     if (searchQuery) {
       const searchTerms = searchQuery.split(/\s+/).filter(Boolean);
-      const searchedProducts = result.filter((item) => {
+      result = result.filter((item) => {
         const searchableText = [item.name, item.category, item.description]
           .filter(Boolean)
           .join(" ")
@@ -92,19 +93,19 @@ const Products = () => {
 
         return searchTerms.every((term) => searchableText.includes(term));
       });
-
-      // Keep the catalogue visible when the search has no result.
-      result = searchedProducts.length > 0 ? searchedProducts : [...products];
     }
 
+    // 4) Stock filter
     if (inStockOnly) {
       result = result.filter((item) => item.stock > 0);
     }
 
+    // 5) Price filter
     result = result.filter(
       (item) => item.price >= minPrice && item.price <= maxPrice
     );
 
+    // 6) Sort
     if (sortBy === "price-low") {
       result = [...result].sort((a, b) => a.price - b.price);
     } else if (sortBy === "price-high") {
@@ -112,7 +113,16 @@ const Products = () => {
     }
 
     return result;
-  }, [products, activeCategory, subcategoryQuery, inStockOnly, minPrice, maxPrice, sortBy, searchQuery]);
+  }, [
+    products,
+    activeCategory,
+    subcategoryQuery,
+    inStockOnly,
+    minPrice,
+    maxPrice,
+    sortBy,
+    searchQuery,
+  ]);
 
   const resetFilters = () => {
     setSelectedCategory("all");
@@ -142,6 +152,7 @@ const Products = () => {
           onChange={(e) => {
             const category = e.target.value;
             setSelectedCategory(category);
+            // category change hole subcategory reset hobe
             navigate(`/products?category=${encodeURIComponent(category)}`);
           }}
           className="w-full text-sm border border-[#E4DDCE] rounded-lg px-3 py-2 bg-[#FAF6EF] text-[#16241F] focus:outline-none focus:ring-2 focus:ring-[#B08946] transition"
@@ -254,7 +265,6 @@ const Products = () => {
   }
 
   return (
-    // ✅ FIX: Proper top padding to sit below the fixed navbar
     <div className="min-h-screen mt-8 sm:mt-6 pb-10 px-4 md:px-8">
       <div className="w-full max-w-none mx-auto">
         <div className="flex justify-between mb-3">
@@ -398,8 +408,8 @@ const Products = () => {
                                 : "Add to wishlist"
                             }
                             className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inWishlist
-                              ? "bg-red-500 text-white"
-                              : "bg-white/90 text-[#16241F]/60 hover:text-red-500 hover:bg-white"
+                                ? "bg-red-500 text-white"
+                                : "bg-white/90 text-[#16241F]/60 hover:text-red-500 hover:bg-white"
                               }`}
                           >
                             <FontAwesomeIcon
@@ -419,8 +429,8 @@ const Products = () => {
                               inCart ? "Remove from cart" : "Add to cart"
                             }
                             className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inCart
-                              ? "bg-[#16241F] text-[#B08946]"
-                              : "bg-white/90 text-[#16241F]/60 hover:text-[#16241F] hover:bg-white"
+                                ? "bg-[#16241F] text-[#B08946]"
+                                : "bg-white/90 text-[#16241F]/60 hover:text-[#16241F] hover:bg-white"
                               }`}
                           >
                             <FontAwesomeIcon
