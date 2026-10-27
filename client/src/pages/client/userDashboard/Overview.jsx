@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Package, Truck, Heart, Star, User, Phone, MapPin, CreditCard, ArrowRight } from "lucide-react";
+import { Package, Truck, Heart, Star, ArrowRight } from "lucide-react";
 import StatCard from "./StatCard";
-import OrderCard from "./OrderCard";
+import AddProductSection from "./AddProductSection";
 import axiosInstance from "../../../utils/axiosInstance";
 
 const statusStyles = {
-  "Pending": "bg-yellow-50 text-yellow-700 border-yellow-200",
-  "Processing": "bg-blue-50 text-blue-700 border-blue-200",
+  Pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
+  Processing: "bg-blue-50 text-blue-700 border-blue-200",
   "In Transit": "bg-amber-50 text-amber-700 border-amber-200",
-  "Delivered": "bg-green-50 text-green-700 border-green-200",
-  "Cancelled": "bg-red-50 text-red-700 border-red-200",
+  Delivered: "bg-green-50 text-green-700 border-green-200",
+  Cancelled: "bg-red-50 text-red-700 border-red-200",
 };
-
 
 export default function Overview() {
   const [wishlistCount, setWishlistCount] = useState(0);
@@ -24,8 +23,7 @@ export default function Overview() {
     const fetchOrder = async () => {
       try {
         setLoading(true);
-
-        const res = await axiosInstance.get('/api/orders/order-details');
+        const res = await axiosInstance.get("/api/orders/order-details");
         setOrders(res.data.orders || []);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -37,7 +35,6 @@ export default function Overview() {
   }, []);
 
   const inTransitCount = orders.filter((o) => o.status === "In Transit").length;
-
   const recentOrders = orders.slice(0, 2);
 
   if (loading) {
@@ -46,7 +43,8 @@ export default function Overview() {
 
   return (
     <>
-      <div className="mb-8 grid grid-cols-2 gap-2  md:gap-4 lg:grid-cols-4">
+      {/* Stat cards */}
+      <div className="mb-8 grid grid-cols-2 gap-2 md:gap-4 lg:grid-cols-4">
         <Link to="/userDashboard/user-orders">
           <StatCard
             label="Total Orders"
@@ -80,6 +78,11 @@ export default function Overview() {
         />
       </div>
 
+      {/* Add Product section */}
+      <AddProductSection
+        onProductAdded={(product) => console.log("New product:", product)}
+      />
+
       {/* Header row: title + "See all orders" link */}
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-bold text-slate-900">Recent Orders</h2>
@@ -108,7 +111,8 @@ export default function Overview() {
               <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 bg-slate-50 border-b border-slate-100">
                 {order.status && (
                   <span
-                    className={`text-xs font-medium px-2.5 py-1 rounded-full border capitalize ${statusStyles[order.status] || "bg-slate-100 text-slate-600 border-slate-200"
+                    className={`text-xs font-medium px-2.5 py-1 rounded-full border capitalize ${statusStyles[order.status] ||
+                      "bg-slate-100 text-slate-600 border-slate-200"
                       }`}
                   >
                     {order.status}
@@ -156,9 +160,6 @@ export default function Overview() {
                   </div>
                 </div>
               </div>
-
-
-
             </div>
           ))}
         </div>
