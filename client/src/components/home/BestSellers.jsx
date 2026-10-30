@@ -12,10 +12,12 @@ import { CountContext } from "../../context/CountContext";
 
 const API_URL = "/data/products.json";
 
-// NewArrivals-এর সাথে হুবহু একই breakpoint (প্রতি সারিতে কতটা কার্ড)
+// সবসময় মোট কতগুলো প্রোডাক্ট দেখাবে
+const TOTAL_ITEMS = 12;
+
+// প্রতি সারিতে কতটা কার্ড (laptop ও বড় স্ক্রিনে ৬টা)
 const getItemsCount = (width) => {
-  if (width >= 1280) return 6; // xl
-  if (width >= 1024) return 5; // lg
+  if (width >= 1024) return 6; // laptop ও বড় স্ক্রিন
   if (width >= 768) return 4; // md
   if (width >= 640) return 3; // sm
   if (width >= 320) return 2; // ফোন
@@ -89,9 +91,8 @@ const BestSellers = () => {
     );
   }
 
-  // বড় স্ক্রিনে ২ সারি, ছোট স্ক্রিনে ১ সারি
-  const rows = width >= 1024 ? 2 : 1;
-  const visibleProductsList = products?.slice(0, itemsPerRow * rows);
+  // সবসময় মোট ১২টা প্রোডাক্ট দেখাবে
+  const visibleProductsList = products?.slice(0, TOTAL_ITEMS);
 
   return (
     <section className="w-full mx-auto">
@@ -132,7 +133,7 @@ const BestSellers = () => {
       {/* ============ Loading Skeleton ============ */}
       {loading && (
         <div className={`grid ${gridColsClass} gap-3 sm:gap-4`}>
-          {[...Array(itemsPerRow)].map((_, index) => (
+          {[...Array(TOTAL_ITEMS)].map((_, index) => (
             <div
               key={index}
               className="bg-white border border-[#E4DDCE]/60 rounded-3xl p-2 animate-pulse"

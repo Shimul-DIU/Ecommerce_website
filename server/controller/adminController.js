@@ -4,7 +4,10 @@ import jwt from "jsonwebtoken";
 import resend from "../config/mail.js";
 
 const getAdminRefreshCookieOptions = (req) => {
-    const isSecure = req.secure;
+    const isSecure =
+        req.secure ||
+        req.headers["x-forwarded-proto"] === "https" ||
+        process.env.NODE_ENV === "production";
 
     return {
         httpOnly: true,

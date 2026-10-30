@@ -14,7 +14,10 @@ const saltRounds = 10;
 // =====================================================
 
 const getRefreshCookieOptions = (req) => {
-  const isSecure = req.secure;
+  const isSecure =
+    req.secure ||
+    req.headers["x-forwarded-proto"] === "https" ||
+    process.env.NODE_ENV === "production";
 
   return {
     httpOnly: true,
@@ -150,7 +153,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    const user = await Users.findOne({ email });
+    const user = await Users.findOne({ email }).select("+password");
 
     if (!user) {
       return res.status(400).json({

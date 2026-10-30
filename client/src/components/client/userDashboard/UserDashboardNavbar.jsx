@@ -11,42 +11,42 @@ import {
 import { useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 
-const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded, isOpen }) => {
+const navItems = [
+  { to: "/userDashboard/user-overview", icon: LayoutDashboard, label: "Overview" },
+  { to: "/userDashboard/user-orders", icon: Package, label: "Orders" },
+  { to: "/userDashboard/cart", icon: ShoppingBag, label: "Cart" },
+  { to: "/userDashboard/wishlist", icon: Heart, label: "Wishlist" },
+  { to: "/userDashboard/user-addresses", icon: MapPin, label: "Addresses" },
+];
+
+const UserDashboardNavbar = ({ setIsExpanded }) => {
   const { logout } = useContext(AuthContext);
 
-  const navItems = [
-    { to: "/userDashboard/user-overview", icon: LayoutDashboard, label: "Overview" },
-    { to: "/userDashboard/user-orders", icon: Package, label: "Orders" },
-    { to: "/userDashboard/cart", icon: ShoppingBag, label: "Card" },
-    { to: "/userDashboard/wishlist", icon: Heart, label: "Wishlist" },
-    { to: "/userDashboard/user-addresses", icon: MapPin, label: "Addresses" },
-    // { to: "/userDashboard/user-profile", icon: , label: "Profile" },
-  ];
+  const closeOnMobile = () => {
+    if (setIsExpanded && window.innerWidth < 640) setIsExpanded(false);
+  };
 
   const handleItemClick = (e) => {
     e.stopPropagation();
-    // Mobile-এ ক্লিক করলে বন্ধ হবে, desktop-এ না চাইলে condition উঠিয়ে দিতে পারেন
-    if (setIsExpanded && window.innerWidth < 640) setIsExpanded(false);
+    closeOnMobile();
   };
 
   const handleLogout = (e) => {
     e.stopPropagation();
-    if (setIsExpanded && window.innerWidth < 640) setIsExpanded(false);
+    closeOnMobile();
     if (typeof logout === "function") logout();
   };
 
   return (
-    <aside
-      className={`sticky top-0 md:mt-4 z-40 bg-white border-b sm:border-b-0 sm:border-r  border-slate-200 transition-all duration-300 w-full sm:h-screen ${isExpanded ? "sm:w-64" : "sm:w-64" /* ডেস্কটপে সব সময় চওড়া (w-64) রাখতে চাইলে */
-        } sm:flex sm:flex-col sm:justify-between sm:p-4`}
-    >
+    <>
       {/* ==========================================
-          1. MOBILE LAYOUT (< sm screens)
+          1. MOBILE BOTTOM BAR (< sm screens)
          ========================================== */}
-      <div className="sm:hidden min-w-full  bg-white">
-        <nav className="flex items-center justify-between bg-white border border-slate-100 w-full h-12">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E4DDCE] bg-white/95 shadow-[0_-4px_20px_rgba(22,36,31,0.08)] backdrop-blur sm:hidden">
+        <div className="flex items-stretch justify-between px-1 pb-[env(safe-area-inset-bottom)]">
           {navItems.map((item) => {
             const Icon = item.icon;
+
             return (
               <NavLink
                 key={item.to}
@@ -54,62 +54,98 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded, isOpen }) => {
                 onClick={handleItemClick}
                 title={item.label}
                 className={({ isActive }) =>
-                  `flex items-center justify-center flex-1 h-11 rounded-lg transition-all duration-200 ${isActive
-                    ? " text-blue-600 scale-105"
-                    : "text-slate-500 hover:bg-slate-200/60 hover:text-slate-800"
+                  `relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 transition-colors duration-200 ${
+                    isActive
+                      ? "text-[#B08946]"
+                      : "text-[#16241F]/50 hover:text-[#16241F]"
                   }`
                 }
               >
-                <Icon size={22} strokeWidth={2} />
+                {({ isActive }) => (
+                  <>
+                    {isActive && (
+                      <span className="absolute top-0 h-0.5 w-8 rounded-full bg-[#B08946]" />
+                    )}
+                    <Icon size={20} strokeWidth={isActive ? 2.4 : 2} />
+                    <span className="text-[10px] font-semibold">
+                      {item.label}
+                    </span>
+                  </>
+                )}
               </NavLink>
             );
           })}
 
           <button
+            type="button"
             onClick={handleLogout}
             title="Logout"
-            className="flex items-center justify-center flex-1 h-11 rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+            className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-red-500 transition-colors hover:text-red-600"
           >
-            <LogOut size={24} strokeWidth={2} />
+            <LogOut size={20} strokeWidth={2} />
+            <span className="text-[10px] font-semibold">Logout</span>
           </button>
-        </nav>
-      </div>
+        </div>
+      </nav>
 
       {/* ==========================================
           2. DESKTOP SIDEBAR (>= sm screens)
          ========================================== */}
-      <div className="hidden sm:flex sm:flex-col sm:justify-between h-full w-full bg-white">
-        <div className="flex flex-col w-full ">
+      <aside className="sticky top-0 z-40 hidden h-screen w-64 shrink-0 flex-col justify-between overflow-hidden bg-[#16241F] p-4 text-[#FAF6EF] sm:flex md:pt-6">
+        {/* decorative circles */}
+        <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#B08946]/10" />
+        <div className="pointer-events-none absolute -bottom-20 -left-16 h-52 w-52 rounded-full bg-[#B08946]/10" />
+
+        <div className="relative z-10 flex w-full flex-col">
           {/* Logo Section */}
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 px-2">
-            <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-200">
-              <Store size={24} className="text-white" />
+          <div className="mb-6 flex items-center gap-3 border-b border-white/10 px-2 pb-5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#B08946] text-[#16241F] shadow-lg shadow-black/20">
+              <Store size={22} />
             </div>
-            <span className="whitespace-nowrap font-bold text-slate-800 text-lg tracking-tight">
-              ShimulShop
-            </span>
+
+            <div className="leading-tight">
+              <span className="block whitespace-nowrap text-lg font-bold tracking-tight">
+                ShimulShop
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B08946]">
+                User Panel
+              </span>
+            </div>
           </div>
 
           {/* Navigation Items */}
-          <nav className="flex flex-col gap-1.5 w-full">
+          <nav className="flex w-full flex-col gap-1.5">
             {navItems.map((item) => {
               const Icon = item.icon;
+
               return (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   onClick={handleItemClick}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 w-full ${isActive
-                      ? "bg-blue-50 text-blue-600 font-semibold shadow-sm"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-blue-600"
+                    `group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+                      isActive
+                        ? "bg-[#B08946] font-bold text-[#16241F] shadow-md"
+                        : "text-[#FAF6EF]/70 hover:bg-white/10 hover:text-[#FAF6EF]"
                     }`
                   }
                 >
-                  <Icon size={24} strokeWidth={2} className="flex-shrink-0" />
-                  <span className="whitespace-nowrap">
-                    {item.label}
-                  </span>
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <span className="absolute -left-4 h-6 w-1 rounded-r-full bg-[#FAF6EF]" />
+                      )}
+                      <Icon
+                        size={20}
+                        strokeWidth={2}
+                        className={`shrink-0 transition-transform duration-200 ${
+                          isActive ? "" : "group-hover:scale-110"
+                        }`}
+                      />
+                      <span className="whitespace-nowrap">{item.label}</span>
+                    </>
+                  )}
                 </NavLink>
               );
             })}
@@ -117,19 +153,18 @@ const UserDashboardNavbar = ({ isExpanded = true, setIsExpanded, isOpen }) => {
         </div>
 
         {/* Logout Section */}
-        <div className="border-t border-slate-100 pt-3 w-full">
+        <div className="relative z-10 w-full border-t border-white/10 pt-3">
           <button
+            type="button"
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors w-full"
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-300 transition-colors hover:bg-red-500/15 hover:text-red-200"
           >
-            <LogOut size={24} strokeWidth={2} className="flex-shrink-0" />
-            <span className="whitespace-nowrap">
-              Logout
-            </span>
+            <LogOut size={20} strokeWidth={2} className="shrink-0" />
+            <span className="whitespace-nowrap">Logout</span>
           </button>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 };
 

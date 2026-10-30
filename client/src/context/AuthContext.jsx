@@ -279,6 +279,18 @@ export const AuthProvider = ({ children }) => {
   // ===================================================
 
   useEffect(() => {
+    // Auth tokens must never be persisted in localStorage.
+    // Clean up any legacy/stale token entries that may exist.
+    ["accessToken", "refreshToken", "token", "authToken", "userToken"].forEach(
+      (key) => {
+        try {
+          localStorage.removeItem(key);
+        } catch {
+          /* ignore */
+        }
+      }
+    );
+
     const handleUserSessionExpired = () => {
       setAccessToken(null);
       setUser(null);

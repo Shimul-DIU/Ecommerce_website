@@ -71,6 +71,42 @@
       "originalPrice": 1990,
       "stock": 30,
       "sold": 390
+    },
+    {
+      "_id": "9",
+      "name": "Men's Casual Polo T-Shirt - Premium Cotton",
+      "image": "https://picsum.photos/seed/polo9/400/400",
+      "price": 750,
+      "originalPrice": 950,
+      "stock": 45,
+      "sold": 620
+    },
+    {
+      "_id": "10",
+      "name": "Women's Stylish Handbag - Premium Design",
+      "image": "https://picsum.photos/seed/handbag10/400/400",
+      "price": 1850,
+      "originalPrice": 2400,
+      "stock": 22,
+      "sold": 470
+    },
+    {
+      "_id": "11",
+      "name": "Portable Bluetooth Speaker - Deep Bass",
+      "image": "https://picsum.photos/seed/speaker11/400/400",
+      "price": 1150,
+      "originalPrice": 1500,
+      "stock": 35,
+      "sold": 780
+    },
+    {
+      "_id": "12",
+      "name": "Men's Sports Sunglasses - UV Protection",
+      "image": "https://picsum.photos/seed/sunglasses12/400/400",
+      "price": 550,
+      "originalPrice": 750,
+      "stock": 50,
+      "sold": 290
     }
   ]
 }
