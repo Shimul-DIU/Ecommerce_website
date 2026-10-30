@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import rateLimit from 'express-rate-limit';
-import { createUser,logout, loginUser ,forgotPassword,resetPassword, GoogleLogin, refreshAccessToken} from '../controller/authController.js';
+import { createUser,logout, loginUser ,forgotPassword,resetPassword, SocialLogin, refreshAccessToken} from '../controller/authController.js';
 import { ForgotPassword, loginAdmin, logoutAdmin, refreshAdminAccessToken, ResetPassword } from '../controller/adminController.js';
 
 const authRouter = express.Router();
@@ -26,7 +26,10 @@ authRouter.post(
 );
 
 // Firebase-routing
-authRouter.post('/user/google-login',GoogleLogin)
+authRouter.post('/user/google-login',SocialLogin)
+authRouter.post('/user/facebook-login',SocialLogin)
+authRouter.post('/user/github-login',SocialLogin)
+authRouter.post('/user/social-login',SocialLogin)
 
 // ========================
 

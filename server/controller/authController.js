@@ -479,7 +479,7 @@ const resetPassword = async (req, res) => {
 // GOOGLE LOGIN
 // =====================================================
 
-const GoogleLogin = async (req, res) => {
+const SocialLogin = async (req, res) => {
   try {
 
     const {
@@ -487,6 +487,7 @@ const GoogleLogin = async (req, res) => {
       email,
       photoURL,
       firebaseId,
+      provider,
     } = req.body;
 
     if (!email || !firebaseId) {
@@ -498,6 +499,8 @@ const GoogleLogin = async (req, res) => {
 
     let user = await Users.findOne({ email });
 
+    const prov = provider || "google";
+
     if (!user) {
 
       user = new Users({
@@ -505,9 +508,16 @@ const GoogleLogin = async (req, res) => {
         fullname,
         avatar: photoURL,
         firebaseId,
-        provider: "google",
+        provider: prov,
       });
 
+      await user.save();
+    } else {
+      // keep existing user; update firebaseId/provider if missing
+      if (!user.firebaseId) user.firebaseId = firebaseId;
+      if (!user.avatar && photoURL) user.avatar = photoURL;
+      if (!user.fullname && fullname) user.fullname = fullname;
+      // update provider only if currently local? keep as is
       await user.save();
     }
 
@@ -580,7 +590,11 @@ export {
   loginUser,
   forgotPassword,
   resetPassword,
-  GoogleLogin,
+  SocialLogin,
   refreshAccessToken,
   logout,
 };
+
+export { SocialLogin as GoogleLogin };
+export { SocialLogin as FacebookLogin };
+export { SocialLogin as GitHubLogin };

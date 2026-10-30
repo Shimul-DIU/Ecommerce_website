@@ -24,6 +24,7 @@ import { useScroll } from "../../hooks/useScroll";
 import { AuthContext } from "../../context/AuthContext";
 import { getInitials } from "../../utils/getInitials";
 import useProducts from "../../hooks/useProducts";
+import { LanguageContext } from "../../context/LanguageContext";
 
 const ICON_ACTION = "text-lg sm:text-xl md:text-lg";
 const AVATAR_SIZE = "w-8 h-8 sm:w-10 sm:h-10";
@@ -64,7 +65,8 @@ const Navbar = ({ onMenuClick }) => {
   const [searchFocused, setSearchFocused] = useState(false);
   const [mobileCategoryOpen, setMobileCategoryOpen] = useState(false);
 
-  const [language, setLanguage] = useState("EN");
+  
+  const { language, setLanguage } = useContext(LanguageContext);
   const [currency, setCurrency] = useState("BDT (৳)");
 
   const closeTimer = useRef(null);
