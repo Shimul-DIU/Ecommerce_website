@@ -5,28 +5,36 @@ import {
   faHeart,
   faShoppingCart,
   faArrowRight,
-  faTag,
+  faCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import useProducts from "../../hooks/useProducts";
 import { CountContext } from "../../context/CountContext";
 
-
 const getItemsCount = (width) => {
-  if (width >= 1024) return 4;
-  if (width >= 768) return 4;
-  if (width >= 640) return 3;
-  if (width >= 480) return 3;
-  if (width >= 320) return 2;
+  if (width >= 1280) return 6; // xl: বড় ডেস্কটপ
+  if (width >= 1024) return 5; // lg: ডেস্কটপ/ল্যাপটপ
+  if (width >= 768) return 4; // md: ট্যাবলেট
+  if (width >= 640) return 3; // sm: বড় ফোন
+  if (width >= 320) return 2; // ফোন
   return 1;
 };
 
+const gridColsMap = {
+  1: "grid-cols-1",
+  2: "grid-cols-2",
+  3: "grid-cols-3",
+  4: "grid-cols-4",
+  5: "grid-cols-5",
+  6: "grid-cols-6",
+};
+
 const NewArrivals = () => {
-  const { wishlist, cart, toggleWishlist, toggleCart } = useContext(CountContext);
+  const { wishlist, cart, toggleWishlist, toggleCart } =
+    useContext(CountContext);
   const [products, loading, error] = useProducts();
 
-
   const [itemsPerRow, setItemsPerRow] = useState(() =>
-    typeof window !== "undefined" ? getItemsCount(window.innerWidth) : 5
+    typeof window !== "undefined" ? getItemsCount(window.innerWidth) : 6
   );
 
   useEffect(() => {
@@ -38,13 +46,7 @@ const NewArrivals = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const gridColsClass = {
-    1: "grid-cols-1",
-    2: "grid-cols-2",
-    3: "grid-cols-3",
-    4: "grid-cols-4",
-    5: "grid-cols-5",
-  }[itemsPerRow] || "grid-cols-5";
+  const gridColsClass = gridColsMap[itemsPerRow] || "grid-cols-6";
 
   if (error) {
     return (
@@ -59,19 +61,26 @@ const NewArrivals = () => {
   const visibleProductsList = products?.slice(0, itemsPerRow);
 
   return (
-    <section className="w-full mx-auto ">
-      {/* Section Header */}
-      <div className="flex items-center justify-between pb-3 ">
-        <div className="flex items-center gap-2 ">
-          <h2 className="text-xl md:text-2xl lg:text-3xl font-medium text-[#16241F]">
-            New Arrivals
-          </h2>
-          <span className="ml-2 bg-[#FAF6EF] border border-[#E4DDCE] text-[#16241F]/70 text-xs sm:text-sm font-semibold px-2.5 py-0.5 rounded-full">
-            {products?.length || 0} Products
-          </span>
+    <section className="w-full mx-auto">
+      {/* ============ Section Header ============ */}
+      <div className="flex items-center justify-between pb-4">
+        <div className="flex items-center gap-3">
+          <span className="hidden sm:block h-8 w-1 rounded-full bg-[#B08946]" />
+          <div>
+            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-[#B08946]">
+              Just Landed
+            </p>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#16241F] leading-tight">
+                New Arrivals
+              </h2>
+              <span className="hidden sm:inline-block bg-[#16241F] text-[#FAF6EF] text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                {products?.length || 0}
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* See All link */}
         <Link
           to="/products"
           state={{ filter: "all" }}
@@ -87,30 +96,34 @@ const NewArrivals = () => {
         </Link>
       </div>
 
+      {/* ============ Loading Skeleton ============ */}
       {loading && (
         <div className={`grid ${gridColsClass} gap-3 sm:gap-4`}>
           {[...Array(itemsPerRow)].map((_, index) => (
             <div
               key={index}
-              className="bg-white border border-[#E4DDCE]/60 rounded-2xl p-2 animate-pulse"
+              className="bg-white border border-[#E4DDCE]/60 rounded-3xl p-2 animate-pulse"
             >
-              <div className="aspect-square rounded-xl bg-[#E4DDCE]/50" />
-              <div className="h-3.5 w-3/4 rounded-md bg-[#E4DDCE]/50 mt-2" />
-              <div className="h-3 w-1/2 rounded-md bg-[#E4DDCE]/40 mt-1" />
-              <div className="h-8 rounded-xl bg-[#E4DDCE]/50 mt-2" />
+              <div className="aspect-square rounded-2xl bg-[#E4DDCE]/50" />
+              <div className="h-3.5 w-3/4 rounded-md bg-[#E4DDCE]/50 mt-3" />
+              <div className="h-3 w-1/2 rounded-md bg-[#E4DDCE]/40 mt-2" />
+              <div className="h-4 w-1/3 rounded-md bg-[#E4DDCE]/50 mt-3 mb-1" />
             </div>
           ))}
         </div>
       )}
 
+      {/* ============ Products Grid ============ */}
       {!loading && (
-        <div className={`grid ${gridColsClass} gap-3 sm:gap-4.5`}>
-          {visibleProductsList?.map((item) => {
+        <div className={`grid ${gridColsClass} gap-3 sm:gap-4`}>
+          {visibleProductsList?.map((item, index) => {
             const inWishlist = wishlist?.includes(String(item._id));
             const inCart = cart?.includes(String(item._id));
             const isOutOfStock = item.stock <= 0;
+            const isLowStock = item.stock > 0 && item.stock <= 5;
 
-            const originalPrice = item.originalPrice || Math.round(item.price * 1.25);
+            const originalPrice =
+              item.originalPrice || Math.round(item.price * 1.25);
             const discountPercent =
               item.discountPercent ||
               (originalPrice > item.price
@@ -119,43 +132,60 @@ const NewArrivals = () => {
 
             const savingsAmount = originalPrice - item.price;
 
+            // প্রথম ৩টি প্রোডাক্টে "NEW" ব্যাজ
+            const isNew = index < 3;
+
             return (
               <Link
-                to={'/checkout'}
+                to={"/checkout"}
                 state={{ product: item }}
                 key={item._id}
-                className="group relative flex flex-col bg-white border border-[#E4DDCE] hover:border-[#B08946]/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+                className="group relative flex flex-col bg-white border border-[#E4DDCE] hover:border-[#B08946]/60 rounded-3xl overflow-hidden transition-all duration-500 hover:shadow-[0_18px_40px_-12px_rgba(22,36,31,0.25)] hover:-translate-y-1.5"
               >
-                {/* Image Container */}
-                <div className="relative w-full aspect-square bg-[#FAF6EF]/60 overflow-hidden flex items-center justify-center p-1 sm:p-2">
+                {/* ---------- Image Panel ---------- */}
+                <div className="relative w-full aspect-square overflow-hidden bg-[radial-gradient(circle_at_50%_35%,#FFFFFF_0%,#FAF6EF_60%,#EFE9DC_100%)] flex items-center justify-center p-3 sm:p-4">
+                  {/* পেছনের হালকা গোল */}
+                  <div className="absolute w-2/3 aspect-square rounded-full bg-[#B08946]/10 transition-transform duration-700 group-hover:scale-125" />
+
                   <img
                     src={item.image}
                     alt={item.name}
                     loading="lazy"
-                    className="w-full rounded-lg h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                    className={`relative z-[1] w-full h-full object-contain drop-shadow-md transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-2 ${
+                      isOutOfStock ? "grayscale opacity-60" : ""
+                    }`}
                   />
 
-                  {/* Top Left Discount Badge */}
-                  {discountPercent > 0 && !isOutOfStock && (
-                    <div className="absolute top-2 left-2 z-10 bg-red-600 text-white text-[10px] sm:text-xs font-extrabold px-2 py-0.5 rounded-md shadow-md flex items-center gap-1">
-                      <FontAwesomeIcon icon={faTag} className="text-[9px] sm:text-[10px]" />
-                      <span>{discountPercent}% OFF</span>
-                    </div>
-                  )}
+                  {/* Top Left Badges */}
+                  <div className="absolute top-2.5 left-2.5 z-10 flex flex-col items-start gap-1">
+                    {isNew && !isOutOfStock && (
+                      <span className="bg-[#16241F] text-[#B08946] text-[9px] sm:text-[10px] font-extrabold tracking-[0.15em] px-2 py-0.5 rounded-full shadow-md">
+                        NEW
+                      </span>
+                    )}
+                    {discountPercent > 0 && !isOutOfStock && (
+                      <span className="bg-[#B08946] text-[#16241F] text-[10px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full shadow-md">
+                        -{discountPercent}%
+                      </span>
+                    )}
+                  </div>
 
                   {/* Floating Action Buttons */}
-                  <div className="absolute top-2 right-2 flex flex-col gap-1.5 z-20">
+                  <div className="absolute top-2.5 right-2.5 flex flex-col gap-1.5 z-20">
                     <button
                       type="button"
                       onClick={(e) => {
                         e.preventDefault();
                         toggleWishlist(String(item._id));
                       }}
-                      aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-                      className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inWishlist
-                        ? "bg-red-500 text-white"
-                        : "bg-white/90 text-[#16241F]/60 hover:text-red-500 hover:bg-white"
-                        }`}
+                      aria-label={
+                        inWishlist ? "Remove from wishlist" : "Add to wishlist"
+                      }
+                      className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${
+                        inWishlist
+                          ? "bg-red-500 text-white"
+                          : "bg-white/90 text-[#16241F]/60 hover:text-red-500 hover:bg-white"
+                      }`}
                     >
                       <FontAwesomeIcon
                         icon={faHeart}
@@ -170,17 +200,31 @@ const NewArrivals = () => {
                         toggleCart(String(item._id));
                       }}
                       aria-label={inCart ? "Remove from cart" : "Add to cart"}
-                      className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inCart
-                        ? "bg-[#16241F] text-[#B08946]"
-                        : "bg-white/90 text-[#16241F]/60 hover:text-[#16241F] hover:bg-white"
-                        }`}
+                      className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${
+                        inCart
+                          ? "bg-[#16241F] text-[#B08946]"
+                          : "bg-white/90 text-[#16241F]/60 hover:text-[#16241F] hover:bg-white"
+                      }`}
                     >
                       <FontAwesomeIcon
-                        icon={faShoppingCart}
+                        icon={inCart ? faCheck : faShoppingCart}
                         className="text-xs sm:text-sm"
                       />
                     </button>
                   </div>
+
+                  {/* Hover এ নিচ থেকে স্লাইড করা Quick Buy (ডেস্কটপে) */}
+                  {!isOutOfStock && (
+                    <div className="hidden md:flex absolute inset-x-3 bottom-3 z-10 translate-y-[140%] group-hover:translate-y-0 transition-transform duration-300">
+                      <span className="w-full flex items-center justify-center gap-2 bg-[#16241F] text-[#FAF6EF] text-sm font-bold py-2 rounded-xl shadow-lg">
+                        Quick Buy
+                        <FontAwesomeIcon
+                          icon={faArrowRight}
+                          className="text-xs text-[#B08946]"
+                        />
+                      </span>
+                    </div>
+                  )}
 
                   {/* Out of Stock Overlay */}
                   {isOutOfStock && (
@@ -192,48 +236,74 @@ const NewArrivals = () => {
                   )}
                 </div>
 
-                {/* Details Section */}
-                <div className="pl-2.5 pb-2.5 pr-1 sm:p-3.5 flex flex-col justify-between flex-1">
-                  <div>
-                    <h3
-                      title={item.name}
-                      className="text-[#16241F] text-sm sm:text-base font-semibold line-clamp-1 leading-snug group-hover:text-[#B08946] transition-colors"
-                    >
-                      {item.name}
-                    </h3>
-                  </div>
+                {/* ---------- Details ---------- */}
+                <div className="px-3 pt-3 pb-3 sm:px-4 sm:pb-4 flex flex-col flex-1">
+                  <h3
+                    title={item.name}
+                    className="text-[#16241F] text-sm sm:text-base font-semibold line-clamp-1 leading-snug group-hover:text-[#B08946] transition-colors"
+                  >
+                    {item.name}
+                  </h3>
 
-                  <div className="mt-2">
-                    <div className="space-y-0.5 mb-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-base sm:text-lg font-extrabold text-[#16241F]">
-                            ৳{item.price}
+                  {/* Stock status */}
+                  <p className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-xs font-medium">
+                    <span
+                      className={`inline-block w-1.5 h-1.5 rounded-full ${
+                        isOutOfStock
+                          ? "bg-red-500"
+                          : isLowStock
+                            ? "bg-orange-400"
+                            : "bg-green-500"
+                      }`}
+                    />
+                    <span
+                      className={
+                        isOutOfStock
+                          ? "text-red-500"
+                          : isLowStock
+                            ? "text-orange-500"
+                            : "text-[#16241F]/55"
+                      }
+                    >
+                      {isOutOfStock
+                        ? "Out of stock"
+                        : isLowStock
+                          ? `মাত্র ${item.stock} টি বাকি`
+                          : `In stock: ${item.stock}`}
+                    </span>
+                  </p>
+
+                  {/* Price */}
+                  <div className="mt-auto pt-3">
+                    <div className="flex items-end justify-between gap-2 border-t border-dashed border-[#E4DDCE] pt-3">
+                      <div className="flex flex-col leading-none">
+                        {originalPrice > item.price && (
+                          <span className="text-[11px] sm:text-xs text-[#16241F]/40 line-through font-medium mb-1">
+                            ৳{originalPrice}
                           </span>
-                          {originalPrice > item.price && (
-                            <span className="text-xs sm:text-sm text-[#16241F]/40 line-through font-medium">
-                              ৳{originalPrice}
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-[10px] sm:text-xs font-medium text-[#16241F]/50 bg-[#FAF6EF] px-1.5 py-0.5 rounded border border-[#E4DDCE]/60">
-                          Stock: {item.stock}
+                        )}
+                        <span className="text-lg sm:text-xl font-extrabold text-[#16241F]">
+                          ৳{item.price}
                         </span>
                       </div>
 
-                      {savingsAmount > 0 && !isOutOfStock && (
-                        <p className="text-[10px] sm:text-xs text-green-600 font-semibold">
+                      {/* Mobile এ ছোট Buy বাটন, ডেস্কটপে Save লেখা */}
+                      {savingsAmount > 0 && !isOutOfStock ? (
+                        <span className="hidden sm:inline-block text-[10px] sm:text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full whitespace-nowrap">
                           Save ৳{savingsAmount}
-                        </p>
-                      )}
-                    </div>
+                        </span>
+                      ) : null}
 
-                    <button
-                      disabled={isOutOfStock}
-                      className="w-full h-9 sm:h-10 rounded-xl bg-[#16241F] hover:bg-[#0F1A16] active:scale-[0.98] disabled:bg-[#16241F]/20 disabled:text-[#16241F]/40 disabled:cursor-not-allowed text-[#FAF6EF] text-sm sm:text-base font-bold transition-all duration-200 shadow-sm flex items-center justify-center gap-1.5"
-                    >
-                      <span>{isOutOfStock ? "Unavailable" : "Buy Now"}</span>
-                    </button>
+                      <span
+                        className={`sm:hidden w-8 h-8 rounded-full flex items-center justify-center text-xs ${
+                          isOutOfStock
+                            ? "bg-[#16241F]/15 text-[#16241F]/40"
+                            : "bg-[#16241F] text-[#B08946]"
+                        }`}
+                      >
+                        <FontAwesomeIcon icon={faArrowRight} />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </Link>

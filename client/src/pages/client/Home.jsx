@@ -3,7 +3,6 @@ import HeroBanner from '../../components/common/HeroBanner';
 import DealOfTheDay from '../../components/home/DealOFTheDay';
 import DevelopmentPopup from '../../components/common/DevelopmentPopup';
 import TopCategories from '../../components/client/TopCategories';
-import SidebarCategories from '../../components/client/SidebarCategories';
 import BestSellers from '../../components/home/BestSellers';
 import LatestProducts from '../../components/home/LatestProducts';
 
@@ -17,17 +16,9 @@ const Home = () => (
 
     <TopCategories />
 
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-      <aside className="lg:col-span-3 w-full">
-        <SidebarCategories />
-      </aside>
+    {/* সাইডবার নেই, তাই পুরো প্রস্থে */}
+    <NewArrivals />
 
-      <main className="lg:col-span-9 w-full">
-        <NewArrivals />
-      </main>
-    </div>
-
-    {/* গ্রিডের বাইরে, পুরো প্রস্থে */}
     <BestSellers />
     <LatestProducts />
   </div>
