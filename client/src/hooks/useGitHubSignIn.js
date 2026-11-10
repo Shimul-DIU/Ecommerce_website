@@ -13,23 +13,29 @@ const useGitHubSignIn = () => {
   const signInWithGitHub = async () => {
     const provider = new GithubAuthProvider();
     provider.addScope("user:email");
-    try {
-      const response = await signInWithPopup(auth, provider);
-      const user = response.user;
+    const response = await signInWithPopup(auth, provider);
+    const user = response.user;
 
-      const res = await axiosInstance.post("/api/auth/user/github-login", {
-        fullname: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        firebaseId: user.uid,
-        provider: "github",
-      });
-
-      googleLogin(res.data.accessToken, res.data.user);
-      navigate("/userDashboard");
-    } catch (error) {
-      console.log(error);
+    if (!user.email) {
+      const error = new Error("GitHub did not provide an email address");
+      error.code = "auth/missing-email";
+      throw error;
     }
+
+    const res = await axiosInstance.post("/api/auth/user/github-login", {
+      fullname: user.displayName || "Social user",
+      email: user.email,
+      photoURL: user.photoURL,
+      firebaseId: user.uid,
+      provider: "github",
+    });
+
+    if (!res.data?.accessToken || !res.data?.user) {
+      throw new Error("Social login response is incomplete");
+    }
+
+    googleLogin(res.data.accessToken, res.data.user);
+    navigate("/userDashboard");
   };
 
   return signInWithGitHub;

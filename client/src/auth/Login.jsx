@@ -64,6 +64,13 @@ const TEXT = {
     errSomething: "Something went wrong",
     errTerms: "Please agree to the Terms & Conditions",
     errLogin: "Login failed",
+    errSocial: "Social sign-in failed. Please try again.",
+    errSocialProviderDisabled:
+      "This sign-in provider is not enabled in Firebase Authentication.",
+    errSocialDomain:
+      "This website domain is not authorized in Firebase Authentication.",
+    errSocialEmail:
+      "This provider did not share an email address. Please make your email public and try again.",
   },
 
   BN: {
@@ -100,6 +107,13 @@ const TEXT = {
     errSomething: "কিছু একটা ভুল হয়েছে",
     errTerms: "অনুগ্রহ করে শর্তাবলীতে সম্মত হোন",
     errLogin: "লগইন করা যায়নি",
+    errSocial: "সোশ্যাল সাইন-ইন করা যায়নি। আবার চেষ্টা করুন।",
+    errSocialProviderDisabled:
+      "Firebase Authentication-এ এই সাইন-ইন পদ্ধতিটি চালু করা নেই।",
+    errSocialDomain:
+      "এই ওয়েবসাইটের ডোমেইন Firebase Authentication-এ অনুমোদিত নয়।",
+    errSocialEmail:
+      "এই প্রোভাইডার ইমেইল ঠিকানা শেয়ার করেনি। ইমেইলটি পাবলিক করে আবার চেষ্টা করুন।",
   },
 };
 
@@ -131,20 +145,33 @@ const Login = () => {
     rememberMe: false,
   });
 
-  /* ---------------- Google Login ---------------- */
-  const handleGoogleLogin = async () => {
-    await signInWithGoogle();
+  const handleSocialLogin = async (signIn) => {
+    setMessage("");
+    try {
+      await signIn();
+    } catch (error) {
+      if (error.code === "auth/popup-closed-by-user") {
+        return;
+      }
+
+      const errorMessages = {
+        "auth/operation-not-allowed": t.errSocialProviderDisabled,
+        "auth/unauthorized-domain": t.errSocialDomain,
+        "auth/missing-email": t.errSocialEmail,
+      };
+
+      setMessage(
+        errorMessages[error.code] ||
+          error.response?.data?.message ||
+          error.message ||
+          t.errSocial
+      );
+    }
   };
 
-  /* ---------------- Facebook Login ---------------- */
-  const handleFacebookLogin = async () => {
-    await signInWithFacebook();
-  };
-
-  /* ---------------- GitHub Login ---------------- */
-  const handleGitHubLogin = async () => {
-    await signInWithGitHub();
-  };
+  const handleGoogleLogin = () => handleSocialLogin(signInWithGoogle);
+  const handleFacebookLogin = () => handleSocialLogin(signInWithFacebook);
+  const handleGitHubLogin = () => handleSocialLogin(signInWithGitHub);
 
   /* ---------------- Input Change ---------------- */
   const changeHandler = (e) => {
