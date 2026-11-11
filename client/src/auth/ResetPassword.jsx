@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiLock, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 import axiosInstance from "../utils/axiosInstance";
+import { useTranslation } from "../utils/translations";
 
 const ResetPassword = () => {
+  const { t } = useTranslation();
   const { token } = useParams();
   const navigate = useNavigate();
 
@@ -77,10 +79,10 @@ const ResetPassword = () => {
               <FiLock className="w-8 h-8 text-blue-600" />
             </div>
             <h2 className="text-3xl font-bold text-gray-800 mb-2">
-              Reset Password
+              {t("Reset Password")}
             </h2>
             <p className="text-gray-500 text-sm">
-              Enter your new password below
+              {t("Enter your new password below")}
             </p>
           </div>
 
@@ -88,12 +90,12 @@ const ResetPassword = () => {
             {/* New Password Field */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                New Password
+                {t("New Password")}
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter new password"
+                  placeholder={t("Enter new password")}
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
@@ -117,22 +119,22 @@ const ResetPassword = () => {
               {errors.password && (
                 <p className="mt-1.5 text-sm text-red-600 flex items-center gap-1">
                   <FiAlertCircle className="w-4 h-4" />
-                  {errors.password}
+                  {t(errors.password)}
                 </p>
               )}
               <p className="mt-1.5 text-xs text-gray-400">
-                Must be at least 8 characters
+                {t("Must be at least 8 characters")}
               </p>
             </div>
 
             {/* Confirm Password Field */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Confirm Password
+                {t("Confirm Password")}
               </label>
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Confirm your password"
+                placeholder={t("Confirm your password")}
                 value={confirmPassword}
                 onChange={(e) => {
                   setConfirmPassword(e.target.value);
@@ -148,7 +150,7 @@ const ResetPassword = () => {
               {errors.confirmPassword && (
                 <p className="mt-1.5 text-sm text-red-600 flex items-center gap-1">
                   <FiAlertCircle className="w-4 h-4" />
-                  {errors.confirmPassword}
+                  {t(errors.confirmPassword)}
                 </p>
               )}
             </div>
@@ -169,10 +171,10 @@ const ResetPassword = () => {
                   </div>
                   <span className="text-xs text-gray-500 min-w-[60px]">
                     {password.length < 4
-                      ? "Weak"
+                      ? t("Weak")
                       : password.length < 8
-                        ? "Medium"
-                        : "Strong"}
+                        ? t("Medium")
+                        : t("Strong")}
                   </span>
                 </div>
               </div>
@@ -194,10 +196,10 @@ const ResetPassword = () => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Updating Password...
+                  {t("Updating Password...")}
                 </div>
               ) : (
-                "Update Password"
+                t("Update Password")
               )}
             </button>
 
@@ -208,7 +210,7 @@ const ResetPassword = () => {
                 onClick={() => navigate("/login")}
                 className="text-sm text-gray-500 hover:text-blue-600 transition-colors duration-200"
               >
-                ← Back to Login
+                ← {t("Back to Login")}
               </button>
             </div>
 
@@ -225,7 +227,7 @@ const ResetPassword = () => {
                 ) : (
                   <FiAlertCircle className="w-5 h-5 flex-shrink-0" />
                 )}
-                <p className="text-sm font-medium">{message}</p>
+                <p className="text-sm font-medium">{t(message)}</p>
               </div>
             )}
           </form>
@@ -233,7 +235,7 @@ const ResetPassword = () => {
 
         {/* Footer */}
         <p className="text-center text-xs text-gray-400 mt-6">
-          Secure password reset • Token expires in 1 hour
+          {t("Secure password reset • Token expires in 1 hour")}
         </p>
       </div>
     </div>

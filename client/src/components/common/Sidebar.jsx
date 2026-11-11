@@ -2,8 +2,10 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { useTranslation } from "../../utils/translations";
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const { t } = useTranslation();
   const [menOpen, setMenOpen] = useState(false);
   const [womenOpen, setWomenOpen] = useState(false);
   const [jewelryOpen, setJewelryOpen] = useState(false);
@@ -40,7 +42,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
           <h2 className="text-base font-bold text-gray-800 tracking-wide">
-            Categories
+            {t("Categories")}
           </h2>
 
           <button
@@ -56,14 +58,14 @@ const Sidebar = ({ isOpen, onClose }) => {
           {/* Home */}
           <li>
             <NavLink to="/" onClick={onClose} className={linkStyle}>
-              Home
+              {t("Home")}
             </NavLink>
           </li>
 
           {/* Products */}
           <li>
             <NavLink to="/products" onClick={onClose} className={linkStyle}>
-              Products
+              {t("Products")}
             </NavLink>
           </li>
 
@@ -73,7 +75,7 @@ const Sidebar = ({ isOpen, onClose }) => {
               onClick={() => setMenOpen(!menOpen)}
               className="w-full flex items-center justify-between px-4 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <span>Men's</span>
+              <span>{t("Men's")}</span>
               <FontAwesomeIcon
                 icon={faChevronDown}
                 className={`text-xs text-gray-400 transition-transform duration-200 ${menOpen ? "rotate-180 text-blue-600" : ""
@@ -85,22 +87,22 @@ const Sidebar = ({ isOpen, onClose }) => {
               <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
                 <li>
                   <NavLink to="/men/shirt" onClick={onClose} className={subLinkStyle}>
-                    Shirt
+                    {t("Shirt")}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/men/shorts-jeans" onClick={onClose} className={subLinkStyle}>
-                    Shorts & Jeans
+                    {t("Shorts & Jeans")}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/men/safety-shoes" onClick={onClose} className={subLinkStyle}>
-                    Safety Shoes
+                    {t("Safety Shoes")}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/men/wallet" onClick={onClose} className={subLinkStyle}>
-                    Wallet
+                    {t("Wallet")}
                   </NavLink>
                 </li>
               </ul>
@@ -113,7 +115,7 @@ const Sidebar = ({ isOpen, onClose }) => {
               onClick={() => setWomenOpen(!womenOpen)}
               className="w-full flex items-center justify-between px-4 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <span>Women's</span>
+              <span>{t("Women's")}</span>
               <FontAwesomeIcon
                 icon={faChevronDown}
                 className={`text-xs text-gray-400 transition-transform duration-200 ${womenOpen ? "rotate-180 text-blue-600" : ""
@@ -125,22 +127,22 @@ const Sidebar = ({ isOpen, onClose }) => {
               <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
                 <li>
                   <NavLink to="/women/dress-frock" onClick={onClose} className={subLinkStyle}>
-                    Dress & Frock
+                    {t("Dress & Frock")}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/women/earrings" onClick={onClose} className={subLinkStyle}>
-                    Earrings
+                    {t("Earrings")}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/women/necklace" onClick={onClose} className={subLinkStyle}>
-                    Necklace
+                    {t("Necklace")}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/women/makeup-kit" onClick={onClose} className={subLinkStyle}>
-                    Makeup Kit
+                    {t("Makeup Kit")}
                   </NavLink>
                 </li>
               </ul>
@@ -153,7 +155,7 @@ const Sidebar = ({ isOpen, onClose }) => {
               onClick={() => setJewelryOpen(!jewelryOpen)}
               className="w-full flex items-center justify-between px-4 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <span>Jewellery</span>
+              <span>{t("Jewellery")}</span>
               <FontAwesomeIcon
                 icon={faChevronDown}
                 className={`text-xs text-gray-400 transition-transform duration-200 ${jewelryOpen ? "rotate-180 text-blue-600" : ""
@@ -165,22 +167,22 @@ const Sidebar = ({ isOpen, onClose }) => {
               <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
                 <li>
                   <NavLink to="/jewellery/earrings" onClick={onClose} className={subLinkStyle}>
-                    Earrings
+                    {t("Earrings")}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/jewellery/couple-rings" onClick={onClose} className={subLinkStyle}>
-                    Couple Rings
+                    {t("Couple Rings")}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/jewellery/necklace" onClick={onClose} className={subLinkStyle}>
-                    Necklace
+                    {t("Necklace")}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/jewellery/bracelets" onClick={onClose} className={subLinkStyle}>
-                    Bracelets
+                    {t("Bracelets")}
                   </NavLink>
                 </li>
               </ul>
@@ -193,7 +195,7 @@ const Sidebar = ({ isOpen, onClose }) => {
               onClick={() => setPerfumeOpen(!perfumeOpen)}
               className="w-full flex items-center justify-between px-4 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <span>Perfume</span>
+              <span>{t("Perfume")}</span>
               <FontAwesomeIcon
                 icon={faChevronDown}
                 className={`text-xs text-gray-400 transition-transform duration-200 ${perfumeOpen ? "rotate-180 text-blue-600" : ""
@@ -205,22 +207,22 @@ const Sidebar = ({ isOpen, onClose }) => {
               <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
                 <li>
                   <NavLink to="/perfume/clothes-perfume" onClick={onClose} className={subLinkStyle}>
-                    Clothes Perfume
+                    {t("Clothes Perfume")}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/perfume/deodorant" onClick={onClose} className={subLinkStyle}>
-                    Deodorant
+                    {t("Deodorant")}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/perfume/flower-fragrance" onClick={onClose} className={subLinkStyle}>
-                    Flower Fragrance
+                    {t("Flower Fragrance")}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/perfume/air-freshener" onClick={onClose} className={subLinkStyle}>
-                    Air Freshener
+                    {t("Air Freshener")}
                   </NavLink>
                 </li>
               </ul>
@@ -230,7 +232,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           {/* Profile */}
           <li>
             <NavLink to="/profile" onClick={onClose} className={linkStyle}>
-              Profile
+              {t("Profile")}
             </NavLink>
           </li>
         </ul>

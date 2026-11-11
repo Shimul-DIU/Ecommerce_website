@@ -25,6 +25,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { getInitials } from "../../utils/getInitials";
 import useProducts from "../../hooks/useProducts";
 import { LanguageContext } from "../../context/LanguageContext";
+import { translate } from "../../utils/translations";
 
 const ICON_ACTION = "text-lg sm:text-xl md:text-lg";
 const AVATAR_SIZE = "w-8 h-8 sm:w-10 sm:h-10";
@@ -67,6 +68,7 @@ const Navbar = ({ onMenuClick }) => {
 
   
   const { language, setLanguage } = useContext(LanguageContext);
+  const t = (text) => translate(language, text);
   const [currency, setCurrency] = useState("BDT (৳)");
 
   const closeTimer = useRef(null);
@@ -177,14 +179,18 @@ const Navbar = ({ onMenuClick }) => {
   };
 
   const getCategoryLink = (category, subItem) => {
-    const normalizedSubItem = subItem
+    const subcategory = subItem
       .toLowerCase()
-      .replace(/^fishing\s*-?/, "")
-      .replace(/ /g, "-");
-    const subcategory = `${category}-${normalizedSubItem}`;
+      .replace(/['’]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
 
     if (["men", "women", "fishing"].includes(category)) {
-      return `/${category}?category=${encodeURIComponent(subcategory)}`;
+      const filterCategory =
+        category === "men" && subcategory === "t-shirt"
+          ? "men-tshirt"
+          : `${category}-${subcategory.replace(/^fishing-/, "")}`;
+      return `/${category}?category=${encodeURIComponent(filterCategory)}`;
     }
 
     return `/products?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`;
@@ -257,7 +263,7 @@ const Navbar = ({ onMenuClick }) => {
       className={`absolute z-50 w-52 overflow-hidden rounded-2xl border border-[#E4DDCE] bg-white shadow-2xl text-sm ${className}`}
     >
       <div className="bg-[#16241F] px-4 py-3">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-[#B08946]">Welcome</p>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-[#B08946]">{t("Welcome")}</p>
         <p className="mt-0.5 truncate text-sm font-semibold text-[#FAF6EF]">
           {user?.fullname || "User"}
         </p>
@@ -323,11 +329,11 @@ const Navbar = ({ onMenuClick }) => {
               </span>
               <span className="hidden md:block h-3 w-px bg-white/15" />
               <div className="flex items-center gap-2">
-                <Link to="/help" className="hover:text-[#B08946] transition-colors">Help</Link>
+                <Link to="/help" className="hover:text-[#B08946] transition-colors">{t("Help")}</Link>
                 <span className="text-white/15">|</span>
-                <Link to="/support" className="hover:text-[#B08946] transition-colors">Support</Link>
+                <Link to="/support" className="hover:text-[#B08946] transition-colors">{t("Support")}</Link>
                 <span className="text-white/15">|</span>
-                <Link to="/contact" className="hover:text-[#B08946] transition-colors">Contact</Link>
+                <Link to="/contact" className="hover:text-[#B08946] transition-colors">{t("Contact")}</Link>
               </div>
             </div>
 
@@ -339,12 +345,12 @@ const Navbar = ({ onMenuClick }) => {
                   onChange={(e) => setLanguage(e.target.value)}
                   className="bg-transparent outline-none cursor-pointer text-xs text-inherit"
                 >
-                  <option value="EN" className="text-black">English (EN)</option>
-                  <option value="BN" className="text-black">বাংলা (BN)</option>
+                  <option value="EN" className="text-black">{t("English (EN)")}</option>
+                  <option value="BN" className="text-black">{t("বাংলা (BN)")}</option>
                 </select>
               </div>
 
-              <div className="flex items-center gap-1.5 hover:text-[#B08946] transition-colors">
+              {/* <div className="flex items-center gap-1.5 hover:text-[#B08946] transition-colors">
                 <FontAwesomeIcon icon={faMoneyBillWave} className="text-[#B08946]" />
                 <select
                   value={currency}
@@ -355,7 +361,7 @@ const Navbar = ({ onMenuClick }) => {
                   <option value="USD ($)" className="text-black">USD ($)</option>
                   <option value="EUR (€)" className="text-black">EUR (€)</option>
                 </select>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -382,7 +388,7 @@ const Navbar = ({ onMenuClick }) => {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => setSearchFocused(true)}
-                    placeholder="Search products..."
+                    placeholder={t("Search products...")}
                     autoFocus
                     className="flex-1 h-full outline-none bg-transparent text-sm text-[#16241F] placeholder:text-[#16241F]/40"
                   />
@@ -549,7 +555,7 @@ const Navbar = ({ onMenuClick }) => {
                                       onClick={() => setActiveDropdown(null)}
                                       className="w-fit text-[12px] font-medium text-[#16241F]/60 transition-all hover:text-[#B08946] hover:translate-x-1"
                                     >
-                                      {subItem}
+                                      {t(subItem)}
                                     </Link>
                                   ))}
                                 </div>
@@ -569,7 +575,7 @@ const Navbar = ({ onMenuClick }) => {
                               onClick={() => setActiveDropdown(null)}
                               className="block px-5 py-2 text-sm font-medium text-[#16241F]/75 transition-all hover:bg-[#FAF6EF] hover:text-[#B08946] hover:pl-6"
                             >
-                              {cat.name}
+                              {t(cat.name)}
                             </Link>
                           ))}
                         </div>
@@ -588,7 +594,7 @@ const Navbar = ({ onMenuClick }) => {
                                 onClick={() => setActiveDropdown(null)}
                                 className="block px-5 py-2 text-sm font-medium text-[#16241F]/75 transition-all hover:bg-[#FAF6EF] hover:text-[#B08946] hover:pl-6"
                               >
-                                {subItem}
+                                {t(subItem)}
                               </Link>
                             ))}
                           </div>
@@ -704,7 +710,7 @@ const Navbar = ({ onMenuClick }) => {
                                   onClick={() => setMobileCategoryOpen(false)}
                                   className="w-fit text-sm text-[#16241F]/65 transition-colors hover:text-[#B08946]"
                                 >
-                                  {subItem}
+                                  {t(subItem)}
                                 </Link>
                               ))}
                             </div>

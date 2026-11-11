@@ -15,8 +15,10 @@ import {
   faTwitter,
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons";
+import { useTranslation } from "../../utils/translations";
 
 const Contact = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -68,10 +70,10 @@ const Contact = () => {
         {/* ================= HEADER SECTION ================= */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-            Get in Touch With Us
+            {t("Get in Touch With Us")}
           </h1>
           <p className="mt-3 text-base sm:text-lg text-slate-600">
-            Have a question or feedback? Our team is here to assist you every step of the way.
+            {t("Have a question or feedback? Our team is here to assist you every step of the way.")}
           </p>
         </div>
 
@@ -83,7 +85,7 @@ const Contact = () => {
               <FontAwesomeIcon icon={faPhone} className="text-lg" />
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900 text-base mb-1">Phone Support</h3>
+              <h3 className="font-semibold text-slate-900 text-base mb-1">{t("Phone Support")}</h3>
               <p className="text-sm text-slate-600 mb-1">+880 1922773703</p>
               <p className="text-sm text-slate-600">+880 01540184685</p>
             </div>
@@ -95,7 +97,7 @@ const Contact = () => {
               <FontAwesomeIcon icon={faEnvelope} className="text-lg" />
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900 text-base mb-1">Email Us</h3>
+              <h3 className="font-semibold text-slate-900 text-base mb-1">{t("Email Us")}</h3>
               <p className="text-sm text-slate-600">md.shimulstore@gamil.com.com</p>
               <p className="text-sm text-slate-600 mb-1">md.shimuldiu7@gmail.com</p>
             </div>
@@ -107,7 +109,7 @@ const Contact = () => {
               <FontAwesomeIcon icon={faMapMarkerAlt} className="text-lg" />
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900 text-base mb-1">Showroom / Office</h3>
+              <h3 className="font-semibold text-slate-900 text-base mb-1">{t("Showroom / Office")}</h3>
               <p className="text-sm text-slate-600">
                 GM bari,North Badda, Bangladesh.
               </p>
@@ -120,8 +122,8 @@ const Contact = () => {
               <FontAwesomeIcon icon={faClock} className="text-lg" />
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900 text-base mb-1">Working Hours</h3>
-              <p className="text-sm text-slate-600 mb-1">Saturday - Thursday</p>
+              <h3 className="font-semibold text-slate-900 text-base mb-1">{t("Working Hours")}</h3>
+              <p className="text-sm text-slate-600 mb-1">{t("Saturday - Thursday")}</p>
               <p className="text-sm text-slate-600">9:00 AM - 10:00 PM</p>
             </div>
           </div>
@@ -132,7 +134,7 @@ const Contact = () => {
 
           {/* Contact Form */}
           <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100">
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Send Us a Message</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">{t("Send Us a Message")}</h2>
             <p className="text-slate-500 text-sm mb-6">
               Fill out the form below and our team will get back to you as soon as possible.
             </p>
@@ -146,19 +148,19 @@ const Contact = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Your Name *</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">{t("Your Name *")}</label>
                   <input
                     type="text"
                     name="name"
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="Enter your full name"
+                    placeholder={t("Enter your full name")}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Email Address *</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">{t("Email Address *")}</label>
                   <input
                     type="email"
                     name="email"
@@ -173,7 +175,7 @@ const Contact = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">{t("Phone Number")}</label>
                   <input
                     type="tel"
                     name="phone"
@@ -184,27 +186,27 @@ const Contact = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Subject</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">{t("Subject")}</label>
                   <input
                     type="text"
                     name="subject"
                     value={formData.subject}
                     onChange={handleChange}
-                    placeholder="e.g. Order Inquiry"
+                    placeholder={t("e.g. Order Inquiry")}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Message *</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t("Message *")}</label>
                 <textarea
                   name="message"
                   required
                   rows="4"
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Write your message or inquiry here..."
+                  placeholder={t("Write your message or inquiry here...")}
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm resize-none"
                 ></textarea>
               </div>
@@ -213,7 +215,7 @@ const Contact = () => {
                 type="submit"
                 className="w-full sm:w-auto px-7 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2"
               >
-                <span>Send Message</span>
+                <span>{t("Send Message")}</span>
                 <FontAwesomeIcon icon={faPaperPlane} className="text-xs" />
               </button>
             </form>
@@ -224,7 +226,7 @@ const Contact = () => {
             {/* Google Map */}
             <div className="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 h-full min-h-[300px] overflow-hidden">
               <iframe
-                title="Google Map Location"
+                title={t("Google Map Location")}
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.902442430132!2d90.3754223!3d23.7508581!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8b33cff1357%3A0x932c021312314b!2sDhanmondi%2032!5e0!3m2!1sen!2sbd!4v1680000000000!5m2!1sen!2sbd"
                 className="w-full h-full min-h-[300px] rounded-xl border-0"
                 allowFullScreen=""
@@ -234,7 +236,7 @@ const Contact = () => {
 
             {/* Social Media Links */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-              <h3 className="font-semibold text-slate-900 mb-3 text-sm">Follow Us on Social Media</h3>
+              <h3 className="font-semibold text-slate-900 mb-3 text-sm">{t("Follow Us on Social Media")}</h3>
               <div className="flex gap-3">
                 <a
                   href="https://www.Facebook.com"

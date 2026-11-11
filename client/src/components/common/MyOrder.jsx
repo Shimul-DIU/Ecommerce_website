@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useTranslation } from "../../utils/translations";
 
 // TODO: adjust this to match your actual backend route
 // e.g. `${import.meta.env.VITE_API_URL}/orders?email=${user.email}`
@@ -21,6 +22,7 @@ const formatDate = (dateString) =>
   });
 
 const MyOrders = ({ userEmail }) => {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -71,7 +73,7 @@ const MyOrders = ({ userEmail }) => {
   if (error) {
     return (
       <section className="max-w-4xl mx-auto py-16 px-6 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-600">{t(error)}</p>
       </section>
     );
   }
@@ -80,16 +82,16 @@ const MyOrders = ({ userEmail }) => {
     return (
       <section className="max-w-4xl mx-auto py-20 px-6 text-center">
         <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-          No orders yet
+          {t("No orders yet")}
         </h2>
         <p className="text-gray-500 mb-6">
-          Looks like you haven&apos;t placed any orders yet.
+          {t("Looks like you haven't placed any orders yet.")}
         </p>
         <a
           href="/"
           className="inline-block bg-blue-600 text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-blue-700 transition-all duration-300"
         >
-          Start Shopping
+          {t("Start Shopping")}
         </a>
       </section>
     );
@@ -98,7 +100,7 @@ const MyOrders = ({ userEmail }) => {
   return (
     <section className="max-w-4xl mx-auto py-16 px-6">
       <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">
-        My Orders
+        {t("My Orders")}
       </h2>
 
       <div className="space-y-5">
@@ -118,7 +120,7 @@ const MyOrders = ({ userEmail }) => {
               >
                 <div>
                   <p className="text-sm text-gray-500">
-                    Order #{order._id.slice(-8).toUpperCase()}
+                    {t("Order")} #{order._id.slice(-8).toUpperCase()}
                   </p>
                   <p className="text-xs text-gray-400 mt-0.5">
                     {formatDate(order.createdAt)}
@@ -160,7 +162,7 @@ const MyOrders = ({ userEmail }) => {
                               {item.name}
                             </p>
                             <p className="text-gray-500 text-xs">
-                              Qty: {item.quantity}
+                              {t("Qty")}: {item.quantity}
                             </p>
                           </div>
                         </div>
@@ -174,7 +176,7 @@ const MyOrders = ({ userEmail }) => {
                   {order.shippingAddress && (
                     <div className="mt-4 pt-4 border-t border-gray-200 text-sm text-gray-600">
                       <p className="font-medium text-gray-800 mb-1">
-                        Shipping Address
+                        {t("Shipping Address")}
                       </p>
                       <p>{order.shippingAddress}</p>
                     </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Package, Truck, Clock, CheckCircle2, ChevronRight } from "lucide-react";
+import { useTranslation } from "../../../utils/translations";
 
 const STATUS_STYLES = {
   Delivered: { classes: "bg-emerald-50 text-emerald-600", Icon: CheckCircle2 },
@@ -24,6 +25,7 @@ function Barcode({ seed = 1 }) {
 
 // order shape: { id, date, items: string[], total, status, tracking }
 export default function OrderCard({ order }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const { classes, Icon } = STATUS_STYLES[order.status] || STATUS_STYLES.Processing;
 
@@ -42,14 +44,14 @@ export default function OrderCard({ order }) {
         <div className="flex items-center gap-6">
           <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 ${classes}`}>
             <Icon size={14} />
-            <span className="text-xs font-semibold">{order.status}</span>
+            <span className="text-xs font-semibold">{t(order.status)}</span>
           </div>
           <p className="font-bold text-slate-900">&#2547;{order.total.toLocaleString()}</p>
           <button
             onClick={() => setOpen(!open)}
             className="flex items-center gap-1 text-sm text-slate-700"
           >
-            Details
+            {t("Details")}
             <ChevronRight
               size={16}
               style={{ transform: open ? "rotate(90deg)" : "none", transition: "transform 0.15s" }}
@@ -61,7 +63,7 @@ export default function OrderCard({ order }) {
       {open && (
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-dashed border-slate-300 px-5 py-4">
           <div>
-            <p className="text-[11px] uppercase tracking-wider text-slate-500">Tracking Number</p>
+            <p className="text-[11px] uppercase tracking-wider text-slate-500">{t("Tracking Number")}</p>
             <p className="text-[15px] text-slate-900">{order.tracking}</p>
           </div>
           <Barcode seed={order.id.length} />

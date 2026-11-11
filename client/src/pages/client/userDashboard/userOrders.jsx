@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import OrderCard from "./OrderCard";
+import { useTranslation } from "../../../utils/translations";
 
 export default function UserOrders() {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -17,11 +19,11 @@ export default function UserOrders() {
 
   return (
     <>
-      <h2 className="mb-4 text-lg font-bold text-slate-900">Order History</h2>
+      <h2 className="mb-4 text-lg font-bold text-slate-900">{t("Order History")}</h2>
       {loading ? (
-        <p className="text-sm text-slate-500">Loading...</p>
+        <p className="text-sm text-slate-500">{t("Loading...")}</p>
       ) : orders.length === 0 ? (
-        <p className="text-sm text-slate-500">You haven't placed any orders yet.</p>
+        <p className="text-sm text-slate-500">{t("You haven't placed any orders yet.")}</p>
       ) : (
         orders.map((o) => <OrderCard key={o.id} order={o} />)
       )}

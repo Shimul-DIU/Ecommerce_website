@@ -4,8 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 import { CountContext } from '../../context/CountContext'; // নিজের ফোল্ডার অনুযায়ী পাথ ঠিক করুন
+import { useTranslation } from '../../utils/translations';
 
 const ProductCard = ({ product }) => {
+  const { t } = useTranslation();
   const { wishlist, cart, toggleWishlist, toggleCart } = useContext(CountContext);
 
   const productId = String(product._id || product.id);
@@ -35,7 +37,7 @@ const ProductCard = ({ product }) => {
           />
           {product.isNew && (
             <span className="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-              New
+              {t("New")}
             </span>
           )}
           {product.discount && (
@@ -71,7 +73,7 @@ const ProductCard = ({ product }) => {
       <button
         type="button"
         onClick={handleWishlist}
-        aria-label={isWished ? 'Remove from wishlist' : 'Add to wishlist'}
+        aria-label={isWished ? t('Remove from wishlist') : t('Add to wishlist')}
         className="absolute top-3 right-3 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white shadow hover:scale-110 transition-transform"
       >
         <FontAwesomeIcon
@@ -87,7 +89,7 @@ const ProductCard = ({ product }) => {
           }`}
         onClick={handleCart}
       >
-        {inCart ? 'Added ✓' : 'Add to Cart'}
+        {inCart ? t('Added ✓') : t('Add to Cart')}
       </button>
     </div>
   );

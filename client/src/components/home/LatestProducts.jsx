@@ -8,6 +8,7 @@ import {
   faTag,
 } from "@fortawesome/free-solid-svg-icons";
 import { CountContext } from "../../context/CountContext";
+import { useTranslation } from "../../utils/translations";
 
 const API_URL = "/data/products.json";
 
@@ -37,6 +38,7 @@ const getTime = (p) => {
 };
 
 const LatestProducts = () => {
+  const { t } = useTranslation();
   const { wishlist, cart, toggleWishlist, toggleCart } = useContext(CountContext);
 
   const [products, setProducts] = useState([]);
@@ -109,10 +111,10 @@ const LatestProducts = () => {
       <div className="flex items-center justify-between pb-3">
         <div className="flex items-center gap-2">
           <h2 className="text-xl md:text-2xl lg:text-3xl font-medium text-[#16241F]">
-            Latest Products
+            {t("Latest Products")}
           </h2>
           <span className="ml-2 bg-[#FAF6EF] border border-[#E4DDCE] text-[#16241F]/70 text-xs sm:text-sm font-semibold px-2.5 py-0.5 rounded-full">
-            {products?.length || 0} Products
+            {products?.length || 0} {t("Products")}
           </span>
         </div>
 
@@ -122,7 +124,7 @@ const LatestProducts = () => {
           state={{ filter: "latest" }}
           className="group flex items-center gap-1.5 text-sm sm:text-base font-semibold text-[#16241F] hover:text-[#B08946] transition-colors duration-200"
         >
-          <span>See All</span>
+          <span>{t("See All")}</span>
           <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#FAF6EF] group-hover:bg-[#B08946] text-[#16241F] group-hover:text-white flex items-center justify-center transition-all duration-300">
             <FontAwesomeIcon
               icon={faArrowRight}

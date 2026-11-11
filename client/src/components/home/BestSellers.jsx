@@ -9,6 +9,7 @@ import {
   faFire,
 } from "@fortawesome/free-solid-svg-icons";
 import { CountContext } from "../../context/CountContext";
+import { useTranslation } from "../../utils/translations";
 
 const API_URL = "/data/products.json";
 
@@ -34,6 +35,7 @@ const gridColsMap = {
 };
 
 const BestSellers = () => {
+  const { t } = useTranslation();
   const { wishlist, cart, toggleWishlist, toggleCart } =
     useContext(CountContext);
 
@@ -102,11 +104,11 @@ const BestSellers = () => {
           <span className="hidden sm:block h-8 w-1 rounded-full bg-[#B08946]" />
           <div>
             <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-[#B08946]">
-              Most Loved
+              {t("Most Loved")}
             </p>
             <div className="flex items-center gap-2">
               <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#16241F] leading-tight">
-                Best Sellers
+                {t("Best Sellers")}
               </h2>
               <span className="hidden sm:inline-block bg-[#16241F] text-[#FAF6EF] text-xs font-semibold px-2.5 py-0.5 rounded-full">
                 {products?.length || 0}
@@ -120,7 +122,7 @@ const BestSellers = () => {
           state={{ filter: "best-sellers" }}
           className="group flex items-center gap-1.5 text-sm sm:text-base font-semibold text-[#16241F] hover:text-[#B08946] transition-colors duration-200"
         >
-          <span>See All</span>
+          <span>{t("See All")}</span>
           <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#FAF6EF] group-hover:bg-[#B08946] text-[#16241F] group-hover:text-white flex items-center justify-center transition-all duration-300">
             <FontAwesomeIcon
               icon={faArrowRight}

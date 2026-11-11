@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useTranslation } from "../../../utils/translations";
 
 export default function Addresses() {
+  const { t } = useTranslation();
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,26 +37,26 @@ export default function Addresses() {
   return (
     <>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-slate-900">Saved Addresses</h2>
+        <h2 className="text-lg font-bold text-slate-900">{t("Saved Addresses")}</h2>
         <button
           onClick={handleAddNew}
           className="flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-2 text-sm text-white"
         >
-          <Plus size={15} /> Add new
+          <Plus size={15} /> {t("Add new")}
         </button>
       </div>
 
       {loading ? (
-        <p className="text-sm text-slate-500">Loading...</p>
+        <p className="text-sm text-slate-500">{t("Loading...")}</p>
       ) : addresses.length === 0 ? (
-        <p className="text-sm text-slate-500">No addresses saved yet.</p>
+        <p className="text-sm text-slate-500">{t("No addresses saved yet.")}</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {addresses.map((a) => (
             <div key={a.id} className="relative rounded-lg border border-slate-200 bg-white p-4">
               {a.isDefault && (
                 <span className="absolute right-4 top-4 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] text-emerald-600">
-                  Default
+                  {t("Default")}
                 </span>
               )}
               <p className="font-semibold text-slate-900">{a.label}</p>
@@ -67,13 +69,13 @@ export default function Addresses() {
                   onClick={() => handleEdit(a.id)}
                   className="flex items-center gap-1 text-xs text-slate-700"
                 >
-                  <Pencil size={12} /> Edit
+                  <Pencil size={12} /> {t("Edit")}
                 </button>
                 <button
                   onClick={() => removeAddress(a.id)}
                   className="flex items-center gap-1 text-xs text-rose-600"
                 >
-                  <Trash2 size={12} /> Delete
+                  <Trash2 size={12} /> {t("Delete")}
                 </button>
               </div>
             </div>

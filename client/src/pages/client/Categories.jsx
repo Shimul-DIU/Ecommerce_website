@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { useTranslation } from "../../utils/translations";
 
 const categories = {
   perfume: ["Men's Perfume", "Women's Perfume"],
@@ -25,6 +26,7 @@ const slugify = (text) =>
     .replace(/(^-|-$)/g, "");
 
 const Categories = () => {
+  const { t } = useTranslation();
   const [openCategory, setOpenCategory] = useState(Object.keys(categories)[0]);
 
   const toggleCategory = (key) => {
@@ -34,7 +36,7 @@ const Categories = () => {
   return (
     <aside className="w-full max-w-xs bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
       <h2 className="text-lg font-bold text-gray-900 mb-4 pb-3 border-b border-gray-100">
-        Categories
+        {t("Categories")}
       </h2>
 
       <ul className="space-y-1">
@@ -49,7 +51,7 @@ const Categories = () => {
                 aria-expanded={isOpen}
                 className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left font-semibold text-gray-800 hover:bg-gray-50 transition-colors duration-150"
               >
-                <span>{categoryLabels[key]}</span>
+                <span>{t(categoryLabels[key])}</span>
                 <FontAwesomeIcon
                   icon={faChevronDown}
                   className={`text-xs text-gray-400 transition-transform duration-200 ${
@@ -75,7 +77,7 @@ const Categories = () => {
                         }`
                       }
                     >
-                      {item}
+                      {t(item)}
                     </NavLink>
                   </li>
                 ))}

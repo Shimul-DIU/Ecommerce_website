@@ -25,6 +25,7 @@ import {
 
 import { CountContext } from "../../context/CountContext";
 import useProducts from "../../hooks/useProducts";
+import { useTranslation } from "../../utils/translations";
 import { useScroll } from "../../hooks/useScroll";
 
 
@@ -73,6 +74,7 @@ const OFFER_TYPES = [
    ========================================================= */
 
 const Offer = () => {
+  const { t } = useTranslation();
   const isScrolled = useScroll();
 
   const {
@@ -341,7 +343,7 @@ const Offer = () => {
         />
 
         <h3 className="text-base font-bold text-[#16241F]">
-          Filter Offers
+          {t("Filter Offers")}
         </h3>
 
       </div>
@@ -352,7 +354,7 @@ const Offer = () => {
       <div>
 
         <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#16241F]/70">
-          Discount
+          {t("Discount")}
         </label>
 
         <select
@@ -369,7 +371,7 @@ const Offer = () => {
               key={offer.key}
               value={offer.key}
             >
-              {offer.label}
+              {t(offer.label)}
             </option>
 
           ))}
@@ -384,7 +386,7 @@ const Offer = () => {
       <div>
 
         <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#16241F]/70">
-          Sort By
+          {t("Sort By")}
         </label>
 
         <select
@@ -396,19 +398,19 @@ const Offer = () => {
         >
 
           <option value="default">
-            Featured
+            {t("Featured")}
           </option>
 
           <option value="discount-high">
-            Biggest Discount
+            {t("Biggest Discount")}
           </option>
 
           <option value="price-low">
-            Price: Low → High
+            {t("Price: Low → High")}
           </option>
 
           <option value="price-high">
-            Price: High → Low
+            {t("Price: High → Low")}
           </option>
 
         </select>
@@ -423,7 +425,7 @@ const Offer = () => {
         <div className="mb-2 flex items-center justify-between">
 
           <label className="text-[11px] font-bold uppercase tracking-wider text-[#16241F]/70">
-            Price Range
+            {t("Price Range")}
           </label>
 
           <span className="rounded-md border border-[#E4DDCE] bg-[#FAF6EF] px-2 py-1 text-[10px] font-bold text-[#B08946]">
@@ -489,7 +491,7 @@ const Offer = () => {
         />
 
         <span className="text-sm font-medium text-[#16241F]">
-          In stock only
+          {t("In stock only")}
         </span>
 
       </label>
@@ -502,7 +504,7 @@ const Offer = () => {
         onClick={resetFilters}
         className="w-full rounded-lg border border-[#16241F]/20 py-2.5 text-xs font-bold uppercase tracking-wider text-[#16241F] transition hover:bg-[#16241F] hover:text-white"
       >
-        Reset Filters
+        {t("Reset Filters")}
       </button>
 
     </div>
@@ -550,7 +552,7 @@ const Offer = () => {
 
           <img
             src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=1800&q=85"
-            alt="Special Offers"
+            alt={t("Special Offers")}
             className="h-full w-full object-cover"
           />
 
@@ -579,7 +581,7 @@ const Offer = () => {
                   />
 
                   <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#D8B766] sm:text-xs">
-                    Special Offers
+                    {t("Special Offers")}
                   </p>
 
                 </div>
@@ -588,15 +590,14 @@ const Offer = () => {
                 {/* Main Heading */}
 
                 <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
-                  Big Savings, Better Shopping
+                  {t("Big Savings, Better Shopping")}
                 </h1>
 
 
                 {/* Description */}
 
                 <p className="mt-3 max-w-md text-sm leading-6 text-white/75 sm:text-base">
-                  Grab amazing deals and exclusive discounts
-                  on your favorite products before they're gone.
+                  {t("Grab amazing deals and exclusive discounts on your favorite products before they're gone.")}
                 </p>
 
 
@@ -606,7 +607,7 @@ const Offer = () => {
                   href="#offer-products"
                   className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#B08946] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#967238]"
                 >
-                  Shop Offers
+                  {t("Shop Offers")}
 
                   <FontAwesomeIcon
                     icon={faArrowRight}
@@ -645,11 +646,11 @@ const Offer = () => {
           <div>
 
             <h2 className="text-xl font-bold text-[#16241F]">
-              Special Offers
+              {t("Special Offers")}
             </h2>
 
             <p className="mt-0.5 text-xs text-[#16241F]/50">
-              {filteredProducts.length} offers available
+              {filteredProducts.length} {t("offers available")}
             </p>
 
           </div>
@@ -668,7 +669,7 @@ const Offer = () => {
               className="text-[#B08946]"
             />
 
-            Filters
+            {t("Filters")}
 
           </button>
 
@@ -702,7 +703,7 @@ const Offer = () => {
               <div className="mb-6 flex items-center justify-between">
 
                 <h2 className="text-lg font-bold text-[#16241F]">
-                  Filters
+                  {t("Filters")}
                 </h2>
 
 
@@ -770,11 +771,11 @@ const Offer = () => {
               <div>
 
                 <h2 className="text-xl font-bold text-[#16241F]">
-                  Today's Best Offers
+                  {t("Today's Best Offers")}
                 </h2>
 
                 <p className="mt-0.5 text-xs text-[#16241F]/50">
-                  Showing {filteredProducts.length} discounted products
+                  {t("Showing")} {filteredProducts.length} {t("discounted products")}
                 </p>
 
               </div>
@@ -785,7 +786,7 @@ const Offer = () => {
               <div className="hidden items-center gap-2 sm:flex">
 
                 <span className="text-xs text-[#16241F]/50">
-                  Sort:
+                  {t("Sort:")}
                 </span>
 
                 <select
@@ -797,19 +798,19 @@ const Offer = () => {
                 >
 
                   <option value="default">
-                    Featured
+                    {t("Featured")}
                   </option>
 
                   <option value="discount-high">
-                    Biggest Discount
+                    {t("Biggest Discount")}
                   </option>
 
                   <option value="price-low">
-                    Price: Low → High
+                    {t("Price: Low → High")}
                   </option>
 
                   <option value="price-high">
-                    Price: High → Low
+                    {t("Price: High → Low")}
                   </option>
 
                 </select>
@@ -866,7 +867,7 @@ const Offer = () => {
                   />
 
                   <p className="font-semibold text-[#16241F]">
-                    No offers found
+                    {t("No offers found")}
                   </p>
 
                   <p className="mt-1 text-xs text-[#16241F]/50">
@@ -878,7 +879,7 @@ const Offer = () => {
                     onClick={resetFilters}
                     className="mt-4 rounded-lg bg-[#16241F] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#0F1A16]"
                   >
-                    Reset Filters
+                    {t("Reset Filters")}
                   </button>
 
                 </div>
@@ -978,7 +979,7 @@ const Offer = () => {
                             />
 
                             <span>
-                              {discountPercent}% OFF
+                              {discountPercent}% {t("OFF")}
                             </span>
 
                           </div>
@@ -1121,7 +1122,7 @@ const Offer = () => {
 
 
                                 <span className="shrink-0 rounded border border-[#E4DDCE]/60 bg-[#FAF6EF] px-1 py-0.5 text-[9px] font-medium text-[#16241F]/50 sm:text-[10px]">
-                                  Stock: {item.stock}
+                                  {t("Stock")}: {item.stock}
                                 </span>
 
                               </div>
@@ -1155,7 +1156,7 @@ const Offer = () => {
                               <span>
                                 {isOutOfStock
                                   ? "Unavailable"
-                                  : "Buy Now"}
+                                  : t("Buy Now")}
                               </span>
 
                             </button>

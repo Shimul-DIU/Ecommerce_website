@@ -31,6 +31,7 @@ import {
 import { faStar as faStarOutline } from "@fortawesome/free-regular-svg-icons";
 import axiosInstance from "../../utils/axiosInstance";
 import { AuthContext } from "../../context/AuthContext";
+import { useTranslation } from "../../utils/translations";
 
 const SHIPPING_FEE = 60;
 const FREE_SHIPPING_MIN = 2000;
@@ -100,6 +101,7 @@ const inputCls = (hasError) =>
   }`;
 
 const Checkout = () => {
+  const { t } = useTranslation();
   const { state } = useLocation();
   const navigate = useNavigate();
   const { accessToken } = useContext(AuthContext);
@@ -418,7 +420,7 @@ const Checkout = () => {
           </div>
         </div>
         <h2 className="text-2xl font-bold text-[#16241F] mt-2">
-          No Product Selected
+          {t("No Product Selected")}
         </h2>
         <p className="text-[#16241F]/60 max-w-md text-sm">
           Please select a product from the shop page to proceed to checkout.
@@ -428,7 +430,7 @@ const Checkout = () => {
           className="bg-[#16241F] text-[#FAF6EF] px-7 py-3 rounded-xl font-semibold hover:bg-[#B08946] hover:text-[#16241F] transition flex items-center gap-2 shadow-lg mt-2"
         >
           <FontAwesomeIcon icon={faArrowLeft} size="sm" />
-          Return to Shop
+          {t("Return to Shop")}
         </button>
       </div>
     );
@@ -443,12 +445,12 @@ const Checkout = () => {
             <span className="hidden sm:block h-10 w-1 rounded-full bg-[#B08946]" />
             <div>
               <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-[#B08946]">
-                Secure Checkout
+                {t("Secure Checkout")}
               </p>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#16241F] tracking-tight leading-tight">
-                Checkout
+                {t("Checkout")}
                 <span className="ml-2 align-middle text-xs sm:text-sm font-semibold bg-[#16241F] text-[#FAF6EF] px-2.5 py-1 rounded-full">
-                  {items.length} product{items.length > 1 ? "s" : ""}
+                  {items.length} {t("products")}
                 </span>
               </h1>
             </div>
@@ -461,7 +463,7 @@ const Checkout = () => {
             <span className="w-8 h-8 rounded-full bg-white border border-[#E4DDCE] group-hover:bg-[#B08946] group-hover:text-white group-hover:border-[#B08946] flex items-center justify-center transition-all">
               <FontAwesomeIcon icon={faArrowLeft} className="text-xs" />
             </span>
-            <span className="hidden sm:inline">Back</span>
+            <span className="hidden sm:inline">{t("Back")}</span>
           </button>
         </div>
 
@@ -523,7 +525,7 @@ const Checkout = () => {
               }
               className="text-lg"
             />
-            <p className="font-semibold">{serverMessage}</p>
+            <p className="font-semibold">{t(serverMessage)}</p>
           </div>
         </div>
       )}
@@ -543,32 +545,32 @@ const Checkout = () => {
               <div>
                 <SectionTitle
                   icon={faUser}
-                  step="Step 01"
-                  title="Contact Information"
+                  step={t("Step 01")}
+                  title={t("Contact Information")}
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                   {/* NAME */}
                   <div>
                     <label className={labelCls}>
-                      Full Name <span className="text-red-500">*</span>
+                      {t("Full Name")} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       name="name"
                       value={formdata.name}
                       onChange={changeHandler}
-                      placeholder="Enter your name"
+                      placeholder={t("Enter your name")}
                       className={inputCls(error.field === "name")}
                     />
                     {error.field === "name" && (
-                      <FieldError message={error.message} />
+                      <FieldError message={t(error.message)} />
                     )}
                   </div>
 
                   {/* PHONE */}
                   <div>
                     <label className={labelCls}>
-                      Phone Number <span className="text-red-500">*</span>
+                      {t("Phone Number")} <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <span className="absolute left-0 top-0 bottom-0 flex items-center px-3 rounded-l-xl bg-[#16241F] text-[#B08946] text-xs sm:text-sm font-bold">
@@ -585,7 +587,7 @@ const Checkout = () => {
                       />
                     </div>
                     {error.field === "phone" && (
-                      <FieldError message={error.message} />
+                      <FieldError message={t(error.message)} />
                     )}
                   </div>
                 </div>
@@ -595,22 +597,22 @@ const Checkout = () => {
               <div>
                 <SectionTitle
                   icon={faLocationDot}
-                  step="Step 02"
-                  title="Delivery Address"
+                  step={t("Step 02")}
+                  title={t("Delivery Address")}
                 />
                 <label className={labelCls}>
-                  Full Address <span className="text-red-500">*</span>
+                  {t("Full Address")} <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   rows="3"
                   name="address"
                   value={formdata.address}
                   onChange={changeHandler}
-                  placeholder="House no, Road no, Area, Thana, District..."
+                  placeholder={t("House no, Road no, Area, Thana, District...")}
                   className={`${inputCls(error.field === "address")} resize-none`}
                 />
                 {error.field === "address" && (
-                  <FieldError message={error.message} />
+                  <FieldError message={t(error.message)} />
                 )}
               </div>
 
@@ -618,8 +620,8 @@ const Checkout = () => {
               <div>
                 <SectionTitle
                   icon={faWallet}
-                  step="Step 03"
-                  title="Payment Method"
+                  step={t("Step 03")}
+                  title={t("Payment Method")}
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                   {["bkash", "nagad", "cod"].map((method) => {
@@ -666,15 +668,15 @@ const Checkout = () => {
                             selected ? "text-[#FAF6EF]" : "text-[#16241F]"
                           }`}
                         >
-                          {method === "cod" ? "Cash on Delivery" : method}
+                          {method === "cod" ? t("Cash on Delivery") : t(method)}
                           <span
                             className={`block text-[11px] font-medium normal-case ${
                               selected ? "text-[#FAF6EF]/60" : "text-[#16241F]/45"
                             }`}
                           >
                             {method === "cod"
-                              ? "পণ্য হাতে পেয়ে টাকা দিন"
-                              : "মোবাইল পেমেন্ট"}
+                              ? t("Pay when your order arrives")
+                              : t("Mobile payment")}
                           </span>
                         </span>
                         {selected && (
@@ -688,7 +690,7 @@ const Checkout = () => {
                   })}
                 </div>
                 {error.field === "paymentMethod" && (
-                  <FieldError message={error.message} />
+                  <FieldError message={t(error.message)} />
                 )}
 
                 {/* bKash / Nagad extra fields */}
@@ -700,13 +702,13 @@ const Checkout = () => {
                         icon={faShieldHalved}
                         className="text-[#B08946]"
                       />
-                      <span className="capitalize">{formdata.paymentMethod}</span>{" "}
-                      পেমেন্টের তথ্য দিন
+                      <span className="capitalize">{t(formdata.paymentMethod)}</span>{" "}
+                      {t("Enter payment details")}
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       <div>
                         <label className={labelCls}>
-                          Mobile Number <span className="text-red-500">*</span>
+                          {t("Mobile Number")} <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="tel"
@@ -718,23 +720,23 @@ const Checkout = () => {
                           className={inputCls(error.field === "mobileNumber")}
                         />
                         {error.field === "mobileNumber" && (
-                          <FieldError message={error.message} />
+                          <FieldError message={t(error.message)} />
                         )}
                       </div>
                       <div>
                         <label className={labelCls}>
-                          Transaction ID <span className="text-red-500">*</span>
+                          {t("Transaction ID")} <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
                           name="transactionId"
                           value={formdata.transactionId}
                           onChange={changeHandler}
-                          placeholder="Enter Transaction ID"
+                          placeholder={t("Enter Transaction ID")}
                           className={inputCls(error.field === "transactionId")}
                         />
                         {error.field === "transactionId" && (
-                          <FieldError message={error.message} />
+                          <FieldError message={t(error.message)} />
                         )}
                       </div>
                     </div>
@@ -750,9 +752,9 @@ const Checkout = () => {
 
             <div className="relative">
               <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#B08946]">
-                Summary
+                {t("Summary")}
               </p>
-              <h3 className="text-lg sm:text-xl font-bold mb-4">Order Summary</h3>
+              <h3 className="text-lg sm:text-xl font-bold mb-4">{t("Order Summary")}</h3>
 
               {/* Free shipping progress */}
               <div className="mb-4 p-3 rounded-2xl bg-white/5 border border-white/10">
@@ -812,7 +814,7 @@ const Checkout = () => {
                   </span>
                 </div>
                 <div className="flex justify-between text-[#FAF6EF]/70">
-                  <span>Delivery Charge</span>
+                  <span>{t("Delivery Charge")}</span>
                   <span
                     className={`font-semibold ${
                       summary.shipping === 0 ? "text-green-300" : "text-[#FAF6EF]"
@@ -827,7 +829,7 @@ const Checkout = () => {
 
               <div className="flex justify-between items-end">
                 <span className="font-semibold text-sm sm:text-base text-[#FAF6EF]/80">
-                  Total Amount
+                  {t("Total Amount")}
                 </span>
                 <span className="text-3xl sm:text-4xl font-black text-[#B08946] leading-none">
                   ৳{summary.total.toLocaleString()}
@@ -866,13 +868,13 @@ const Checkout = () => {
           {/* REVIEW */}
           {reviewProduct && (
             <div className="bg-white rounded-3xl border border-[#E4DDCE] p-4 sm:p-7 shadow-sm space-y-4">
-              <SectionTitle icon={faStar} title="Ratings & Reviews" />
+              <SectionTitle icon={faStar} title={t("Ratings & Reviews")} />
 
               {/* Product selector (একাধিক প্রোডাক্ট থাকলে) */}
               {items.length > 1 && (
                 <div>
                   <p className="text-[11px] font-bold text-[#16241F]/55 mb-2 uppercase tracking-[0.15em]">
-                    Select product to review
+                    {t("Select product to review")}
                   </p>
                   <div className="flex gap-2 overflow-x-auto pb-1">
                     {items.map((item) => (
@@ -912,7 +914,7 @@ const Checkout = () => {
                 className="space-y-3 bg-[#FAF6EF] p-4 rounded-2xl border border-[#E4DDCE]"
               >
                 <div>
-                  <label className={labelCls}>Your Rating</label>
+                  <label className={labelCls}>{t("Your Rating")}</label>
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
@@ -942,7 +944,7 @@ const Checkout = () => {
                     value={reviewComment}
                     onChange={(e) => setReviewComment(e.target.value)}
                     maxLength={500}
-                    placeholder="Write your honest review here..."
+                    placeholder={t("Write your honest review here...")}
                     className="w-full border border-[#E4DDCE] rounded-xl p-3 text-sm outline-none focus:border-[#B08946] focus:ring-4 focus:ring-[#B08946]/15 bg-white resize-none"
                   />
                   <div className="text-right text-xs text-[#16241F]/40 mt-1">
@@ -1037,7 +1039,7 @@ const Checkout = () => {
         <div className="lg:col-span-5 flex flex-col gap-5 order-1 lg:order-2 lg:sticky lg:top-44">
           {/* PRODUCT LIST */}
           <div className="bg-white rounded-3xl border border-[#E4DDCE] p-4 sm:p-5 shadow-sm">
-            <SectionTitle icon={faShoppingBag} title="Your Items" />
+            <SectionTitle icon={faShoppingBag} title={t("Your Items")} />
 
             <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
               {items.map((item) => {
@@ -1078,7 +1080,7 @@ const Checkout = () => {
                           <button
                             type="button"
                             onClick={() => removeItem(item._id)}
-                            aria-label="Remove item"
+                            aria-label={t("Remove item")}
                             className="shrink-0 w-7 h-7 rounded-full text-[#16241F]/35 hover:bg-red-50 hover:text-red-500 transition flex items-center justify-center"
                           >
                             <FontAwesomeIcon icon={faTrash} className="text-xs" />
@@ -1107,7 +1109,7 @@ const Checkout = () => {
                             type="button"
                             onClick={() => decreaseQty(item._id)}
                             disabled={item.quantity <= 1}
-                            aria-label="Decrease quantity"
+                            aria-label={t("Decrease quantity")}
                             className="w-8 h-8 text-[#16241F] hover:bg-[#16241F] hover:text-[#B08946] disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#16241F] transition"
                           >
                             <FontAwesomeIcon icon={faMinus} className="text-[10px]" />
@@ -1119,7 +1121,7 @@ const Checkout = () => {
                             type="button"
                             onClick={() => increaseQty(item._id)}
                             disabled={item.quantity >= maxQty}
-                            aria-label="Increase quantity"
+                            aria-label={t("Increase quantity")}
                             className="w-8 h-8 text-[#16241F] hover:bg-[#16241F] hover:text-[#B08946] disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#16241F] transition"
                           >
                             <FontAwesomeIcon icon={faPlus} className="text-[10px]" />
@@ -1137,7 +1139,7 @@ const Checkout = () => {
             </div>
 
             {error.field === "quantity" && (
-              <FieldError message={error.message} />
+              <FieldError message={t(error.message)} />
             )}
           </div>
 

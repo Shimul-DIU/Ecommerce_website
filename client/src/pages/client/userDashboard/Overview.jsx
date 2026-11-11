@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import AddProductSection from "./AddProductSection";
 import axiosInstance from "../../../utils/axiosInstance";
+import { useTranslation } from "../../../utils/translations";
 
 /* ---------------- Status styles ---------------- */
 const statusStyles = {
@@ -70,6 +71,7 @@ const OverviewSkeleton = () => (
 
 /* ---------------- Component ---------------- */
 export default function Overview() {
+  const { t } = useTranslation();
   const [wishlistCount, setWishlistCount] = useState(0);
   const [rewardPoints, setRewardPoints] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -105,28 +107,28 @@ export default function Overview() {
 
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#B08946]">
-            Overview
+            {t("Overview")}
           </p>
-          <h1 className="text-2xl font-bold text-[#16241F]">My Dashboard</h1>
+          <h1 className="text-2xl font-bold text-[#16241F]">{t("My Dashboard")}</h1>
         </div>
       </div>
 
       {/* ============ STAT CARDS ============ */}
       <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
         <Link to="/userDashboard/user-orders" className="block">
-          <StatCard label="Total Orders" value={orders.length} Icon={Package} />
+          <StatCard label={t("Total Orders")} value={orders.length} Icon={Package} />
         </Link>
 
-        <StatCard label="In Transit" value={inTransitCount} Icon={Truck} />
+        <StatCard label={t("In Transit")} value={inTransitCount} Icon={Truck} />
 
         <StatCard
-          label="Wishlist Items"
+          label={t("Wishlist Items")}
           value={wishlistCount}
           Icon={Heart}
         />
 
         <StatCard
-          label="Reward Points"
+          label={t("Reward Points")}
           value={rewardPoints.toLocaleString()}
           Icon={Star}
         />
@@ -144,10 +146,10 @@ export default function Overview() {
             <span className="h-7 w-1 rounded-full bg-[#B08946]" />
             <div>
               <h2 className="text-lg font-bold text-[#16241F]">
-                Recent Orders
+                {t("Recent Orders")}
               </h2>
               <p className="text-xs text-[#16241F]/50">
-                Your latest purchases
+                {t("Your latest purchases")}
               </p>
             </div>
           </div>
@@ -156,7 +158,7 @@ export default function Overview() {
             to="/userDashboard/user-orders"
             className="group flex items-center gap-1.5 text-sm font-semibold text-[#B08946] transition hover:text-[#16241F]"
           >
-            See all orders
+            {t("See all orders")}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
@@ -168,9 +170,9 @@ export default function Overview() {
               <Package className="h-8 w-8" />
             </div>
 
-            <p className="font-semibold text-[#16241F]">No orders found</p>
+            <p className="font-semibold text-[#16241F]">{t("No orders found")}</p>
             <p className="mt-1 text-sm text-[#16241F]/50">
-              You haven't placed any order yet.
+              {t("You haven't placed any order yet.")}
             </p>
 
             <Link
@@ -178,7 +180,7 @@ export default function Overview() {
               className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#16241F] px-5 py-2.5 text-sm font-semibold text-[#FAF6EF] shadow-md transition hover:bg-[#B08946] hover:text-[#16241F]"
             >
               <ShoppingBag className="h-4 w-4" />
-              Browse Products
+              {t("Browse Products")}
             </Link>
           </div>
         ) : (
@@ -192,7 +194,7 @@ export default function Overview() {
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E4DDCE]/70 bg-[#FAF6EF]/70 px-5 py-3">
                   <div className="min-w-0">
                     <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#16241F]/45">
-                      Order
+                      {t("Order")}
                     </p>
                     <p className="truncate text-sm font-bold text-[#16241F]">
                       #{String(order._id).slice(-8).toUpperCase()}
@@ -230,7 +232,7 @@ export default function Overview() {
                       src={
                         order.productSnapshot?.image || "/placeholder-image.jpg"
                       }
-                      alt={order.productSnapshot?.name || "Product"}
+                      alt={order.productSnapshot?.name || t("Product")}
                       className="h-20 w-20 shrink-0 rounded-xl border border-[#E4DDCE] object-cover"
                     />
 
@@ -239,7 +241,7 @@ export default function Overview() {
                         {order.productSnapshot?.name || "Unknown Product"}
                       </p>
                       <p className="mt-0.5 truncate text-xs text-[#16241F]/40">
-                        ID: {order.productSnapshot?.productId || "N/A"}
+                        {t("ID")}: {order.productSnapshot?.productId || "N/A"}
                       </p>
                       <p className="mt-2 text-sm font-medium text-[#16241F]/70">
                         ৳{order.productSnapshot?.price?.toLocaleString() || 0}{" "}
@@ -252,12 +254,12 @@ export default function Overview() {
                   {/* Price breakdown */}
                   <div className="space-y-1.5 border-t border-dashed border-[#E4DDCE] pt-3">
                     <div className="flex justify-between text-sm text-[#16241F]/60">
-                      <span>Subtotal</span>
+                      <span>{t("Subtotal")}</span>
                       <span>৳{order.subtotal?.toLocaleString() || 0}</span>
                     </div>
 
                     <div className="flex justify-between text-sm text-[#16241F]/60">
-                      <span>Delivery</span>
+                      <span>{t("Delivery")}</span>
                       <span>
                         ৳{order.deliveryCharge?.toLocaleString() || 0}
                       </span>
@@ -268,7 +270,7 @@ export default function Overview() {
                 {/* Total footer */}
                 <div className="flex items-center justify-between bg-[#16241F] px-5 py-3.5 text-[#FAF6EF]">
                   <span className="text-xs font-bold uppercase tracking-[0.15em] text-[#FAF6EF]/70">
-                    Total
+                    {t("Total")}
                   </span>
                   <span className="text-lg font-bold text-[#B08946]">
                     ৳{order.total?.toLocaleString() || 0}

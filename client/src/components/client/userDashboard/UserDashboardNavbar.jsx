@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
+import { useTranslation } from "../../../utils/translations";
 
 const navItems = [
   { to: "/userDashboard/user-overview", icon: LayoutDashboard, label: "Overview" },
@@ -20,6 +21,7 @@ const navItems = [
 ];
 
 const UserDashboardNavbar = ({ setIsExpanded }) => {
+  const { t } = useTranslation();
   const { logout } = useContext(AuthContext);
 
   const closeOnMobile = () => {
@@ -52,7 +54,7 @@ const UserDashboardNavbar = ({ setIsExpanded }) => {
                 key={item.to}
                 to={item.to}
                 onClick={handleItemClick}
-                title={item.label}
+                title={t(item.label)}
                 className={({ isActive }) =>
                   `relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 transition-colors duration-200 ${
                     isActive
@@ -68,7 +70,7 @@ const UserDashboardNavbar = ({ setIsExpanded }) => {
                     )}
                     <Icon size={20} strokeWidth={isActive ? 2.4 : 2} />
                     <span className="text-[10px] font-semibold">
-                      {item.label}
+                      {t(item.label)}
                     </span>
                   </>
                 )}
@@ -79,11 +81,11 @@ const UserDashboardNavbar = ({ setIsExpanded }) => {
           <button
             type="button"
             onClick={handleLogout}
-            title="Logout"
+            title={t("Logout")}
             className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-red-500 transition-colors hover:text-red-600"
           >
             <LogOut size={20} strokeWidth={2} />
-            <span className="text-[10px] font-semibold">Logout</span>
+            <span className="text-[10px] font-semibold">{t("Logout")}</span>
           </button>
         </div>
       </nav>
@@ -108,7 +110,7 @@ const UserDashboardNavbar = ({ setIsExpanded }) => {
                 ShimulShop
               </span>
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B08946]">
-                User Panel
+                {t("User Panel")}
               </span>
             </div>
           </div>
@@ -143,7 +145,7 @@ const UserDashboardNavbar = ({ setIsExpanded }) => {
                           isActive ? "" : "group-hover:scale-110"
                         }`}
                       />
-                      <span className="whitespace-nowrap">{item.label}</span>
+                      <span className="whitespace-nowrap">{t(item.label)}</span>
                     </>
                   )}
                 </NavLink>
@@ -160,7 +162,7 @@ const UserDashboardNavbar = ({ setIsExpanded }) => {
             className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-300 transition-colors hover:bg-red-500/15 hover:text-red-200"
           >
             <LogOut size={20} strokeWidth={2} className="shrink-0" />
-            <span className="whitespace-nowrap">Logout</span>
+            <span className="whitespace-nowrap">{t("Logout")}</span>
           </button>
         </div>
       </aside>

@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { CountContext } from "../../../context/CountContext";
 import useProducts from "../../../hooks/useProducts";
+import { useTranslation } from "../../../utils/translations";
 
 const QTY_KEY = "cartQty";
 const SHIPPING_FEE = 60;
@@ -24,6 +25,7 @@ const readQty = () => {
 };
 
 const CartPage = () => {
+  const { t } = useTranslation();
   const { cart, toggleCart } = useContext(CountContext);
   const [products, loading, error] = useProducts();
   const navigate = useNavigate();
@@ -196,17 +198,17 @@ const CartPage = () => {
           />
         </div>
         <h2 className="text-xl font-bold text-slate-800 mb-2">
-          Your cart is empty
+          {t("Your cart is empty")}
         </h2>
         <p className="text-sm text-slate-500 mb-6">
-          No products added yet. Start shopping.
+          {t("No products added yet. Start shopping.")}
         </p>
         <Link
           to="/products"
           className="inline-flex items-center gap-2 bg-blue-600 text-white text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-blue-700 transition-colors"
         >
           <FontAwesomeIcon icon={faArrowLeft} className="text-xs" />
-          Shop Now
+          {t("Shop Now")}
         </Link>
       </div>
     );
@@ -217,7 +219,7 @@ const CartPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl sm:text-2xl font-bold text-slate-800">
-          Shopping Cart
+          {t("Shopping Cart")}
           <span className="ml-2 text-sm font-medium text-slate-400">
             ({cartItems.length} item{cartItems.length > 1 ? "s" : ""})
           </span>
@@ -227,7 +229,7 @@ const CartPage = () => {
           className="hidden sm:flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
         >
           <FontAwesomeIcon icon={faArrowLeft} className="text-xs" />
-          Continue Shopping
+          {t("Continue Shopping")}
         </Link>
       </div>
 
@@ -273,7 +275,7 @@ const CartPage = () => {
 
                   {outOfStock && (
                     <p className="text-xs font-semibold text-red-500 mt-1">
-                      Out of stock — not included in total
+                      {t("Out of stock — not included in total")}
                     </p>
                   )}
 
@@ -284,7 +286,7 @@ const CartPage = () => {
                         <button
                           onClick={() => handleDecrease(item.id)}
                           disabled={item.quantity <= 1}
-                          aria-label="Decrease quantity"
+                          aria-label={t("Decrease quantity")}
                           className="w-7 h-7 flex items-center justify-center text-slate-500 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                         >
                           <FontAwesomeIcon
@@ -298,7 +300,7 @@ const CartPage = () => {
                         <button
                           onClick={() => handleIncrease(item.id, item.stock)}
                           disabled={item.quantity >= item.stock}
-                          aria-label="Increase quantity"
+                          aria-label={t("Increase quantity")}
                           className="w-7 h-7 flex items-center justify-center text-slate-500 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                         >
                           <FontAwesomeIcon
@@ -314,7 +316,7 @@ const CartPage = () => {
                       className="flex items-center gap-1.5 text-xs font-medium text-red-500 hover:text-red-600 transition-colors"
                     >
                       <FontAwesomeIcon icon={faTrash} className="text-xs" />
-                      <span className="hidden sm:inline">Remove</span>
+                      <span className="hidden sm:inline">{t("Remove")}</span>
                     </button>
                   </div>
                 </div>
@@ -322,7 +324,7 @@ const CartPage = () => {
                 {/* Line Total (desktop) */}
                 {!outOfStock && (
                   <div className="hidden sm:block text-right shrink-0">
-                    <p className="text-xs text-slate-400 mb-1">Total</p>
+                    <p className="text-xs text-slate-400 mb-1">{t("Total")}</p>
                     <p className="text-sm font-bold text-slate-800">
                       ৳{(item.price * item.quantity).toLocaleString()}
                     </p>
@@ -337,7 +339,7 @@ const CartPage = () => {
         <div className="lg:col-span-1">
           <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-5 sticky top-24">
             <h2 className="text-base font-bold text-slate-800 mb-4">
-              Order Summary
+              {t("Order Summary")}
             </h2>
 
             <div className="flex flex-col gap-2.5 text-sm">
@@ -346,7 +348,7 @@ const CartPage = () => {
                 <>
                   <div className="flex items-center justify-between text-slate-500">
                     <span>
-                      Items ({summary.totalQty} pc
+                      {t("Items")} ({summary.totalQty} {t("pc")}
                       {summary.totalQty !== 1 ? "s" : ""})
                     </span>
                     <span className="text-slate-700 font-medium">
@@ -354,7 +356,7 @@ const CartPage = () => {
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-slate-500">
-                    <span>Discount</span>
+                    <span>{t("Discount")}</span>
                     <span className="text-green-600 font-medium">
                       -৳{summary.discount.toLocaleString()}
                     </span>
@@ -365,7 +367,7 @@ const CartPage = () => {
               {/* pcs সংখ্যা Subtotal-এর লেখাতেই থাকবে */}
               <div className="flex items-center justify-between text-slate-500">
                 <span>
-                  Subtotal ({summary.totalQty} pc
+                  {t("Subtotal")} ({summary.totalQty} {t("pc")}
                   {summary.totalQty !== 1 ? "s" : ""})
                 </span>
                 <span className="text-slate-700 font-medium">
@@ -374,19 +376,19 @@ const CartPage = () => {
               </div>
 
               <div className="flex items-center justify-between text-slate-500">
-                <span>Delivery charge</span>
+                <span>{t("Delivery charge")}</span>
                 <span
                   className={`font-medium ${summary.shipping === 0 ? "text-green-600" : "text-slate-700"
                     }`}
                 >
-                  {summary.shipping === 0 ? "Free" : `৳${summary.shipping}`}
+                  {summary.shipping === 0 ? t("Free") : `৳${summary.shipping}`}
                 </span>
               </div>
             </div>
 
             <div className="flex items-center justify-between border-t border-slate-100 mt-3 pt-3">
               <span className="text-sm font-semibold text-slate-800">
-                Total
+                {t("Total")}
               </span>
               <span className="text-lg font-bold text-blue-600">
                 ৳{summary.total.toLocaleString()}
@@ -405,15 +407,15 @@ const CartPage = () => {
               disabled={payableItems.length === 0}
               className="w-full mt-5 bg-blue-600 text-white text-sm font-semibold py-3 rounded-full hover:bg-blue-700 transition-colors shadow-sm shadow-blue-200 disabled:bg-slate-300 disabled:shadow-none disabled:cursor-not-allowed"
             >
-              Proceed to Checkout
+              {t("Proceed to Checkout")}
             </button>
 
             <p className="text-[11px] text-slate-400 text-center mt-3">
               {summary.remainingForFree > 0
-                ? `Add ৳${summary.remainingForFree.toLocaleString()} more for free delivery`
+                ? `${t("Add")} ৳${summary.remainingForFree.toLocaleString()} ${t("more for free delivery")}`
                 : summary.subtotal > 0
-                  ? "You got free delivery 🎉"
-                  : `Free delivery on orders over ৳${FREE_SHIPPING_MIN}`}
+                  ? t("You got free delivery 🎉")
+                  : `${t("Free delivery on orders over")} ৳${FREE_SHIPPING_MIN}`}
             </p>
           </div>
         </div>

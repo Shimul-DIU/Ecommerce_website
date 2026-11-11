@@ -9,6 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "../../utils/axiosInstance"; // path নিজের মতো ঠিক করো
 import { CountContext } from "../../context/CountContext"; // path নিজের মতো ঠিক করো
+import { useTranslation } from "../../utils/translations";
 
 // ============================================================
 // IMAGE URL
@@ -72,6 +73,7 @@ const Colon = () => (
 // DEAL CARD
 // ============================================================
 function DealCard({ deal }) {
+  const { t } = useTranslation();
   const { name, description, price, oldPrice, sold = 0, stock = 0 } = deal;
   const image = getImageUrl(deal.image);
 
@@ -151,7 +153,7 @@ function DealCard({ deal }) {
               {discountPercent}%
             </span>
             <span className="text-[9px] sm:text-[10px] font-bold tracking-widest">
-              OFF
+              {t("OFF")}
             </span>
           </div>
         )}
@@ -160,7 +162,7 @@ function DealCard({ deal }) {
         {unavailable && (
           <div className="absolute inset-0 z-20 bg-[#16241F]/55 flex items-center justify-center">
             <span className="rotate-[-8deg] border-2 border-white/80 text-white text-sm sm:text-base font-extrabold uppercase tracking-[0.2em] px-4 py-1.5 rounded-md">
-              {expired ? "Deal Ended" : "Sold Out"}
+              {expired ? t("Deal Ended") : t("Sold Out")}
             </span>
           </div>
         )}
@@ -172,7 +174,7 @@ function DealCard({ deal }) {
           {/* Tag */}
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[#B08946]/15 border border-[#B08946]/40 text-[#B08946] text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] px-3 py-1">
             <FontAwesomeIcon icon={faBolt} className="text-[10px]" />
-            Flash Deal
+            {t("Flash Deal")}
           </span>
 
           <h3 className="mt-3 text-lg sm:text-2xl md:text-3xl font-semibold text-[#FAF6EF] leading-snug line-clamp-2">
@@ -228,18 +230,18 @@ function DealCard({ deal }) {
           {/* Countdown */}
           <div className="mt-4 sm:mt-5">
             <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.18em] text-[#FAF6EF]/50 mb-2">
-              {expired ? "Deal ended" : "Offer ends in"}
+              {expired ? t("Deal ended") : t("Offer ends in")}
             </p>
 
             {!expired && (
               <div className="flex items-start gap-1.5 sm:gap-2.5">
-                <TimeBox value={days} label="Days" />
+                <TimeBox value={days} label={t("Days")} />
                 <Colon />
-                <TimeBox value={hours} label="Hrs" />
+                <TimeBox value={hours} label={t("Hrs")} />
                 <Colon />
-                <TimeBox value={minutes} label="Min" />
+                <TimeBox value={minutes} label={t("Min")} />
                 <Colon />
-                <TimeBox value={seconds} label="Sec" />
+                <TimeBox value={seconds} label={t("Sec")} />
               </div>
             )}
           </div>
@@ -252,7 +254,7 @@ function DealCard({ deal }) {
             disabled={unavailable}
             className="flex-1 sm:flex-none sm:min-w-[160px] flex items-center justify-center gap-2 px-5 py-2.5 sm:py-3 rounded-xl bg-[#B08946] hover:bg-[#C49A52] active:scale-[0.98] text-[#16241F] text-sm sm:text-base font-bold shadow-md transition disabled:bg-white/10 disabled:text-white/30 disabled:cursor-not-allowed"
           >
-            <span>Buy Now</span>
+            <span>{t("Buy Now")}</span>
             <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
           </button>
 
@@ -267,10 +269,10 @@ function DealCard({ deal }) {
           >
             <FontAwesomeIcon icon={faShoppingCart} className="text-xs sm:text-sm" />
             {inCart
-              ? "Remove from cart"
+              ? t("Remove from cart")
               : unavailable
-                ? "Out of stock"
-                : "Add to cart"}
+                ? t("Out of stock")
+                : t("Add to cart")}
           </button>
         </div>
       </div>
@@ -282,6 +284,7 @@ function DealCard({ deal }) {
 // DEAL OF THE DAY (dynamic)
 // ============================================================
 const DealOfTheDay = () => {
+  const { t } = useTranslation();
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -313,19 +316,19 @@ const DealOfTheDay = () => {
           <div className="flex items-center gap-3">
             <span className="hidden sm:block h-8 w-1 rounded-full bg-[#B08946]" />
             <h2 className="text-xl md:text-2xl lg:text-3xl font-medium text-[#16241F]">
-              Deal of the Day
+              {t("Deal of the Day")}
             </h2>
             <span className="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-600 text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75 animate-ping" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
               </span>
-              Live
+              {t("Live")}
             </span>
           </div>
 
           <span className="text-sm sm:text-base text-[#16241F]/40">
-            {deals.length} deals
+            {deals.length} {t("deals")}
           </span>
         </div>
 

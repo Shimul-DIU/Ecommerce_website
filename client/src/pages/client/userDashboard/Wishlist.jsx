@@ -4,8 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "../../../utils/axiosInstance";
 import { CountContext } from "../../../context/CountContext";
+import { useTranslation } from "../../../utils/translations";
 
 export default function Wishlist() {
+  const { t } = useTranslation();
   const { wishlist, cart, toggleWishlist, toggleCart } =
     useContext(CountContext);
   const [items, setItems] = useState([]);
@@ -43,13 +45,13 @@ export default function Wishlist() {
 
   return (
     <>
-      <h2 className="mb-4 text-lg font-bold text-slate-900">Your Wishlist</h2>
+      <h2 className="mb-4 text-lg font-bold text-slate-900">{t("Your Wishlist")}</h2>
 
       {loading ? (
-        <p className="text-sm text-slate-500">Loading...</p>
+        <p className="text-sm text-slate-500">{t("Loading...")}</p>
       ) : visibleItems.length === 0 ? (
         <p className="text-slate-500">
-          Nothing saved yet. Items you love will show up here.
+          {t("Nothing saved yet. Items you love will show up here.")}
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -73,7 +75,7 @@ export default function Wishlist() {
                     />
                     {w.isNew && (
                       <span className="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        New
+                        {t("New")}
                       </span>
                     )}
                     {w.discount && (
@@ -119,7 +121,7 @@ export default function Wishlist() {
                             : "text-rose-600"
                           }`}
                       >
-                        {w.inStock !== false ? "In stock" : "Out of stock"}
+                        {w.inStock !== false ? t("In stock") : t("Out of stock")}
                       </span>
                     </div>
                   </div>
@@ -129,7 +131,7 @@ export default function Wishlist() {
                 <button
                   type="button"
                   onClick={(e) => handleRemove(e, productId)}
-                  aria-label="Remove from wishlist"
+                  aria-label={t("Remove from wishlist")}
                   className="absolute top-3 right-3 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white shadow hover:scale-110 transition-transform"
                 >
                   <FontAwesomeIcon icon={faHeart} className="text-red-500" />
@@ -142,7 +144,7 @@ export default function Wishlist() {
                   className={`absolute bottom-4 left-4 right-4 text-white py-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${inCart ? "bg-green-600" : "bg-blue-600"
                     }`}
                 >
-                  {inCart ? "Added ✓" : "Add to Cart"}
+                  {inCart ? t("Added ✓") : t("Add to Cart")}
                 </button>
               </div>
             );

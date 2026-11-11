@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { PlusCircle, ImagePlus, X, ChevronDown, ChevronUp } from "lucide-react";
 import axiosInstance from "../../../utils/axiosInstance";
+import { useTranslation } from "../../../utils/translations";
 
 const initialForm = {
   name: "",
@@ -11,6 +12,7 @@ const initialForm = {
 };
 
 export default function AddProductSection({ onProductAdded }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(initialForm);
   const [image, setImage] = useState(null);
@@ -39,7 +41,7 @@ export default function AddProductSection({ onProductAdded }) {
     setMessage({ type: "", text: "" });
 
     if (!form.name || !form.price) {
-      setMessage({ type: "error", text: "Product name আর price দিতে হবে।" });
+      setMessage({ type: "error", text: t("Product name and price are required.") });
       return;
     }
 
@@ -54,7 +56,7 @@ export default function AddProductSection({ onProductAdded }) {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setMessage({ type: "success", text: "Product সফলভাবে add হয়েছে!" });
+      setMessage({ type: "success", text: t("Product added successfully!") });
       setForm(initialForm);
       removeImage();
       onProductAdded?.(res.data.product);
@@ -62,7 +64,7 @@ export default function AddProductSection({ onProductAdded }) {
       console.error("Error adding product:", error);
       setMessage({
         type: "error",
-        text: error.response?.data?.message || "Product add করা যায়নি, আবার চেষ্টা করো।",
+        text: error.response?.data?.message || t("Could not add product. Please try again."),
       });
     } finally {
       setSubmitting(false);
@@ -85,8 +87,8 @@ export default function AddProductSection({ onProductAdded }) {
             <PlusCircle className="h-5 w-5 text-indigo-600" />
           </div>
           <div className="text-left">
-            <h2 className="text-lg font-bold text-slate-900">Add Product</h2>
-            <p className="text-xs text-slate-500">তোমার নিজের product এখানে add করো</p>
+            <h2 className="text-lg font-bold text-slate-900">{t("Add Product")}</h2>
+            <p className="text-xs text-slate-500">{t("Add your own products here.")}</p>
           </div>
         </div>
         {open ? (
@@ -101,21 +103,21 @@ export default function AddProductSection({ onProductAdded }) {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-700">
-                Product Name *
+                {t("Product Name")} *
               </label>
               <input
                 type="text"
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                placeholder="যেমন: Wireless Headphone"
+                placeholder={t("e.g. Wireless Headphone")}
                 className={inputClass}
               />
             </div>
 
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-700">
-                Price (৳) *
+                {t("Price (৳)")} *
               </label>
               <input
                 type="number"
@@ -130,21 +132,21 @@ export default function AddProductSection({ onProductAdded }) {
 
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-700">
-                Category
+                {t("Category")}
               </label>
               <input
                 type="text"
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                placeholder="Electronics"
+                placeholder={t("Electronics")}
                 className={inputClass}
               />
             </div>
 
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-700">
-                Stock
+                {t("Stock")}
               </label>
               <input
                 type="number"
@@ -159,14 +161,14 @@ export default function AddProductSection({ onProductAdded }) {
 
             <div className="md:col-span-2">
               <label className="mb-1 block text-sm font-medium text-slate-700">
-                Description
+                {t("Description")}
               </label>
               <textarea
                 name="description"
                 rows={3}
                 value={form.description}
                 onChange={handleChange}
-                placeholder="Product সম্পর্কে কিছু লেখো..."
+                placeholder={t("Write a description of the product...")}
                 className={inputClass}
               />
             </div>
@@ -174,14 +176,14 @@ export default function AddProductSection({ onProductAdded }) {
             {/* Image upload */}
             <div className="md:col-span-2">
               <label className="mb-1 block text-sm font-medium text-slate-700">
-                Product Image
+                {t("Product Image")}
               </label>
 
               {preview ? (
                 <div className="relative inline-block">
                   <img
                     src={preview}
-                    alt="Preview"
+                    alt={t("Preview")}
                     className="h-28 w-28 rounded-lg border border-slate-200 object-cover"
                   />
                   <button
@@ -195,7 +197,7 @@ export default function AddProductSection({ onProductAdded }) {
               ) : (
                 <label className="flex h-28 w-28 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-slate-300 text-slate-400 hover:border-indigo-400 hover:text-indigo-500">
                   <ImagePlus className="h-6 w-6" />
-                  <span className="text-xs">Upload</span>
+                  <span className="text-xs">{t("Upload")}</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -222,7 +224,7 @@ export default function AddProductSection({ onProductAdded }) {
               disabled={submitting}
               className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
             >
-              {submitting ? "Adding..." : "Add Product"}
+              {submitting ? t("Adding...") : t("Add Product")}
             </button>
           </div>
         </form>

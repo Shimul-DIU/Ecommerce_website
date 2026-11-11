@@ -25,6 +25,7 @@ import {
 import { CountContext } from "../../context/CountContext";
 import useProducts from "../../hooks/useProducts";
 import { useScroll } from "../../hooks/useScroll";
+import { useTranslation } from "../../utils/translations";
 
 
 /* =========================================================
@@ -69,6 +70,10 @@ const WOMEN_CATEGORIES = [
     label: "Shoes",
   },
   {
+    key: "women-bag",
+    label: "Bag",
+  },
+  {
     key: "women-accessories",
     label: "Accessories",
   },
@@ -80,6 +85,7 @@ const WOMEN_CATEGORIES = [
    ========================================================= */
 
 const Women = () => {
+  const { t } = useTranslation();
   const isScrolled = useScroll();
 
   const {
@@ -91,7 +97,7 @@ const Women = () => {
 
   const [products, loading, error] = useProducts();
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const searchQuery =
     searchParams.get("search")?.trim().toLowerCase() || "";
@@ -103,9 +109,7 @@ const Women = () => {
      FILTER STATES
      ======================================================= */
 
-  const [selectedCategory, setSelectedCategory] =
-    useState(categoryQuery);
-  const activeCategory = categoryQuery || selectedCategory;
+  const activeCategory = categoryQuery;
 
   useEffect(() => {
     if (categoryQuery === "women") return undefined;
@@ -252,7 +256,11 @@ const Women = () => {
      ======================================================= */
 
   const resetFilters = () => {
-    setSelectedCategory("women");
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams);
+      nextParams.delete("category");
+      return nextParams;
+    });
     setSortBy("default");
     setMinPrice(MIN_LIMIT);
     setMaxPrice(MAX_LIMIT);
@@ -277,7 +285,7 @@ const Women = () => {
         />
 
         <h3 className="text-base font-bold text-[#16241F]">
-          Filter Products
+          {t("Filter Products")}
         </h3>
 
       </div>
@@ -288,13 +296,17 @@ const Women = () => {
       <div>
 
         <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#16241F]/70">
-          Category
+          {t("Category")}
         </label>
 
         <select
           value={activeCategory}
           onChange={(e) =>
-            setSelectedCategory(e.target.value)
+            setSearchParams((currentParams) => {
+              const nextParams = new URLSearchParams(currentParams);
+              nextParams.set("category", e.target.value);
+              return nextParams;
+            })
           }
           className="w-full rounded-lg border border-[#E4DDCE] bg-[#FAF6EF] px-3 py-2.5 text-sm text-[#16241F] outline-none transition focus:border-[#B08946] focus:ring-2 focus:ring-[#B08946]/20"
         >
@@ -304,7 +316,7 @@ const Women = () => {
               key={category.key}
               value={category.key}
             >
-              {category.label}
+              {t(category.label)}
             </option>
           ))}
 
@@ -318,7 +330,7 @@ const Women = () => {
       <div>
 
         <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#16241F]/70">
-          Sort By
+          {t("Sort By")}
         </label>
 
         <select
@@ -330,15 +342,15 @@ const Women = () => {
         >
 
           <option value="default">
-            Default
+            {t("Default")}
           </option>
 
           <option value="price-low">
-            Price: Low → High
+            {t("Price: Low → High")}
           </option>
 
           <option value="price-high">
-            Price: High → Low
+            {t("Price: High → Low")}
           </option>
 
         </select>
@@ -416,7 +428,7 @@ const Women = () => {
         />
 
         <span className="text-sm font-medium text-[#16241F]">
-          In stock only
+          {t("In stock only")}
         </span>
 
       </label>
@@ -429,7 +441,7 @@ const Women = () => {
         onClick={resetFilters}
         className="w-full rounded-lg border border-[#16241F]/20 py-2.5 text-xs font-bold uppercase tracking-wider text-[#16241F] transition hover:bg-[#16241F] hover:text-white"
       >
-        Reset Filters
+        {t("Reset Filters")}
       </button>
 
     </div>
@@ -470,7 +482,7 @@ const Women = () => {
 
           <img
             src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1800&q=85"
-            alt="Women's Collection"
+            alt={t("Women's Collection")}
             className="h-full w-full object-cover"
           />
 
@@ -489,23 +501,22 @@ const Women = () => {
               <div className="max-w-xl">
 
                 <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#D8B766] sm:text-xs">
-                  Women's Collection
+                  {t("Women's Collection")}
                 </p>
 
                 <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
-                  Elegance in Every Detail
+                  {t("Elegance in Every Detail")}
                 </h1>
 
                 <p className="mt-3 max-w-md text-sm leading-6 text-white/75 sm:text-base">
-                  Discover our latest collection of
-                  women's fashion, footwear and accessories.
+                  {t("Discover our latest collection of women's fashion, footwear and accessories.")}
                 </p>
 
                 <a
                   href="#women-products"
                   className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#B08946] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#967238]"
                 >
-                  Shop Women's Collection
+                  {t("Shop Women's Collection")}
 
                   <FontAwesomeIcon
                     icon={faArrowRight}
@@ -543,11 +554,11 @@ const Women = () => {
           <div>
 
             <h2 className="text-xl font-bold text-[#16241F]">
-              Women's Collection
+              {t("Women's Collection")}
             </h2>
 
             <p className="mt-0.5 text-xs text-[#16241F]/50">
-              {filteredProducts.length} products
+              {filteredProducts.length} {t("products")}
             </p>
 
           </div>
@@ -566,7 +577,7 @@ const Women = () => {
               className="text-[#B08946]"
             />
 
-            Filters
+            {t("Filters")}
 
           </button>
 
@@ -597,7 +608,7 @@ const Women = () => {
               <div className="mb-6 flex items-center justify-between">
 
                 <h2 className="text-lg font-bold text-[#16241F]">
-                  Filters
+                  {t("Filters")}
                 </h2>
 
                 <button
@@ -660,11 +671,11 @@ const Women = () => {
               <div>
 
                 <h2 className="text-xl font-bold text-[#16241F]">
-                  Women's Products
+                  {t("Women's Products")}
                 </h2>
 
                 <p className="mt-0.5 text-xs text-[#16241F]/50">
-                  Showing {filteredProducts.length} products
+                  {t("Showing")} {filteredProducts.length} {t("products")}
                 </p>
 
               </div>
@@ -673,7 +684,7 @@ const Women = () => {
               <div className="hidden items-center gap-2 sm:flex">
 
                 <span className="text-xs text-[#16241F]/50">
-                  Sort:
+                  {t("Sort:")}
                 </span>
 
                 <select
@@ -685,15 +696,15 @@ const Women = () => {
                 >
 
                   <option value="default">
-                    Featured
+                    {t("Featured")}
                   </option>
 
                   <option value="price-low">
-                    Price: Low → High
+                    {t("Price: Low → High")}
                   </option>
 
                   <option value="price-high">
-                    Price: High → Low
+                    {t("Price: High → Low")}
                   </option>
 
                 </select>
@@ -748,7 +759,7 @@ const Women = () => {
                   />
 
                   <p className="font-semibold text-[#16241F]">
-                    No women's products found
+                    {t("No women's products found")}
                   </p>
 
                   <p className="mt-1 text-xs text-[#16241F]/50">
@@ -760,7 +771,7 @@ const Women = () => {
                     onClick={resetFilters}
                     className="mt-4 rounded-lg bg-[#16241F] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#0F1A16]"
                   >
-                    Reset Filters
+                    {t("Reset Filters")}
                   </button>
 
                 </div>
@@ -866,7 +877,7 @@ const Women = () => {
                                 />
 
                                 <span>
-                                  {discountPercent}% OFF
+                                  {discountPercent}% {t("OFF")}
                                 </span>
 
                               </div>
@@ -1000,7 +1011,7 @@ const Women = () => {
 
 
                                 <span className="shrink-0 rounded border border-[#E4DDCE]/60 bg-[#FAF6EF] px-1 py-0.5 text-[9px] font-medium text-[#16241F]/50 sm:text-[10px]">
-                                  Stock: {item.stock}
+                                  {t("Stock")}: {item.stock}
                                 </span>
 
                               </div>
@@ -1012,7 +1023,7 @@ const Women = () => {
                                 !isOutOfStock && (
 
                                   <p className="text-[9px] font-semibold text-green-600 sm:text-[10px]">
-                                    Save ৳{savingsAmount}
+                                    {t("Save")} ৳{savingsAmount}
                                   </p>
 
                                 )}
@@ -1033,8 +1044,8 @@ const Women = () => {
 
                               <span>
                                 {isOutOfStock
-                                  ? "Unavailable"
-                                  : "Buy Now"}
+                                  ? t("Unavailable")
+                                  : t("Buy Now")}
                               </span>
 
                             </button>

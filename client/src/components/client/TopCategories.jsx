@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTag } from "@fortawesome/free-solid-svg-icons";
+import { useTranslation } from "../../utils/translations";
 
 const CATEGORIES = [
   {
@@ -54,18 +55,19 @@ const CATEGORIES = [
 ];
 
 const TopCategories = () => {
+  const { t } = useTranslation();
   return (
     <section className="  w-full mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg md:text-xl lg:text-2xl font-medium text-[#16241F]">
-          Top Categories
+          {t("Top Categories")}
         </h2>
         <Link
           to="/products"
           className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition"
         >
-          View All →
+          {t("View All")} →
         </Link>
       </div>
 
@@ -94,10 +96,10 @@ const TopCategories = () => {
               <div className="flex-1 flex flex-col justify-between p-1.5 sm:p-2 min-w-0">
                 <div>
                   <h3 className="text-xs sm:text-sm font-bold text-[#16241F] truncate">
-                    {cat.name}
+                    {t(cat.name)}
                   </h3>
                   <p className="text-[10px] text-[#16241F]/60 truncate">
-                    {cat.itemsCount} items
+                    {cat.itemsCount} {t("items")}
                   </p>
                 </div>
 
@@ -105,7 +107,7 @@ const TopCategories = () => {
                 <div className="flex items-center">
                   <span className="inline-flex items-center gap-0.5 sm:gap-1 bg-blue-50 px-1 sm:px-1.5 py-0.5 rounded-full text-blue-700 font-semibold text-[9px] sm:text-[10px] whitespace-nowrap">
                     <FontAwesomeIcon icon={faTag} className="text-[7px] sm:text-[8px] shrink-0" />
-                    <span>{cat.soldCount} sold</span>
+                    <span>{cat.soldCount} {t("sold")}</span>
                   </span>
                 </div>
               </div>

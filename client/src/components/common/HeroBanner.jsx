@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "../../utils/translations";
 
 const banners = [
   {
@@ -65,6 +66,7 @@ const banners = [
 ];
 
 const HeroBanner = () => {
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef(null);
@@ -139,7 +141,7 @@ const HeroBanner = () => {
                       color: banner.badgeTextColor,
                     }}
                   >
-                    {banner.badge}
+                    {t(banner.badge)}
                   </span>
                 </div>
 
@@ -148,7 +150,7 @@ const HeroBanner = () => {
                   className="text-2xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-tight leading-tight mb-2 sm:mb-3 drop-shadow-md"
                   style={{ color: banner.titleColor }}
                 >
-                  {banner.title}
+                  {t(banner.title)}
                 </h2>
 
                 {/* Subtitle */}
@@ -156,7 +158,7 @@ const HeroBanner = () => {
                   className="text-xs sm:text-sm md:text-base font-medium mb-5 sm:mb-8 line-clamp-2 leading-relaxed opacity-90 max-w-md"
                   style={{ color: banner.subtitleColor }}
                 >
-                  {banner.subtitle}
+                  {t(banner.subtitle)}
                 </p>
 
                 {/* CTA Button */}
@@ -169,7 +171,7 @@ const HeroBanner = () => {
                       color: banner.btnColor,
                     }}
                   >
-                    {banner.btnText}
+                    {t(banner.btnText)}
                   </Link>
                 </div>
               </div>
@@ -181,7 +183,7 @@ const HeroBanner = () => {
         <button
           onClick={goToPrevious}
           className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/40 hover:bg-[#D10024] text-white rounded-full flex items-center justify-center transition-all duration-300 z-20 backdrop-blur-md border border-white/10 shadow-md group"
-          aria-label="Previous Slide"
+          aria-label={t("Previous Slide")}
         >
           <svg
             className="w-5 h-5 transition-transform group-hover:-translate-x-0.5"
@@ -197,7 +199,7 @@ const HeroBanner = () => {
         <button
           onClick={goToNext}
           className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/40 hover:bg-[#D10024] text-white rounded-full flex items-center justify-center transition-all duration-300 z-20 backdrop-blur-md border border-white/10 shadow-md group"
-          aria-label="Next Slide"
+          aria-label={t("Next Slide")}
         >
           <svg
             className="w-5 h-5 transition-transform group-hover:translate-x-0.5"
@@ -220,7 +222,7 @@ const HeroBanner = () => {
                     ? "w-7 bg-[#D10024]"
                     : "w-2 bg-white/50 hover:bg-white"
                   }`}
-                aria-label={`Go to slide ${index + 1}`}
+                aria-label={`${t("Go to slide")} ${index + 1}`}
               />
             ))}
           </div>

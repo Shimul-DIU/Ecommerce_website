@@ -12,6 +12,7 @@ import { CountContext } from "../../context/CountContext";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import useProducts from "../../hooks/useProducts";
 import { useScroll } from "../../hooks/useScroll";
+import { useTranslation } from "../../utils/translations";
 
 const CATEGORY_OPTIONS = [
   { key: "all", label: "All Categories" },
@@ -39,6 +40,7 @@ const normalize = (str = "") =>
     .replace(/^-+|-+$/g, "");
 
 const Products = () => {
+  const { t } = useTranslation();
   const isScrolled = useScroll();
   const { wishlist, cart, toggleWishlist, toggleCart } =
     useContext(CountContext);
@@ -47,13 +49,11 @@ const Products = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const initialFilter =
-    searchParams.get("category") || location.state?.filter || "all";
   const subcategoryQuery = normalize(searchParams.get("subcategory") || "");
   const searchQuery = searchParams.get("search")?.trim().toLowerCase() || "";
 
-  const [selectedCategory, setSelectedCategory] = useState(initialFilter);
-  const activeCategory = searchParams.get("category") || selectedCategory;
+  const activeCategory =
+    searchParams.get("category") || location.state?.filter || "all";
   const [sortBy, setSortBy] = useState("default");
 
   const [minPrice, setMinPrice] = useState(MIN_LIMIT);
@@ -125,7 +125,6 @@ const Products = () => {
   ]);
 
   const resetFilters = () => {
-    setSelectedCategory("all");
     navigate("/products");
     setSortBy("default");
     setMinPrice(MIN_LIMIT);
@@ -140,18 +139,17 @@ const Products = () => {
     <div className="space-y-5">
       <div className="flex items-center gap-2 pb-3 border-b border-[#E4DDCE]">
         <FontAwesomeIcon icon={faSliders} className="text-[#16241F] text-lg" />
-        <h3 className="text-lg font-bold text-[#16241F]">Filter Products</h3>
+        <h3 className="text-lg font-bold text-[#16241F]">{t("Filter Products")}</h3>
       </div>
 
       <div>
         <label className="block text-xs uppercase tracking-wider text-[#16241F]/70 mb-2 font-bold">
-          Category
+          {t("Category")}
         </label>
         <select
           value={activeCategory}
           onChange={(e) => {
             const category = e.target.value;
-            setSelectedCategory(category);
             // category change hole subcategory reset hobe
             navigate(`/products?category=${encodeURIComponent(category)}`);
           }}
@@ -159,7 +157,7 @@ const Products = () => {
         >
           {CATEGORY_OPTIONS.map((cat) => (
             <option key={cat.key} value={cat.key}>
-              {cat.label}
+              {t(cat.label)}
             </option>
           ))}
         </select>
@@ -167,23 +165,23 @@ const Products = () => {
 
       <div>
         <label className="block text-xs uppercase tracking-wider text-[#16241F]/70 mb-2 font-bold">
-          Sort by
+          {t("Sort by")}
         </label>
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
           className="w-full text-sm border border-[#E4DDCE] rounded-lg px-3 py-2 bg-[#FAF6EF] text-[#16241F] focus:outline-none focus:ring-2 focus:ring-[#B08946] transition"
         >
-          <option value="default">Default</option>
-          <option value="price-low">Price: Low → High</option>
-          <option value="price-high">Price: High → Low</option>
+          <option value="default">{t("Default")}</option>
+          <option value="price-low">{t("Price: Low → High")}</option>
+          <option value="price-high">{t("Price: High → Low")}</option>
         </select>
       </div>
 
       <div>
         <div className="flex items-center justify-between mb-2">
           <label className="block text-xs uppercase tracking-wider text-[#16241F]/70 font-bold">
-            Price Range
+            {t("Price Range")}
           </label>
           <span className="text-xs font-bold text-[#B08946] bg-[#FAF6EF] px-2.5 py-1 rounded-md border border-[#E4DDCE]">
             ৳{minPrice} - ৳{maxPrice}
@@ -229,8 +227,8 @@ const Products = () => {
         </div>
 
         <div className="flex justify-between text-[11px] text-[#16241F]/60 font-medium mt-1">
-          <span>Min: ৳{MIN_LIMIT}</span>
-          <span>Max: ৳{MAX_LIMIT}</span>
+          <span>{t("Min")}: ৳{MIN_LIMIT}</span>
+          <span>{t("Max")}: ৳{MAX_LIMIT}</span>
         </div>
       </div>
 
@@ -242,7 +240,7 @@ const Products = () => {
           className="w-4 h-4 accent-[#B08946] rounded cursor-pointer"
         />
         <span className="text-sm text-[#16241F] font-medium">
-          In stock only
+          {t("In stock only")}
         </span>
       </label>
 
@@ -251,7 +249,7 @@ const Products = () => {
         onClick={resetFilters}
         className="w-full py-2 rounded-lg border border-[#16241F]/20 text-[#16241F] text-xs font-bold uppercase tracking-wider hover:bg-[#16241F] hover:text-white transition shadow-sm"
       >
-        Reset Filters
+        {t("Reset Filters")}
       </button>
     </div>
   );
@@ -268,14 +266,14 @@ const Products = () => {
     <div className="min-h-screen mt-8 sm:mt-6 pb-10 px-4 md:px-8">
       <div className="w-full max-w-none mx-auto">
         <div className="flex justify-between mb-3">
-          <h2 className="text-lg sm:text-2xl lg:hidden font-bold">Products</h2>
+          <h2 className="text-lg sm:text-2xl lg:hidden font-bold">{t("Products")}</h2>
           <div className="lg:hidden flex items-center sm:w-auto">
             <button
               onClick={() => setIsDrawerOpen(true)}
               className="flex items-center gap-1 px-2 sm:px-4 py-0.5 sm:py-2 bg-white border border-[#E4DDCE] rounded-lg text-[#16241F] text-sm font-semibold hover:bg-gray-50 transition shadow-sm"
             >
               <FontAwesomeIcon icon={faFilter} className="text-[#B08946]" />
-              <span>Filters</span>
+              <span>{t("Filters")}</span>
             </button>
           </div>
         </div>
@@ -288,7 +286,7 @@ const Products = () => {
             />
             <div className="relative w-80 max-w-[85%] bg-white h-full shadow-2xl p-6 overflow-y-auto z-10">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold text-[#16241F]">Filters</h2>
+                <h2 className="text-xl font-bold text-[#16241F]">{t("Filters")}</h2>
                 <button
                   onClick={() => setIsDrawerOpen(false)}
                   className="p-1.5 hover:bg-[#FAF6EF] rounded-full transition"
@@ -336,16 +334,16 @@ const Products = () => {
                   className="text-4xl text-[#16241F]/30 mb-3"
                 />
                 <p className="text-base text-[#16241F] font-semibold">
-                  No products found!
+                  {t("No products found!")}
                 </p>
                 <p className="text-xs text-[#16241F]/60 mt-1">
-                  Try resetting your filters or adjusting your price range.
+                  {t("Try resetting your filters or adjusting your price range.")}
                 </p>
                 <button
                   onClick={resetFilters}
                   className="mt-4 px-4 py-2 bg-[#16241F] text-white text-xs font-semibold rounded-lg hover:bg-[#0F1A16] transition"
                 >
-                  Reset Filters
+                  {t("Reset Filters")}
                 </button>
               </div>
             )}
@@ -443,7 +441,7 @@ const Products = () => {
                         {isOutOfStock && (
                           <div className="absolute inset-0 bg-[#16241F]/40 backdrop-blur-[2px] flex items-center justify-center p-2 z-10">
                             <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-red-600 bg-white px-3 py-1 rounded-full shadow-lg border border-red-100">
-                              Out of Stock
+                              {t("Out of Stock")}
                             </span>
                           </div>
                         )}
@@ -473,13 +471,13 @@ const Products = () => {
                                 )}
                               </div>
                               <span className="text-[9px] sm:text-[10px] font-medium text-[#16241F]/50 bg-[#FAF6EF] px-1 py-0.5 rounded border border-[#E4DDCE]/60">
-                                Stock: {item.stock}
+                                {t("Stock")}: {item.stock}
                               </span>
                             </div>
 
                             {savingsAmount > 0 && !isOutOfStock && (
                               <p className="text-[9px] sm:text-[10px] text-green-600 font-semibold">
-                                Save ৳{savingsAmount}
+                                {t("Save")} ৳{savingsAmount}
                               </p>
                             )}
                           </div>
@@ -489,7 +487,7 @@ const Products = () => {
                             className="w-full h-8 sm:h-9 rounded-xl bg-[#16241F] hover:bg-[#0F1A16] active:scale-[0.98] disabled:bg-[#16241F]/20 disabled:text-[#16241F]/40 disabled:cursor-not-allowed text-[#FAF6EF] text-xs font-bold transition-all duration-200 shadow-sm flex items-center justify-center gap-1.5"
                           >
                             <span>
-                              {isOutOfStock ? "Unavailable" : "Buy Now"}
+                              {isOutOfStock ? t("Unavailable") : t("Buy Now")}
                             </span>
                           </button>
                         </div>

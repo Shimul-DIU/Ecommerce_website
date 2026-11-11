@@ -16,8 +16,10 @@ import {
   faRotateLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { useTranslation } from "../../../utils/translations";
 
 export default function Footer() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -58,22 +60,22 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <FontAwesomeIcon icon={faTruck} className="w-5 h-5 text-amber-400 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-white">Free Shipping</p>
-              <p className="text-xs text-slate-400">On orders over ৳2,000</p>
+              <p className="text-sm font-semibold text-white">{t("Free Shipping")}</p>
+              <p className="text-xs text-slate-400">{t("On orders over ৳2,000")}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <FontAwesomeIcon icon={faRotateLeft} className="w-5 h-5 text-amber-400 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-white">Easy Returns</p>
-              <p className="text-xs text-slate-400">7-day return policy</p>
+              <p className="text-sm font-semibold text-white">{t("Easy Returns")}</p>
+              <p className="text-xs text-slate-400">{t("7-day return policy")}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <FontAwesomeIcon icon={faShieldHalved} className="w-5 h-5 text-amber-400 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-white">Secure Payment</p>
-              <p className="text-xs text-slate-400">100% protected checkout</p>
+              <p className="text-sm font-semibold text-white">{t("Secure Payment")}</p>
+              <p className="text-xs text-slate-400">{t("100% protected checkout")}</p>
             </div>
           </div>
         </div>
@@ -87,20 +89,19 @@ export default function Footer() {
             Shimul<span className="text-amber-400">shop</span>
           </h2>
           <p className="mt-3 text-sm text-slate-400 leading-relaxed max-w-xs">
-            Quality products, honest prices, and fast delivery across Bangladesh.
-            Shop with confidence.
+            {t("Quality products, honest prices, and fast delivery across Bangladesh. Shop with confidence.")}
           </p>
 
           <form onSubmit={handleSubscribe} className="mt-6 max-w-sm">
             <p className="text-sm font-medium text-white mb-2">
-              Subscribe for offers & updates
+              {t("Subscribe for offers & updates")}
             </p>
             <div className="flex gap-2">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder={t("Enter your email")}
                 className="flex-1 min-w-0 rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-400"
               />
               <button
@@ -112,7 +113,7 @@ export default function Footer() {
             </div>
             {submitted && (
               <p className="mt-2 text-xs text-amber-400">
-                Thanks! Please check your inbox to confirm.
+                {t("Thanks! Please check your inbox to confirm.")}
               </p>
             )}
           </form>
@@ -122,7 +123,7 @@ export default function Footer() {
         {columns.map((col) => (
           <div key={col.title}>
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
-              {col.title}
+              {t(col.title)}
             </h3>
             <ul className="mt-4 space-y-2.5">
               {col.links.map((link) => (
@@ -131,7 +132,7 @@ export default function Footer() {
                     href="#"
                     className="text-sm text-slate-400 hover:text-amber-400 transition-colors"
                   >
-                    {link}
+                    {t(link)}
                   </a>
                 </li>
               ))}
@@ -171,12 +172,12 @@ export default function Footer() {
       <div className="border-t border-slate-800">
         <div className="w-full max-w-none mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-slate-500">
-            © {new Date().getFullYear()} Shimul_shop. All rights reserved.
+            © {new Date().getFullYear()} Shimul_shop. {t("All rights reserved.")}
           </p>
           <div className="flex items-center gap-4 text-xs text-slate-500">
-            <a href="#" className="hover:text-amber-400 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-amber-400 transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-amber-400 transition-colors">Cookies</a>
+            <a href="#" className="hover:text-amber-400 transition-colors">{t("Privacy Policy")}</a>
+            <a href="#" className="hover:text-amber-400 transition-colors">{t("Terms of Service")}</a>
+            <a href="#" className="hover:text-amber-400 transition-colors">{t("Cookies")}</a>
           </div>
         </div>
       </div>

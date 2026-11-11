@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { CheckCircle2, Package, Home, Receipt,  Check } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "../../utils/translations";
 
 export default function OrderSuccess() {
+ const { t } = useTranslation();
  const location=useLocation()
  console.log(location)
  console.log(location.state.order)
@@ -28,9 +30,9 @@ export default function OrderSuccess() {
           <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center">
             <CheckCircle2 className="w-9 h-9 text-white" strokeWidth={2.5} />
           </div>
-          <h1 className="text-xl font-semibold text-slate-900">Order Placed Successfully</h1>
+          <h1 className="text-xl font-semibold text-slate-900">{t("Order Placed Successfully")}</h1>
           <p className="text-sm text-slate-500 mt-1">
-            Thank you! We've received your order and will process it shortly.
+            {t("Thank you! We've received your order and will process it shortly.")}
           </p>
         </div>
 
@@ -38,13 +40,13 @@ export default function OrderSuccess() {
         <div className="px-6 py-6 space-y-5">
           <div className="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-3">
             <div>
-              <p className="text-xs text-slate-500">Order ID</p>
+              <p className="text-xs text-slate-500">{t("Order ID")}</p>
               <p className="text-sm font-medium text-slate-900">{order.productSnapshot.productId}</p>
             </div>
             <button
 
               className="p-2 rounded-md hover:bg-slate-200 transition-colors"
-              aria-label="Copy order ID"
+              aria-label={t("Copy order ID")}
             >
 
                 <Check className="w-4 h-4 text-emerald-600" />
@@ -54,15 +56,15 @@ export default function OrderSuccess() {
 
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
-              <p className="text-xs text-slate-500">Order Date</p>
+              <p className="text-xs text-slate-500">{t("Order Date")}</p>
               <p className="font-medium text-slate-900">{order.createdAt}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500">Payment Method</p>
+              <p className="text-xs text-slate-500">{t("Payment Method")}</p>
               <p className="font-medium text-slate-900">{order.paymentMethod}</p>
             </div>
             <div className="col-span-2">
-              <p className="text-xs text-slate-500">Estimated Delivery</p>
+              <p className="text-xs text-slate-500">{t("Estimated Delivery")}</p>
               <p className="font-medium text-slate-900 flex items-center gap-1.5">
                 <Package className="w-4 h-4 text-slate-400" />
                 {order.estimatedDelivery}
@@ -73,7 +75,7 @@ export default function OrderSuccess() {
           {/* Items */}
           <div className="border-t border-slate-100 pt-4">
             <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wide">
-              Items
+              {t("Items")}
             </p>
             <div className="space-y-2">
 
@@ -90,7 +92,7 @@ export default function OrderSuccess() {
           </div>
 
           <div className="border-t border-slate-100 pt-4 flex justify-between items-center">
-            <span className="text-sm font-semibold text-slate-900">Total</span>
+            <span className="text-sm font-semibold text-slate-900">{t("Total")}</span>
             <span className="text-lg font-bold text-slate-900">
               ৳{(order.total || subtotal).toLocaleString()}
             </span>
@@ -103,14 +105,14 @@ export default function OrderSuccess() {
               className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white text-sm font-medium py-2.5 rounded-lg hover:bg-slate-800 transition-colors"
             >
               <Receipt className="w-4 h-4" />
-              View Order Details
+              {t("View Order Details")}
             </Link>
             <button
 
               className="w-full flex items-center justify-center gap-2 bg-white text-slate-700 text-sm font-medium py-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
             >
               <Home className="w-4 h-4" />
-              Continue Shopping
+              {t("Continue Shopping")}
             </button>
           </div>
         </div>
