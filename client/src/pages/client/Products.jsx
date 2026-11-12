@@ -13,6 +13,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from "react-router-do
 import useProducts from "../../hooks/useProducts";
 import { useScroll } from "../../hooks/useScroll";
 import { useTranslation } from "../../utils/translations";
+import getProductPricing from "../../utils/getProductPricing";
 
 const CATEGORY_OPTIONS = [
   { key: "all", label: "All Categories" },
@@ -369,17 +370,8 @@ const Products = () => {
                   const inCart = cart?.includes(String(item._id));
                   const isOutOfStock = item.stock <= 0;
 
-                  const originalPrice =
-                    item.originalPrice || Math.round(item.price * 1.25);
-                  const discountPercent =
-                    item.discountPercent ||
-                    (originalPrice > item.price
-                      ? Math.round(
-                        ((originalPrice - item.price) / originalPrice) * 100
-                      )
-                      : 0);
-
-                  const savingsAmount = originalPrice - item.price;
+                  const { originalPrice, discountPercent, savingsAmount } =
+                    getProductPricing(item);
 
                   return (
                     <Link

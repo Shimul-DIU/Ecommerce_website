@@ -2,7 +2,12 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import passport from 'passport';
 import { ResetPassword, ForgotPassword, loginAdmin } from '../controller/adminController.js';
-import { productController } from '../controller/productController.js';
+import {
+  deleteProduct,
+  getAdminProduct,
+  productController,
+  updateProduct,
+} from '../controller/productController.js';
 import {
   getAdminOrders,
   updateOrderStatus,
@@ -10,6 +15,7 @@ import {
 import { upload } from '../middleware/upload.js';
 
 const adminRouter = express.Router();
+const adminAuth = passport.authenticate('admin-jwt', { session: false });
 
 const uploadProductImage = (req, res, next) => {
   upload.single("image")(req, res, (error) => {
@@ -58,8 +64,15 @@ adminRouter.patch(
   updateOrderStatus
 );
 
-// add product
-adminRouter.post('/add-product', uploadProductImage, productController)
+adminRouter.get('/products/:productId', adminAuth, getAdminProduct);
+adminRouter.patch(
+  '/products/:productId',
+  adminAuth,
+  uploadProductImage,
+  updateProduct
+);
+adminRouter.delete('/products/:productId', adminAuth, deleteProduct);
+adminRouter.post('/add-product', adminAuth, uploadProductImage, productController);
 
 
 export default adminRouter;

@@ -10,9 +10,10 @@ import {
 import useProducts from "../../hooks/useProducts";
 import { CountContext } from "../../context/CountContext";
 import { useTranslation } from "../../utils/translations";
+import getProductPricing from "../../utils/getProductPricing";
 
 const getItemsCount = (width) => {
-  if (width > 1280) return 6; // xl: বড় ডেস্কটপ
+  if (width >= 1280) return 6; // xl: বড় ডেস্কটপ
   if (width >= 1024) return 5; // lg: ডেস্কটপ/ল্যাপটপ
   if (width >= 768) return 4; // md: ট্যাবলেট
   if (width >= 640) return 3; // sm: বড় ফোন
@@ -122,15 +123,8 @@ const NewArrivals = () => {
             const isOutOfStock = item.stock <= 0;
             const isLowStock = item.stock > 0 && item.stock <= 5;
 
-            const originalPrice =
-              item.originalPrice || Math.round(item.price * 1.25);
-            const discountPercent =
-              item.discountPercent ||
-              (originalPrice > item.price
-                ? Math.round(((originalPrice - item.price) / originalPrice) * 100)
-                : 0);
-
-            const savingsAmount = originalPrice - item.price;
+            const { originalPrice, discountPercent, savingsAmount } =
+              getProductPricing(item);
 
             // প্রথম ৩টি প্রোডাক্টে "NEW" ব্যাজ
             const isNew = index < 3;

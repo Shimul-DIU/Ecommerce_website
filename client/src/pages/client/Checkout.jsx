@@ -32,6 +32,7 @@ import { faStar as faStarOutline } from "@fortawesome/free-regular-svg-icons";
 import axiosInstance from "../../utils/axiosInstance";
 import { AuthContext } from "../../context/AuthContext";
 import { useTranslation } from "../../utils/translations";
+import getProductPricing from "../../utils/getProductPricing";
 
 const SHIPPING_FEE = 60;
 const FREE_SHIPPING_MIN = 2000;
@@ -50,13 +51,12 @@ const buildInitialItems = (state) => {
       const stock = Number(p.stock ?? 0);
       const maxQty = stock > 0 ? stock : 100;
       const qty = Math.min(Math.max(1, Number(p.quantity) || 1), maxQty);
-      const price = Number(p.price || 0);
-      const originalPrice = Number(p.originalPrice || 0);
+      const { price, originalPrice } = getProductPricing(p);
       return {
         ...p,
         _id: String(p._id),
         price,
-        originalPrice: originalPrice > price ? originalPrice : price,
+        originalPrice,
         stock,
         quantity: qty,
         image: p.image || p.images?.[0] || "/images/placeholder.jpg",
@@ -532,7 +532,7 @@ const Checkout = () => {
 
       {/* ============ MAIN ============ */}
       <div className="w-full max-w-none mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 items-start">
-        {/* ---------- LEFT: Form + Reviews ---------- */}
+        {/* ---------- LEFT: Form ---------- */}
         <div className="lg:col-span-7 flex flex-col gap-5 sm:gap-6 order-2 lg:order-1">
           {/* SHIPPING + PAYMENT */}
           <div className="bg-white rounded-3xl border border-[#E4DDCE] shadow-sm p-4 sm:p-7">
@@ -861,12 +861,121 @@ const Checkout = () => {
             </form>
           </div>
 
+        </div>
+
+        {/* ---------- RIGHT: Items ---------- */}
+        <div className="contents order-1 lg:order-2 lg:col-span-5 lg:flex lg:flex-col lg:gap-5">
+          {/* PRODUCT LIST */}
+          <div className="bg-white rounded-3xl border border-[#E4DDCE] p-4 sm:p-5 shadow-sm order-1">
+            <SectionTitle icon={faShoppingBag} title={t("Your Items")} />
+
+            <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+              {items.map((item) => {
+                const hasDiscount = item.originalPrice > item.price;
+                const itemDiscountPercent = hasDiscount
+                  ? Math.round(
+                      ((item.originalPrice - item.price) / item.originalPrice) *
+                        100
+                    )
+                  : 0;
+                const maxQty = item.stock > 0 ? item.stock : 100;
+
+                return (
+                  <div
+                    key={item._id}
+                    className="flex gap-3 p-2.5 sm:p-3 rounded-2xl border border-[#E4DDCE]/70 bg-[#FAF6EF]/60"
+                  >
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden bg-[radial-gradient(circle_at_50%_35%,#FFFFFF_0%,#FAF6EF_70%,#EFE9DC_100%)] border border-[#E4DDCE]/70 flex items-center justify-center p-1">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="max-h-full max-w-full object-contain"
+                      />
+                      {itemDiscountPercent > 0 && (
+                        <span className="absolute top-1 left-1 bg-[#B08946] text-[#16241F] text-[9px] font-extrabold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                          <FontAwesomeIcon icon={faTag} className="text-[8px]" />
+                          {itemDiscountPercent}%
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex-1 min-w-0 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-start justify-between gap-2">
+                          <h2 className="text-sm sm:text-base font-bold text-[#16241F] leading-snug line-clamp-2">
+                            {item.name}
+                          </h2>
+                          <button
+                            type="button"
+                            onClick={() => removeItem(item._id)}
+                            aria-label={t("Remove item")}
+                            className="shrink-0 w-7 h-7 rounded-full text-[#16241F]/35 hover:bg-red-50 hover:text-red-500 transition flex items-center justify-center"
+                          >
+                            <FontAwesomeIcon icon={faTrash} className="text-xs" />
+                          </button>
+                        </div>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-sm font-extrabold text-[#B08946]">
+                            ৳{item.price.toLocaleString()}
+                          </span>
+                          {hasDiscount && (
+                            <span className="text-xs text-[#16241F]/40 line-through">
+                              ৳{item.originalPrice.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                        {item.stock > 0 && item.stock < 10 && (
+                          <span className="text-[11px] text-orange-500 font-semibold">
+                            মাত্র {item.stock} টি বাকি
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center bg-white border border-[#E4DDCE] rounded-full overflow-hidden">
+                          <button
+                            type="button"
+                            onClick={() => decreaseQty(item._id)}
+                            disabled={item.quantity <= 1}
+                            aria-label={t("Decrease quantity")}
+                            className="w-8 h-8 text-[#16241F] hover:bg-[#16241F] hover:text-[#B08946] disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#16241F] transition"
+                          >
+                            <FontAwesomeIcon icon={faMinus} className="text-[10px]" />
+                          </button>
+                          <span className="w-7 text-center font-bold text-sm text-[#16241F]">
+                            {item.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => increaseQty(item._id)}
+                            disabled={item.quantity >= maxQty}
+                            aria-label={t("Increase quantity")}
+                            className="w-8 h-8 text-[#16241F] hover:bg-[#16241F] hover:text-[#B08946] disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#16241F] transition"
+                          >
+                            <FontAwesomeIcon icon={faPlus} className="text-[10px]" />
+                          </button>
+                        </div>
+
+                        <span className="text-sm sm:text-base font-extrabold text-[#16241F]">
+                          ৳{(item.price * item.quantity).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {error.field === "quantity" && (
+              <FieldError message={t(error.message)} />
+            )}
+          </div>
+
           {/* REVIEW */}
           {reviewProduct && (
-            <div className="bg-white rounded-3xl border border-[#E4DDCE] p-4 sm:p-7 shadow-sm space-y-4">
+            <div className="bg-white rounded-3xl border border-[#E4DDCE] p-4 sm:p-7 shadow-sm space-y-4 order-3">
               <SectionTitle icon={faStar} title={t("Ratings & Reviews")} />
 
-              {/* Product selector (একাধিক প্রোডাক্ট থাকলে) */}
               {items.length > 1 && (
                 <div>
                   <p className="text-[11px] font-bold text-[#16241F]/55 mb-2 uppercase tracking-[0.15em]">
@@ -1029,115 +1138,6 @@ const Checkout = () => {
               </div>
             </div>
           )}
-        </div>
-
-        {/* ---------- RIGHT: Items ---------- */}
-        <div className="lg:col-span-5 flex flex-col gap-5 order-1 lg:order-2 lg:sticky lg:top-44">
-          {/* PRODUCT LIST */}
-          <div className="bg-white rounded-3xl border border-[#E4DDCE] p-4 sm:p-5 shadow-sm">
-            <SectionTitle icon={faShoppingBag} title={t("Your Items")} />
-
-            <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-              {items.map((item) => {
-                const hasDiscount = item.originalPrice > item.price;
-                const itemDiscountPercent = hasDiscount
-                  ? Math.round(
-                      ((item.originalPrice - item.price) / item.originalPrice) *
-                        100
-                    )
-                  : 0;
-                const maxQty = item.stock > 0 ? item.stock : 100;
-
-                return (
-                  <div
-                    key={item._id}
-                    className="flex gap-3 p-2.5 sm:p-3 rounded-2xl border border-[#E4DDCE]/70 bg-[#FAF6EF]/60"
-                  >
-                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden bg-[radial-gradient(circle_at_50%_35%,#FFFFFF_0%,#FAF6EF_70%,#EFE9DC_100%)] border border-[#E4DDCE]/70 flex items-center justify-center p-1">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="max-h-full max-w-full object-contain"
-                      />
-                      {itemDiscountPercent > 0 && (
-                        <span className="absolute top-1 left-1 bg-[#B08946] text-[#16241F] text-[9px] font-extrabold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                          <FontAwesomeIcon icon={faTag} className="text-[8px]" />
-                          {itemDiscountPercent}%
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0 flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-start justify-between gap-2">
-                          <h2 className="text-sm sm:text-base font-bold text-[#16241F] leading-snug line-clamp-2">
-                            {item.name}
-                          </h2>
-                          <button
-                            type="button"
-                            onClick={() => removeItem(item._id)}
-                            aria-label={t("Remove item")}
-                            className="shrink-0 w-7 h-7 rounded-full text-[#16241F]/35 hover:bg-red-50 hover:text-red-500 transition flex items-center justify-center"
-                          >
-                            <FontAwesomeIcon icon={faTrash} className="text-xs" />
-                          </button>
-                        </div>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-sm font-extrabold text-[#B08946]">
-                            ৳{item.price.toLocaleString()}
-                          </span>
-                          {hasDiscount && (
-                            <span className="text-xs text-[#16241F]/40 line-through">
-                              ৳{item.originalPrice.toLocaleString()}
-                            </span>
-                          )}
-                        </div>
-                        {item.stock > 0 && item.stock < 10 && (
-                          <span className="text-[11px] text-orange-500 font-semibold">
-                            মাত্র {item.stock} টি বাকি
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center bg-white border border-[#E4DDCE] rounded-full overflow-hidden">
-                          <button
-                            type="button"
-                            onClick={() => decreaseQty(item._id)}
-                            disabled={item.quantity <= 1}
-                            aria-label={t("Decrease quantity")}
-                            className="w-8 h-8 text-[#16241F] hover:bg-[#16241F] hover:text-[#B08946] disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#16241F] transition"
-                          >
-                            <FontAwesomeIcon icon={faMinus} className="text-[10px]" />
-                          </button>
-                          <span className="w-7 text-center font-bold text-sm text-[#16241F]">
-                            {item.quantity}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => increaseQty(item._id)}
-                            disabled={item.quantity >= maxQty}
-                            aria-label={t("Increase quantity")}
-                            className="w-8 h-8 text-[#16241F] hover:bg-[#16241F] hover:text-[#B08946] disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#16241F] transition"
-                          >
-                            <FontAwesomeIcon icon={faPlus} className="text-[10px]" />
-                          </button>
-                        </div>
-
-                        <span className="text-sm sm:text-base font-extrabold text-[#16241F]">
-                          ৳{(item.price * item.quantity).toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {error.field === "quantity" && (
-              <FieldError message={t(error.message)} />
-            )}
-          </div>
 
 
         </div>

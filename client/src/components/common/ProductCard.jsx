@@ -5,12 +5,15 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 import { CountContext } from '../../context/CountContext'; // নিজের ফোল্ডার অনুযায়ী পাথ ঠিক করুন
 import { useTranslation } from '../../utils/translations';
+import getProductPricing from '../../utils/getProductPricing';
 
 const ProductCard = ({ product }) => {
   const { t } = useTranslation();
   const { wishlist, cart, toggleWishlist, toggleCart } = useContext(CountContext);
 
   const productId = String(product._id || product.id);
+  const { price, originalPrice, discountPercent } =
+    getProductPricing(product);
   const isWished = wishlist.includes(productId);
   const inCart = cart.includes(productId);
 
@@ -40,9 +43,9 @@ const ProductCard = ({ product }) => {
               {t("New")}
             </span>
           )}
-          {product.discount && (
+          {discountPercent > 0 && (
             <span className="absolute top-14 right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-              -{product.discount}%
+              -{discountPercent}%
             </span>
           )}
         </div>
@@ -53,9 +56,9 @@ const ProductCard = ({ product }) => {
           </h3>
 
           <div className="flex items-center gap-2 mt-2">
-            <span className="text-lg font-bold text-gray-900">৳{product.price}</span>
-            {product.originalPrice && (
-              <span className="text-sm text-gray-400 line-through">৳{product.originalPrice}</span>
+            <span className="text-lg font-bold text-gray-900">৳{price}</span>
+            {originalPrice > price && (
+              <span className="text-sm text-gray-400 line-through">৳{originalPrice}</span>
             )}
           </div>
 

@@ -27,6 +27,7 @@ import { CountContext } from "../../context/CountContext";
 import useProducts from "../../hooks/useProducts";
 import { useTranslation } from "../../utils/translations";
 import { useScroll } from "../../hooks/useScroll";
+import getProductPricing from "../../utils/getProductPricing";
 
 
 /* =========================================================
@@ -119,46 +120,8 @@ const Offer = () => {
      CALCULATE DISCOUNT
      ======================================================= */
 
-  const getDiscountPercent = (item) => {
-
-    /*
-      First priority:
-      If database has discountPercent,
-      use that value.
-    */
-
-    if (
-      item.discountPercent !== undefined &&
-      item.discountPercent !== null
-    ) {
-      return Number(item.discountPercent);
-    }
-
-
-    /*
-      Otherwise calculate discount
-      from originalPrice and price.
-    */
-
-    if (
-      item.originalPrice &&
-      item.originalPrice > item.price
-    ) {
-      return Math.round(
-        (
-          (item.originalPrice - item.price) /
-          item.originalPrice
-        ) * 100
-      );
-    }
-
-
-    /*
-      No discount
-    */
-
-    return 0;
-  };
+  const getDiscountPercent = (item) =>
+    getProductPricing(item).discountPercent;
 
 
   /* =======================================================
@@ -919,27 +882,8 @@ const Offer = () => {
 
                     /* Original Price */
 
-                    const originalPrice =
-                      item.originalPrice ||
-                      Math.round(
-                        item.price * 1.25
-                      );
-
-
-                    /* Discount */
-
-                    const discountPercent =
-                      getDiscountPercent(item);
-
-
-                    /* Savings */
-
-                    const savingsAmount =
-                      Math.max(
-                        0,
-                        originalPrice -
-                          item.price
-                      );
+                    const { originalPrice, discountPercent, savingsAmount } =
+                      getProductPricing(item);
 
 
                     return (

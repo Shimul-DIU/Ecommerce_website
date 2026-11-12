@@ -38,6 +38,19 @@ const productSchema = new mongoose.Schema(
       min: 0,
     },
 
+    originalPrice: {
+      type: Number,
+      min: 0,
+      default: null,
+    },
+
+    discountPercent: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
+
     // শুধু deal-এর জন্য (আগের দাম)
     oldPrice: {
       type: Number,

@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "../../../utils/axiosInstance";
 import { CountContext } from "../../../context/CountContext";
 import { useTranslation } from "../../../utils/translations";
+import getProductPricing from "../../../utils/getProductPricing";
 
 export default function Wishlist() {
   const { t } = useTranslation();
@@ -12,14 +13,17 @@ export default function Wishlist() {
     useContext(CountContext);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
         const response = await axiosInstance.get("/api/wishlist");
-        setItems(response.data.items);
+        setItems(response.data.items || []);
+        setError("");
       } catch (error) {
         console.error("Error fetching wishlist:", error);
+        setError("Could not load your wishlist.");
       } finally {
         setLoading(false);
       }
@@ -49,6 +53,8 @@ export default function Wishlist() {
 
       {loading ? (
         <p className="text-sm text-slate-500">{t("Loading...")}</p>
+      ) : error ? (
+        <p role="alert" className="text-sm text-rose-600">{t(error)}</p>
       ) : visibleItems.length === 0 ? (
         <p className="text-slate-500">
           {t("Nothing saved yet. Items you love will show up here.")}
@@ -58,6 +64,8 @@ export default function Wishlist() {
           {visibleItems.map((w) => {
             const productId = String(w._id);
             const inCart = cart.includes(productId);
+            const { price, originalPrice, discountPercent } =
+              getProductPricing(w);
             const imageSrc =
               w.image || w.images?.[0] || "/images/placeholder.jpg";
 
@@ -78,9 +86,9 @@ export default function Wishlist() {
                         {t("New")}
                       </span>
                     )}
-                    {w.discount && (
+                    {discountPercent > 0 && (
                       <span className="absolute top-14 right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        -{w.discount}%
+                        -{discountPercent}%
                       </span>
                     )}
                   </div>
@@ -92,11 +100,11 @@ export default function Wishlist() {
 
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-lg font-bold text-gray-900">
-                        ৳{Number(w.price || 0).toLocaleString()}
+                        ৳{price.toLocaleString()}
                       </span>
-                      {w.originalPrice && (
+                      {originalPrice > price && (
                         <span className="text-sm text-gray-400 line-through">
-                          ৳{Number(w.originalPrice).toLocaleString()}
+                          ৳{originalPrice.toLocaleString()}
                         </span>
                       )}
                     </div>

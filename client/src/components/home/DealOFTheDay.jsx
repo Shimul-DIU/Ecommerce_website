@@ -10,6 +10,7 @@ import {
 import axiosInstance from "../../utils/axiosInstance"; // path নিজের মতো ঠিক করো
 import { CountContext } from "../../context/CountContext"; // path নিজের মতো ঠিক করো
 import { useTranslation } from "../../utils/translations";
+import getProductPricing from "../../utils/getProductPricing";
 
 // ============================================================
 // IMAGE URL
@@ -90,11 +91,9 @@ function DealCard({ deal }) {
   const unavailable = expired || outOfStock;
   const inCart = cart.includes(deal._id);
 
-  const hasDiscount = oldPrice > price;
-  const discountPercent = hasDiscount
-    ? Math.round(((oldPrice - price) / oldPrice) * 100)
-    : 0;
-  const savings = hasDiscount ? oldPrice - price : 0;
+  const { discountPercent, savingsAmount: savings } =
+    getProductPricing(deal);
+  const hasDiscount = discountPercent > 0;
 
   // Add to cart বাটন: না থাকলে যোগ হবে, থাকলে remove হবে
   const handleToggleCart = () => {

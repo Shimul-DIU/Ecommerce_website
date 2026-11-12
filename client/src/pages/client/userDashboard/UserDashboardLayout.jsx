@@ -1,29 +1,45 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import UserDashboardNavbar from "../../../components/client/userDashboard/userDashboardNavbar";
-import { Bell, Search } from "lucide-react";
 import { Outlet } from "react-router-dom";
+import axiosInstance from "../../../utils/axiosInstance";
 
 export default function UserDashboardLayout() {
-  const [profile, setProfile] = useState({ name: "User", email: "", phone: "" });
+  const [profile, setProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [profileError, setProfileError] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
-    // TODO: API call দিয়ে লগইন করা ইউজারের প্রোফাইল ফেচ করুন
+    const controller = new AbortController();
+
+    const fetchProfile = async () => {
+      try {
+        const response = await axiosInstance.get("/api/user/profile", {
+          signal: controller.signal,
+        });
+        const user = response.data.user;
+        setProfile({
+          id: user.id,
+          name: user.fullname,
+          email: user.email,
+          phone: user.phone || "",
+        });
+        setProfileError("");
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error("Error fetching profile:", error);
+          setProfileError("Could not load your profile.");
+        }
+      } finally {
+        if (!controller.signal.aborted) setProfileLoading(false);
+      }
+    };
+
+    fetchProfile();
+    return () => controller.abort();
   }, []);
 
-  // Safe Name & Initials handling
-  const displayName = profile?.name || "User";
-  const firstName = displayName.split(" ")[0];
-  const initials = displayName
-    .split(" ")
-    .filter(Boolean)
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-
   return (
-    // class="sticky top-0  z-40 bg-white border-b sm:border-b-0 sm:border-r border-slate-200 transition-all duration-300 w-full sm:h-screen sm:w-64 sm:flex sm:flex-col sm:justify-between sm:p-4"
     <div className="flex w-full max-w-none mx-auto  flex-col sm:flex-row h-[calc(100vh-87px)] mt-[33px] sm:mt-10 md:mt-0  overflow-hidden relative">
       {/* Sidebar Navigation */}
       <UserDashboardNavbar
@@ -41,11 +57,15 @@ export default function UserDashboardLayout() {
 
       {/* Main Content Area */}
       <main className="flex-1 min-w-0 md:mt-4  overflow-y-auto p-2 md:p-3 lg:p-4">
-
-
-
         {/* Dashboard Pages Render Here */}
-        <Outlet context={{ profile, setProfile }} />
+        <Outlet
+          context={{
+            profile,
+            setProfile,
+            profileLoading,
+            profileError,
+          }}
+        />
       </main>
     </div>
   );

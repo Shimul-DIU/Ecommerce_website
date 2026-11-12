@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   faArrowLeft,
   faCloudArrowUp,
@@ -53,16 +53,21 @@ const SectionTitle = ({ icon, title, subtitle }) => (
 
 const AddProduct = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditing = Boolean(id);
 
   const [prevImg, setPrevImg] = useState(null);
   const [error, setError] = useState({});
   const [submitting, setSubmitting] = useState(false);
+  const [loadingProduct, setLoadingProduct] = useState(isEditing);
+  const [loadError, setLoadError] = useState("");
 
   const [form, setForm] = useState({
     name: "",
     category: "",
     subCategory: "",
     price: "",
+    discountPercent: 0,
     oldPrice: "",
     stock: "",
     dealEndsAt: "",
@@ -71,6 +76,68 @@ const AddProduct = () => {
     description: "",
     image: null,
   });
+
+  useEffect(() => {
+    if (!id) return undefined;
+
+    let active = true;
+    const controller = new AbortController();
+    const loadProduct = async () => {
+      try {
+        const response = await axiosInstance.get(`/api/admin/products/${id}`, {
+          signal: controller.signal,
+        });
+        if (!active) return;
+
+        const product = response.data.data;
+        const isDealProduct = product.category === "deal";
+        const dealEndsAt = product.dealEndsAt
+          ? new Date(
+              new Date(product.dealEndsAt).getTime() -
+                new Date(product.dealEndsAt).getTimezoneOffset() * 60000
+            )
+              .toISOString()
+              .slice(0, 16)
+          : "";
+
+        setForm({
+          name: product.name || "",
+          category: product.category || "",
+          subCategory: product.subCategory || "",
+          price: String(
+            isDealProduct
+              ? product.price
+              : product.originalPrice ?? product.price
+          ),
+          discountPercent: Number(product.discountPercent || 0),
+          oldPrice: product.oldPrice ?? "",
+          stock: String(product.stock ?? ""),
+          dealEndsAt,
+          status: product.status || "Active",
+          homepageSection: product.homepageSection || "none",
+          description: product.description || "",
+          image: null,
+        });
+        setPrevImg(product.image || null);
+      } catch (loadProductError) {
+        if (active && !controller.signal.aborted) {
+          console.error("Load product error:", loadProductError);
+          setLoadError(
+            loadProductError.response?.data?.message ||
+              "Failed to load product"
+          );
+        }
+      } finally {
+        if (active) setLoadingProduct(false);
+      }
+    };
+
+    loadProduct();
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [id]);
 
   const isDeal = form.category === "deal";
   const hasSubCategory = !!categoryItems[form.category];
@@ -93,7 +160,15 @@ const AddProduct = () => {
         ...prev,
         category: value,
         subCategory: "",
+        price:
+          prev.category === "deal" && value !== "deal" && prev.oldPrice
+            ? String(prev.oldPrice)
+            : prev.price,
         oldPrice: value === "deal" ? prev.oldPrice : "",
+        discountPercent:
+          value === "deal" || prev.category === "deal"
+            ? 0
+            : prev.discountPercent,
         dealEndsAt: value === "deal" ? prev.dealEndsAt : "",
       }));
       setError({});
@@ -114,12 +189,20 @@ const AddProduct = () => {
 
       const formData = new FormData();
       Object.entries(form).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== "") {
+        if (
+          value !== null &&
+          value !== undefined &&
+          (value !== "" || key === "description")
+        ) {
           formData.append(key, value);
         }
       });
 
-      await axiosInstance.post("/api/admin/add-product", formData);
+      if (isEditing) {
+        await axiosInstance.patch(`/api/admin/products/${id}`, formData);
+      } else {
+        await axiosInstance.post("/api/admin/add-product", formData);
+      }
       navigate("/admin/products");
     } catch (err) {
       console.error("Add product error:", err);
@@ -137,6 +220,25 @@ const AddProduct = () => {
       setSubmitting(false);
     }
   };
+
+  if (loadingProduct) {
+    return <p className="p-6 text-sm text-slate-500">Loading product...</p>;
+  }
+
+  if (loadError) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-white p-6 text-sm text-red-600">
+        <p>{loadError}</p>
+        <button
+          type="button"
+          onClick={() => navigate("/admin/products")}
+          className="mt-4 rounded-full bg-[#16241F] px-4 py-2 font-semibold text-white"
+        >
+          Back to products
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -159,10 +261,12 @@ const AddProduct = () => {
               Products
             </p>
             <h1 className="mt-0.5 text-xl font-extrabold text-[#FAF6EF] sm:text-2xl">
-              Add New Product
+              {isEditing ? "Edit Product" : "Add New Product"}
             </h1>
             <p className="mt-0.5 text-sm text-[#FAF6EF]/60">
-              Fill in the details below to add a product to your store.
+              {isEditing
+                ? "Update the product details in your store."
+                : "Fill in the details below to add a product to your store."}
             </p>
           </div>
         </div>
@@ -271,7 +375,7 @@ const AddProduct = () => {
               {/* PRICE */}
               <div>
                 <label className={labelClass}>
-                  {isDeal ? "Deal Price" : "Price"}
+                  {isDeal ? "Deal Price" : "Regular Price"}
                 </label>
                 <div className="relative">
                   <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-[#B08946]">
@@ -284,12 +388,40 @@ const AddProduct = () => {
                     min="0"
                     value={form.price}
                     onChange={handleChange}
-                    placeholder="Product price"
+                    placeholder={isDeal ? "Deal price" : "Regular price"}
                     className={`${inputClass(error.price)} pl-9`}
                   />
                 </div>
                 <FieldError msg={error.price} />
               </div>
+
+              {!isDeal && (
+                <div>
+                  <label className={labelClass}>Discount (%)</label>
+                  <input
+                    type="number"
+                    name="discountPercent"
+                    min="0"
+                    max="99"
+                    step="1"
+                    value={form.discountPercent}
+                    onChange={handleChange}
+                    className={inputClass(error.discountPercent)}
+                  />
+                  <FieldError msg={error.discountPercent} />
+                  {Number(form.discountPercent) > 0 &&
+                    Number(form.price) > 0 && (
+                      <p className="mt-1 text-xs text-[#16241F]/60">
+                        Customer pays ৳
+                        {Math.round(
+                          Number(form.price) *
+                            (100 - Number(form.discountPercent)) /
+                            100
+                        ).toLocaleString()}
+                      </p>
+                    )}
+                </div>
+              )}
 
               {/* DEAL ONLY: OLD PRICE */}
               {isDeal && (
@@ -446,7 +578,11 @@ const AddProduct = () => {
                 disabled={submitting}
                 className="rounded-full bg-[#B08946] px-4 py-2.5 text-sm font-bold text-[#16241F] transition-colors hover:bg-[#C49A52] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {submitting ? "Saving..." : "Save Product"}
+                {submitting
+                  ? "Saving..."
+                  : isEditing
+                    ? "Update Product"
+                    : "Save Product"}
               </button>
 
               <button

@@ -11,6 +11,7 @@ import {
 import { CountContext } from "../../context/CountContext";
 import { useTranslation } from "../../utils/translations";
 import axiosInstance from "../../utils/axiosInstance";
+import getProductPricing from "../../utils/getProductPricing";
 
 // সবসময় মোট কতগুলো প্রোডাক্ট দেখাবে
 const TOTAL_ITEMS = 12;
@@ -161,15 +162,8 @@ const BestSellers = () => {
             const isOutOfStock = item.stock <= 0;
             const isLowStock = item.stock > 0 && item.stock <= 5;
 
-            const originalPrice =
-              item.originalPrice || Math.round(item.price * 1.25);
-            const discountPercent =
-              item.discountPercent ||
-              (originalPrice > item.price
-                ? Math.round(((originalPrice - item.price) / originalPrice) * 100)
-                : 0);
-
-            const savingsAmount = originalPrice - item.price;
+            const { originalPrice, discountPercent, savingsAmount } =
+              getProductPricing(item);
 
             // প্রথম ৩টি প্রোডাক্টে র‍্যাংক ব্যাজ (#1, #2, #3)
             const isTop = index < 3;

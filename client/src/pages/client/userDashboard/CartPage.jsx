@@ -11,6 +11,7 @@ import {
 import { CountContext } from "../../../context/CountContext";
 import useProducts from "../../../hooks/useProducts";
 import { useTranslation } from "../../../utils/translations";
+import getProductPricing from "../../../utils/getProductPricing";
 
 const QTY_KEY = "cartQty";
 const SHIPPING_FEE = 60;
@@ -58,8 +59,7 @@ const CartPage = () => {
       .map((p) => {
         const id = String(p._id);
         const stock = Number(p.stock ?? 0);
-        const price = Number(p.price || 0);
-        const originalPrice = Number(p.originalPrice || 0);
+        const { price, originalPrice } = getProductPricing(p);
         const saved = quantities[id] || 1;
         const quantity = stock > 0 ? Math.min(Math.max(1, saved), stock) : 1;
         return {
@@ -67,8 +67,7 @@ const CartPage = () => {
           name: p.name,
           image: p.image || p.images?.[0] || "/images/placeholder.jpg",
           price,
-          // originalPrice শুধু তখনই ধরা হবে যখন সেটা আসল দামের চেয়ে বেশি
-          originalPrice: originalPrice > price ? originalPrice : price,
+          originalPrice,
           stock,
           quantity,
           raw: p,

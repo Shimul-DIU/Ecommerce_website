@@ -67,6 +67,41 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
 
+    phone: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    addresses: [
+      {
+        label: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        line: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        city: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        phone: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        isDefault: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
+
     resetPasswordToken: {
       type: String,
     },

@@ -1,30 +1,56 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { useTranslation } from "../../../utils/translations";
+import axiosInstance from "../../../utils/axiosInstance";
 
 export default function UserProfile() {
   const { t } = useTranslation();
-  // profile/setProfile UserDashboardLayout theke Outlet context er madhome ashche,
-  // tai topbar-e (Welcome back, ...) update ta reflect hoye jabe
-  const { profile, setProfile } = useOutletContext();
+  const { profile, setProfile, profileLoading, profileError } =
+    useOutletContext();
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const [savedMsg, setSavedMsg] = useState("");
 
-  const saveProfile = (e) => {
+  const saveProfile = async (e) => {
     e.preventDefault();
+    setSaving(true);
+    setError("");
+    setSavedMsg("");
 
-    // TODO: api call diye profile update koro
-    // fetch("/api/user/me", {
-    //   method: "PUT",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(profile),
-    // }).then(() => {
-    //   setSavedMsg("Profile updated");
-    //   setTimeout(() => setSavedMsg(""), 2000);
-    // });
-
-    setSavedMsg(t("Profile updated"));
-    setTimeout(() => setSavedMsg(""), 2000);
+    try {
+      const response = await axiosInstance.put("/api/user/profile", {
+        fullname: profile.name,
+        phone: profile.phone,
+      });
+      const user = response.data.user;
+      setProfile({
+        id: user.id,
+        name: user.fullname,
+        email: user.email,
+        phone: user.phone || "",
+      });
+      setSavedMsg(t("Profile updated"));
+    } catch (saveError) {
+      console.error("Error updating profile:", saveError);
+      setError(
+        saveError.response?.data?.message || t("Could not update profile.")
+      );
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (profileLoading) {
+    return <p className="text-sm text-slate-500">{t("Loading...")}</p>;
+  }
+
+  if (profileError || !profile) {
+    return (
+      <p className="text-sm text-rose-600">
+        {t(profileError || "Profile unavailable.")}
+      </p>
+    );
+  }
 
   return (
     <>
@@ -36,7 +62,10 @@ export default function UserProfile() {
         <div>
           <label className="text-xs text-slate-500">{t("Full name")}</label>
           <input
-            value={profile.name}
+            required
+            minLength={2}
+            maxLength={100}
+            value={profile.name || ""}
             onChange={(e) => setProfile({ ...profile, name: e.target.value })}
             className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm outline-none"
           />
@@ -45,24 +74,27 @@ export default function UserProfile() {
           <label className="text-xs text-slate-500">{t("Email")}</label>
           <input
             value={profile.email}
-            onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-            className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm outline-none"
+            readOnly
+            className="mt-1 w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
           />
         </div>
         <div>
           <label className="text-xs text-slate-500">{t("Phone")}</label>
           <input
-            value={profile.phone}
+            maxLength={20}
+            value={profile.phone || ""}
             onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
             className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm outline-none"
           />
         </div>
         <button
           type="submit"
+          disabled={saving}
           className="w-fit rounded-md bg-rose-600 px-4 py-2 text-sm font-semibold text-white"
         >
-          {t("Save changes")}
+          {saving ? t("Saving...") : t("Save changes")}
         </button>
+        {error && <p className="text-sm text-rose-600">{error}</p>}
         {savedMsg && <p className="text-sm text-emerald-600">{savedMsg}</p>}
       </form>
     </>

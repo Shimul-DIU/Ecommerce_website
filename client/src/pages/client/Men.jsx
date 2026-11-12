@@ -26,6 +26,7 @@ import { CountContext } from "../../context/CountContext";
 import useProducts from "../../hooks/useProducts";
 import { useScroll } from "../../hooks/useScroll";
 import { useTranslation } from "../../utils/translations";
+import getProductPricing from "../../utils/getProductPricing";
 
 
 /* =========================================================
@@ -838,34 +839,8 @@ const Men = () => {
                       item.stock <= 0;
 
 
-                    /* Original price */
-
-                    const originalPrice =
-                      item.originalPrice ||
-                      Math.round(item.price * 1.25);
-
-
-                    /* Discount */
-
-                    const discountPercent =
-                      item.discountPercent ||
-                      (
-                        originalPrice > item.price
-                          ? Math.round(
-                            (
-                              (originalPrice -
-                                item.price) /
-                              originalPrice
-                            ) * 100
-                          )
-                          : 0
-                      );
-
-
-                    /* Savings */
-
-                    const savingsAmount =
-                      originalPrice - item.price;
+                    const { originalPrice, discountPercent, savingsAmount } =
+                      getProductPricing(item);
 
 
                     return (

@@ -1,4 +1,59 @@
+import mongoose from "mongoose";
 import Product, { NO_SUBCATEGORY } from "../model/products.js";
+
+const resolveProductPricing = ({
+  category,
+  price,
+  oldPrice,
+  discountPercent,
+}) => {
+  const regularPrice = Number(price);
+  if (!Number.isFinite(regularPrice) || regularPrice < 0) {
+    return { error: { price: "Price must be a non-negative number" } };
+  }
+
+  if (category === "deal") {
+    const dealOriginalPrice = Number(oldPrice);
+    if (!Number.isFinite(dealOriginalPrice) || dealOriginalPrice <= regularPrice) {
+      return { error: { oldPrice: "Old price must be greater than deal price" } };
+    }
+
+    return {
+      price: regularPrice,
+      originalPrice: dealOriginalPrice,
+      discountPercent: Math.round(
+        ((dealOriginalPrice - regularPrice) / dealOriginalPrice) * 100
+      ),
+      oldPrice: dealOriginalPrice,
+    };
+  }
+
+  const discount =
+    discountPercent === undefined || discountPercent === ""
+      ? 0
+      : Number(discountPercent);
+  if (!Number.isInteger(discount) || discount < 0 || discount > 99) {
+    return {
+      error: {
+        discountPercent: "Discount must be a whole number from 0 to 99",
+      },
+    };
+  }
+  if (discount > 0 && regularPrice === 0) {
+    return {
+      error: {
+        price: "Price must be greater than zero when a discount is set",
+      },
+    };
+  }
+
+  return {
+    price: Math.round((regularPrice * (100 - discount)) / 100),
+    originalPrice: discount > 0 ? regularPrice : null,
+    discountPercent: discount,
+    oldPrice: null,
+  };
+};
 
 // ============================================================
 // ADD PRODUCT (admin)
@@ -14,6 +69,7 @@ export const productController = async (req, res) => {
       stock,
       description,
       oldPrice,
+      discountPercent,
       dealEndsAt,
       homepageSection,
     } = req.body || {};
@@ -43,15 +99,21 @@ export const productController = async (req, res) => {
       }
     }
 
+    const pricing = resolveProductPricing({
+      category,
+      price,
+      oldPrice,
+      discountPercent,
+    });
+    if (pricing.error) {
+      return res.status(400).json({
+        success: false,
+        error: pricing.error,
+      });
+    }
+
     // ---------- Deal validation ----------
     if (isDeal) {
-      if (Number(oldPrice) <= Number(price)) {
-        return res.status(400).json({
-          success: false,
-          error: { oldPrice: "Old price must be greater than deal price" },
-        });
-      }
-
       const endDate = new Date(dealEndsAt);
 
       if (isNaN(endDate.getTime()) || endDate <= new Date()) {
@@ -79,12 +141,11 @@ export const productController = async (req, res) => {
       category,
       subCategory: subCategory || "",
       status,
-      price,
+      ...pricing,
       stock,
       description,
       homepageSection: homepageSection || "none",
       image,
-      oldPrice: isDeal ? oldPrice : null,
       dealEndsAt: isDeal ? new Date(dealEndsAt) : null,
     });
 
@@ -116,6 +177,155 @@ export const productController = async (req, res) => {
           ? error.message
           : "Internal Server Error",
     });
+  }
+};
+
+export const getAdminProduct = async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.productId)) {
+      return res.status(400).json({ success: false, message: "Invalid product ID" });
+    }
+
+    const product = await Product.findById(req.params.productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    return res.status(200).json({ success: true, data: product });
+  } catch (error) {
+    console.error("Get admin product error:", error);
+    return res.status(500).json({ success: false, message: "Failed to fetch product" });
+  }
+};
+
+export const updateProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    if (!mongoose.isValidObjectId(productId)) {
+      return res.status(400).json({ success: false, message: "Invalid product ID" });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    const body = req.body || {};
+    const category = body.category ?? product.category;
+    const name = body.name ?? product.name;
+    const subCategory = body.subCategory ?? product.subCategory;
+    const status = body.status ?? product.status;
+    const price =
+      body.price ??
+      (category === "deal"
+        ? product.price
+        : product.originalPrice ?? product.price);
+    const discountPercent =
+      body.discountPercent ?? product.discountPercent ?? 0;
+    const oldPrice =
+      category === "deal"
+        ? body.oldPrice ?? product.oldPrice
+        : null;
+    const stock = body.stock ?? product.stock;
+    const description = body.description ?? product.description;
+    const dealEndsAt =
+      category === "deal" ? body.dealEndsAt ?? product.dealEndsAt : null;
+
+    if (!String(name).trim() || !String(category).trim() || !String(status).trim()) {
+      return res.status(400).json({
+        success: false,
+        error: { name: "Name, category, and status are required" },
+      });
+    }
+
+    if (!NO_SUBCATEGORY.includes(category) && !String(subCategory || "").trim()) {
+      return res.status(400).json({
+        success: false,
+        error: { subCategory: "Sub category is required" },
+      });
+    }
+
+    const pricing = resolveProductPricing({
+      category,
+      price,
+      oldPrice,
+      discountPercent,
+    });
+    if (pricing.error) {
+      return res.status(400).json({ success: false, error: pricing.error });
+    }
+
+    let parsedDealEnd = null;
+    if (category === "deal") {
+      parsedDealEnd = new Date(dealEndsAt);
+      if (isNaN(parsedDealEnd.getTime())) {
+        return res.status(400).json({
+          success: false,
+          error: { dealEndsAt: "A valid deal end time is required" },
+        });
+      }
+    }
+
+    product.set({
+      name: String(name).trim(),
+      category,
+      subCategory: subCategory || "",
+      status,
+      ...pricing,
+      stock,
+      description,
+      homepageSection: body.homepageSection ?? product.homepageSection,
+      dealEndsAt: parsedDealEnd,
+      ...(req.file
+        ? { image: req.file.path.replace(/\\/g, "/") }
+        : {}),
+    });
+
+    await product.save();
+    return res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      data: product,
+    });
+  } catch (error) {
+    console.error("Update product error:", error);
+
+    if (error.name === "ValidationError") {
+      const validationErrors = Object.fromEntries(
+        Object.entries(error.errors).map(([key, value]) => [key, value.message])
+      );
+      return res.status(400).json({ success: false, error: validationErrors });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Failed to update product",
+    });
+  }
+};
+
+export const deleteProduct = async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.productId)) {
+      return res.status(400).json({ success: false, message: "Invalid product ID" });
+    }
+
+    const product = await Product.findByIdAndDelete(req.params.productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Product deleted successfully",
+      productId: product._id,
+    });
+  } catch (error) {
+    console.error("Delete product error:", error);
+    return res.status(500).json({ success: false, message: "Failed to delete product" });
   }
 };
 

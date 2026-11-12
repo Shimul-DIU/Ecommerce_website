@@ -11,6 +11,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useSearchParams } from "react-router-dom";
 import axiosInstance from "../../../utils/axiosInstance";
+import getProductPricing from "../../../utils/getProductPricing";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -48,6 +49,7 @@ const AdminProducts = () => {
   const [message, setMessage] = useState("");
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [deletingId, setDeletingId] = useState(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
@@ -104,6 +106,24 @@ const AdminProducts = () => {
   const goToPage = (page) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
+  };
+
+  const handleDelete = async (product) => {
+    if (!window.confirm(`Delete "${product.name}"?`)) return;
+
+    setDeletingId(product._id);
+    setMessage("");
+    try {
+      await axiosInstance.delete(`/api/admin/products/${product._id}`);
+      setProducts((current) =>
+        current.filter((item) => item._id !== product._id)
+      );
+    } catch (error) {
+      console.error("Delete product error:", error);
+      setMessage(error.response?.data?.message || "Failed to delete product");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -208,6 +228,8 @@ const AdminProducts = () => {
               {paginatedProducts.map((item) => {
                 const status =
                   STATUS_STYLES[item.status] || STATUS_STYLES.Inactive;
+                const { originalPrice, discountPercent } =
+                  getProductPricing(item);
 
                 return (
                   <tr
@@ -233,7 +255,12 @@ const AdminProducts = () => {
                     </td>
 
                     <td className="px-3 py-3 font-bold text-[#16241F]">
-                      ৳{item.price}
+                      <span>৳{item.price}</span>
+                      {discountPercent > 0 && (
+                        <span className="mt-1 block text-xs font-semibold text-[#B08946]">
+                          {discountPercent}% off · Regular ৳{originalPrice}
+                        </span>
+                      )}
                     </td>
 
                     <td className="px-3 py-3 font-semibold text-[#16241F]/70">
@@ -253,15 +280,19 @@ const AdminProducts = () => {
 
                     <td className="px-5 py-3">
                       <div className="flex justify-center gap-2">
-                        <button
-                          type="button"
+                        <Link
+                          to={`/admin/products/edit/${item._id}`}
+                          aria-label={`Edit ${item.name}`}
                           className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#16241F] text-[#B08946] shadow-sm transition-colors hover:bg-[#B08946] hover:text-[#16241F]"
                         >
                           <FontAwesomeIcon icon={faPen} className="text-xs" />
-                        </button>
+                        </Link>
 
                         <button
                           type="button"
+                          onClick={() => handleDelete(item)}
+                          disabled={deletingId === item._id}
+                          aria-label={`Delete ${item.name}`}
                           className="flex h-9 w-9 items-center justify-center rounded-xl border border-red-200 bg-red-50 text-red-500 transition-colors hover:bg-red-500 hover:text-white"
                         >
                           <FontAwesomeIcon icon={faTrash} className="text-xs" />

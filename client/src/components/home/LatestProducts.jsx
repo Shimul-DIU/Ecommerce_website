@@ -10,6 +10,7 @@ import {
 import { CountContext } from "../../context/CountContext";
 import { useTranslation } from "../../utils/translations";
 import axiosInstance from "../../utils/axiosInstance";
+import getProductPricing from "../../utils/getProductPricing";
 
 // প্রতি সারিতে কতটা কার্ড
 const getItemsCount = (width) => {
@@ -165,15 +166,8 @@ const LatestProducts = () => {
             const inCart = cart?.includes(String(item._id));
             const isOutOfStock = item.stock <= 0;
 
-            const originalPrice =
-              item.originalPrice || Math.round(item.price * 1.25);
-            const discountPercent =
-              item.discountPercent ||
-              (originalPrice > item.price
-                ? Math.round(((originalPrice - item.price) / originalPrice) * 100)
-                : 0);
-
-            const savingsAmount = originalPrice - item.price;
+            const { originalPrice, discountPercent, savingsAmount } =
+              getProductPricing(item);
 
             // প্রথম ৪টি প্রোডাক্টে "NEW" ব্যাজ
             const isNew = index < 4;

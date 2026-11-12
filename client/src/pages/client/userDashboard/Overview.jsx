@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Package,
   Truck,
   Heart,
-  Star,
   ArrowRight,
   CalendarDays,
   ShoppingBag,
 } from "lucide-react";
-import AddProductSection from "./AddProductSection";
 import axiosInstance from "../../../utils/axiosInstance";
 import formatOrderDate from "../../../utils/formatOrderDate";
+import getOrderItems from "../../../utils/getOrderItems";
 import { useTranslation } from "../../../utils/translations";
+import { CountContext } from "../../../context/CountContext";
 
 /* ---------------- Status styles ---------------- */
 const statusStyles = {
@@ -73,10 +73,11 @@ const OverviewSkeleton = () => (
 /* ---------------- Component ---------------- */
 export default function Overview() {
   const { t } = useTranslation();
-  const [wishlistCount, setWishlistCount] = useState(0);
-  const [rewardPoints, setRewardPoints] = useState(0);
+  const { wishlist } = useContext(CountContext);
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
+  const [ordersLoaded, setOrdersLoaded] = useState(false);
+  const [orderError, setOrderError] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -87,10 +88,17 @@ export default function Overview() {
         const res = await axiosInstance.get("/api/orders/order-details", {
           signal: controller.signal,
         });
-        if (active) setOrders(res.data.orders || []);
+        if (active) {
+          setOrders(res.data.orders || []);
+          setOrdersLoaded(true);
+          setOrderError("");
+        }
       } catch (error) {
         if (active && !controller.signal.aborted) {
           console.error("Error fetching orders:", error);
+          setOrderError(
+            error.response?.data?.message || "Could not load your orders."
+          );
         }
       } finally {
         if (active) setLoading(false);
@@ -112,7 +120,12 @@ export default function Overview() {
     };
   }, []);
 
-  const inTransitCount = orders.filter((o) => o.status === "shipped").length;
+  const inTransitCount = orders.filter(
+    (o) => String(o.status).toLowerCase() === "shipped"
+  ).length;
+  const deliveredCount = orders.filter(
+    (o) => String(o.status).toLowerCase() === "delivered"
+  ).length;
   const recentOrders = orders.slice(0, 2);
 
   if (loading) {
@@ -133,31 +146,38 @@ export default function Overview() {
         </div>
       </div>
 
+      {orderError && ordersLoaded && (
+        <p role="alert" className="text-sm text-rose-600">{t(orderError)}</p>
+      )}
+
       {/* ============ STAT CARDS ============ */}
       <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
         <Link to="/userDashboard/user-orders" className="block">
-          <StatCard label={t("Total Orders")} value={orders.length} Icon={Package} />
+          <StatCard
+            label={t("Total Orders")}
+            value={ordersLoaded ? orders.length : "—"}
+            Icon={Package}
+          />
         </Link>
 
-        <StatCard label={t("In Transit")} value={inTransitCount} Icon={Truck} />
+        <StatCard
+          label={t("In Transit")}
+          value={ordersLoaded ? inTransitCount : "—"}
+          Icon={Truck}
+        />
 
         <StatCard
           label={t("Wishlist Items")}
-          value={wishlistCount}
+          value={wishlist.length}
           Icon={Heart}
         />
 
         <StatCard
-          label={t("Reward Points")}
-          value={rewardPoints.toLocaleString()}
-          Icon={Star}
+          label={t("Delivered")}
+          value={ordersLoaded ? deliveredCount : "—"}
+          Icon={Package}
         />
       </div>
-
-      {/* ============ ADD PRODUCT ============ */}
-      <AddProductSection
-        onProductAdded={(product) => console.log("New product:", product)}
-      />
 
       {/* ============ RECENT ORDERS ============ */}
       <div>
@@ -183,7 +203,11 @@ export default function Overview() {
           </Link>
         </div>
 
-        {recentOrders.length === 0 ? (
+        {!ordersLoaded ? (
+          <p role="alert" className="rounded-lg border border-rose-200 bg-white p-4 text-sm text-rose-600">
+            {t(orderError || "Could not load your orders.")}
+          </p>
+        ) : recentOrders.length === 0 ? (
           /* Empty state */
           <div className="rounded-2xl border border-dashed border-[#E4DDCE] bg-white px-6 py-14 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#FAF6EF] text-[#B08946]">
@@ -243,28 +267,34 @@ export default function Overview() {
                   )}
 
                   {/* Product */}
-                  <div className="flex min-w-0 gap-4">
-                    <img
-                      src={
-                        order.productSnapshot?.image || "/placeholder-image.jpg"
-                      }
-                      alt={order.productSnapshot?.name || t("Product")}
-                      className="h-20 w-20 shrink-0 rounded-xl border border-[#E4DDCE] object-cover"
-                    />
-
-                    <div className="flex min-w-0 flex-col justify-center">
-                      <p className="truncate font-semibold text-[#16241F]">
-                        {order.productSnapshot?.name || "Unknown Product"}
-                      </p>
-                      <p className="mt-0.5 truncate text-xs text-[#16241F]/40">
-                        {t("ID")}: {order.productSnapshot?.productId || "N/A"}
-                      </p>
-                      <p className="mt-2 text-sm font-medium text-[#16241F]/70">
-                        ৳{order.productSnapshot?.price?.toLocaleString() || 0}{" "}
-                        <span className="text-[#B08946]">×</span>{" "}
-                        {order.quantity || 1}
-                      </p>
-                    </div>
+                  <div className="space-y-3">
+                    {getOrderItems(order).map((item, index) => (
+                      <div
+                        key={item.productId || item._id || `${item.name}-${index}`}
+                        className="flex min-w-0 gap-4"
+                      >
+                        <img
+                          src={item.image || "/placeholder-image.jpg"}
+                          alt={item.name || t("Product")}
+                          className="h-20 w-20 shrink-0 rounded-xl border border-[#E4DDCE] object-cover"
+                        />
+                        <div className="flex min-w-0 flex-col justify-center">
+                          <p className="truncate font-semibold text-[#16241F]">
+                            {item.name || t("Product")}
+                          </p>
+                          {item.productId && (
+                            <p className="mt-0.5 truncate text-xs text-[#16241F]/40">
+                              {t("ID")}: {item.productId}
+                            </p>
+                          )}
+                          <p className="mt-2 text-sm font-medium text-[#16241F]/70">
+                            ৳{Number(item.price || 0).toLocaleString()}{" "}
+                            <span className="text-[#B08946]">×</span>{" "}
+                            {item.quantity || 1}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
 
                   {/* Price breakdown */}
