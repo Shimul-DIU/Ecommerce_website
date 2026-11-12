@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -9,8 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { CountContext } from "../../context/CountContext";
 import { useTranslation } from "../../utils/translations";
-
-const API_URL = "/data/products.json";
+import axiosInstance from "../../utils/axiosInstance";
 
 // প্রতি সারিতে কতটা কার্ড
 const getItemsCount = (width) => {
@@ -51,7 +50,7 @@ const LatestProducts = () => {
 
   const itemsPerRow = getItemsCount(width);
 
-  // API call (dummy JSON থেকে)
+  // Load products selected for the Latest Products section.
   useEffect(() => {
     const controller = new AbortController();
 
@@ -59,22 +58,29 @@ const LatestProducts = () => {
       try {
         setLoading(true);
         setError("");
-        const res = await fetch(API_URL, { signal: controller.signal });
-        if (!res.ok) throw new Error("প্রোডাক্ট লোড করা যায়নি");
-        const data = await res.json();
-        const list = Array.isArray(data) ? data : data.products || [];
+        const response = await axiosInstance.get("/api/products", {
+          signal: controller.signal,
+        });
+        const list = response.data?.data;
+        if (!Array.isArray(list)) {
+          throw new Error("Product list could not be loaded");
+        }
 
-        // সবচেয়ে নতুন আগে
-        const hasDates = list.some((p) => getTime(p) > 0);
-        const sorted = hasDates
-          ? [...list].sort((a, b) => getTime(b) - getTime(a))
-          : [...list].reverse();
+        const sorted = list
+          .filter(
+            (product) =>
+              product.status === "Active" &&
+              ["latest-products", "both"].includes(product.homepageSection)
+          )
+          .sort((a, b) => getTime(b) - getTime(a));
 
         setProducts(sorted);
       } catch (err) {
-        if (err.name !== "AbortError") setError(err.message);
+        if (!controller.signal.aborted) {
+          setError(err.response?.data?.message || err.message);
+        }
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     };
 
@@ -121,7 +127,7 @@ const LatestProducts = () => {
         {/* See All link */}
         <Link
           to="/products"
-          state={{ filter: "latest" }}
+          state={{ filter: "latest-products" }}
           className="group flex items-center gap-1.5 text-sm sm:text-base font-semibold text-[#16241F] hover:text-[#B08946] transition-colors duration-200"
         >
           <span>{t("See All")}</span>
@@ -307,6 +313,11 @@ const LatestProducts = () => {
             );
           })}
         </div>
+      )}
+      {!loading && products.length === 0 && (
+        <p className="rounded-xl border border-[#E4DDCE] bg-white px-4 py-8 text-center text-sm text-[#16241F]/55">
+          No latest products available yet.
+        </p>
       )}
     </section>
   );

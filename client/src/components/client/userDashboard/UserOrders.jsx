@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../utils/axiosInstance";
+import getOrderItems from "../../../utils/getOrderItems";
 import { Package, MapPin, Phone, User, CreditCard, Truck } from "lucide-react";
 
 const paymentLabels = {
@@ -22,21 +23,41 @@ const UserOrders = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+
     const fetchData = async () => {
       try {
-
-        const res = await axiosInstance.get("/api/orders/order-details");
-
-        setOrders(res.data.orders);
+        const res = await axiosInstance.get("/api/orders/order-details", {
+          signal: controller.signal,
+        });
+        if (active) {
+          setOrders(res.data.orders || []);
+          setError(null);
+        }
       } catch (error) {
-        console.log(error);
-        setError("অর্ডার লোড করতে সমস্যা হয়েছে।");
+        if (active && !controller.signal.aborted) {
+          console.error(error);
+          setError("অর্ডার লোড করতে সমস্যা হয়েছে।");
+        }
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
 
     fetchData();
+    const refreshVisibleOrders = () => {
+      if (document.visibilityState === "visible") fetchData();
+    };
+    const intervalId = window.setInterval(refreshVisibleOrders, 30000);
+    window.addEventListener("focus", fetchData);
+
+    return () => {
+      active = false;
+      controller.abort();
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", fetchData);
+    };
   }, []);
 
   return (
@@ -110,24 +131,30 @@ const UserOrders = () => {
 
                 <div className="p-5 flex flex-col sm:flex-row gap-5">
                   {/* Product */}
-                  <div className="flex gap-4 flex-1 min-w-0">
-                    <img
-                      src={order.productSnapshot?.image}
-                      alt={order.productSnapshot?.name}
-                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover border border-slate-200 shrink-0"
-                    />
-                    <div className="min-w-0 flex flex-col justify-center">
-                      <p className="font-semibold text-slate-900 text-base sm:text-lg truncate">
-                        {order.productSnapshot?.name}
-                      </p>
-                      <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-                        ID: {order.productSnapshot?.productId}
-                      </p>
-                      <p className="text-sm sm:text-base text-slate-600 mt-2">
-                        ৳{order.productSnapshot?.price?.toLocaleString()} ×{" "}
-                        {order.quantity}
-                      </p>
-                    </div>
+                  <div className="flex flex-1 min-w-0 flex-col gap-3">
+                    {getOrderItems(order).map((item) => (
+                      <div
+                        key={item.productId}
+                        className="flex min-w-0 gap-4"
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover border border-slate-200 shrink-0"
+                        />
+                        <div className="min-w-0 flex flex-col justify-center">
+                          <p className="font-semibold text-slate-900 text-base sm:text-lg truncate">
+                            {item.name}
+                          </p>
+                          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                            ID: {item.productId}
+                          </p>
+                          <p className="text-sm sm:text-base text-slate-600 mt-2">
+                            ৳{item.price?.toLocaleString()} × {item.quantity}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
 
                   {/* Price breakdown */}

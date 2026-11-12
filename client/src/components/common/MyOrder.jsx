@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useTranslation } from "../../utils/translations";
+import formatOrderDate from "../../utils/formatOrderDate";
+import getOrderItems from "../../utils/getOrderItems";
 
 // TODO: adjust this to match your actual backend route
 // e.g. `${import.meta.env.VITE_API_URL}/orders?email=${user.email}`
@@ -13,13 +15,6 @@ const statusStyles = {
   delivered: "bg-green-50 text-green-700",
   cancelled: "bg-red-50 text-red-700",
 };
-
-const formatDate = (dateString) =>
-  new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 
 const MyOrders = ({ userEmail }) => {
   const { t } = useTranslation();
@@ -123,7 +118,7 @@ const MyOrders = ({ userEmail }) => {
                     {t("Order")} #{order._id.slice(-8).toUpperCase()}
                   </p>
                   <p className="text-xs text-gray-400 mt-0.5">
-                    {formatDate(order.createdAt)}
+                    {formatOrderDate(order.createdAt)}
                   </p>
                 </div>
 
@@ -144,7 +139,7 @@ const MyOrders = ({ userEmail }) => {
               {isExpanded && (
                 <div className="border-t border-gray-100 p-5 bg-gray-50">
                   <ul className="divide-y divide-gray-200">
-                    {order.items?.map((item, idx) => (
+                    {getOrderItems(order).map((item, idx) => (
                       <li
                         key={idx}
                         className="flex items-center justify-between py-3 text-sm"

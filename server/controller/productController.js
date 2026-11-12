@@ -15,6 +15,7 @@ export const productController = async (req, res) => {
       description,
       oldPrice,
       dealEndsAt,
+      homepageSection,
     } = req.body || {};
 
     const isDeal = category === "deal";
@@ -81,6 +82,7 @@ export const productController = async (req, res) => {
       price,
       stock,
       description,
+      homepageSection: homepageSection || "none",
       image,
       oldPrice: isDeal ? oldPrice : null,
       dealEndsAt: isDeal ? new Date(dealEndsAt) : null,

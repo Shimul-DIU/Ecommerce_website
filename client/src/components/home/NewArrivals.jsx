@@ -12,7 +12,7 @@ import { CountContext } from "../../context/CountContext";
 import { useTranslation } from "../../utils/translations";
 
 const getItemsCount = (width) => {
-  if (width >= 1280) return 6; // xl: বড় ডেস্কটপ
+  if (width > 1280) return 6; // xl: বড় ডেস্কটপ
   if (width >= 1024) return 5; // lg: ডেস্কটপ/ল্যাপটপ
   if (width >= 768) return 4; // md: ট্যাবলেট
   if (width >= 640) return 3; // sm: বড় ফোন
@@ -69,9 +69,7 @@ const NewArrivals = () => {
         <div className="flex items-center gap-3">
           <span className="hidden sm:block h-8 w-1 rounded-full bg-[#B08946]" />
           <div>
-            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-[#B08946]">
-              Just Landed
-            </p>
+            
             <div className="flex items-center gap-2">
               <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#16241F] leading-tight">
                 {t("New Arrivals")}

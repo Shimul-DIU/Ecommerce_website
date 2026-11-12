@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authContext } from "../context/AuthContext";
 import axiosInstance from "../utils/axiosInstance";
+import formatOrderDate from "../utils/formatOrderDate";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faRightFromBracket,
@@ -356,7 +357,7 @@ const Profile = () => {
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">Order #{order.id?.slice(0, 8)}</p>
-                          <p className="text-sm text-gray-500">{formatDate(order.createdAt)}</p>
+                          <p className="text-sm text-gray-500">{formatOrderDate(order.createdAt)}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">

@@ -18,6 +18,8 @@ const CATEGORY_OPTIONS = [
   { key: "all", label: "All Categories" },
   { key: "deal", label: "Deal of the Day" },
   { key: "new-arrival", label: "New Arrival" },
+  { key: "latest-products", label: "Latest Products" },
+  { key: "best-sellers", label: "Best Sellers" },
   { key: "perfume", label: "Perfume" },
   { key: "jewellery", label: "Jewellery" },
   { key: "men", label: "Men's" },
@@ -69,9 +71,21 @@ const Products = () => {
     let result =
       activeCategory === "all"
         ? [...products]
-        : products.filter(
-          (item) => normalize(item.category) === normalize(activeCategory)
-        );
+        : activeCategory === "latest-products"
+          ? products.filter(
+              (item) =>
+                ["latest-products", "both"].includes(item.homepageSection)
+            )
+          : activeCategory === "best-sellers"
+            ? products
+                .filter(
+                  (item) =>
+                    item.status === "Active" && Number(item.sold) > 0
+                )
+                .sort((a, b) => Number(b.sold || 0) - Number(a.sold || 0))
+            : products.filter(
+                (item) => normalize(item.category) === normalize(activeCategory)
+              );
 
     // 2) Subcategory filter (sidebar theke)
     if (subcategoryQuery) {

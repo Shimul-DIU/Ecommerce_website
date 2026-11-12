@@ -3,6 +3,10 @@ import rateLimit from 'express-rate-limit';
 import passport from 'passport';
 import { ResetPassword, ForgotPassword, loginAdmin } from '../controller/adminController.js';
 import { productController } from '../controller/productController.js';
+import {
+  getAdminOrders,
+  updateOrderStatus,
+} from '../controller/orderController.js';
 import { upload } from '../middleware/upload.js';
 
 const adminRouter = express.Router();
@@ -41,6 +45,17 @@ adminRouter.get(
       message: 'Welcome Admin Dashboard',
     });
   }
+);
+
+adminRouter.get(
+  '/orders',
+  passport.authenticate('admin-jwt', { session: false }),
+  getAdminOrders
+);
+adminRouter.patch(
+  '/orders/:orderId/status',
+  passport.authenticate('admin-jwt', { session: false }),
+  updateOrderStatus
 );
 
 // add product

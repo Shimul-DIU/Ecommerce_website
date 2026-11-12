@@ -572,20 +572,16 @@ const Checkout = () => {
                     <label className={labelCls}>
                       {t("Phone Number")} <span className="text-red-500">*</span>
                     </label>
-                    <div className="relative">
-                      <span className="absolute left-0 top-0 bottom-0 flex items-center px-3 rounded-l-xl bg-[#16241F] text-[#B08946] text-xs sm:text-sm font-bold">
-                        +880
-                      </span>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formdata.phone}
-                        onChange={changeHandler}
-                        placeholder="01XXXXXXXXX"
-                        maxLength={11}
-                        className={`${inputCls(error.field === "phone")} pl-16 sm:pl-[72px]`}
-                      />
-                    </div>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formdata.phone}
+                      onChange={changeHandler}
+                      placeholder="01XXXXXXXXX"
+                      maxLength={11}
+                      inputMode="numeric"
+                      className={inputCls(error.field === "phone")}
+                    />
                     {error.field === "phone" && (
                       <FieldError message={t(error.message)} />
                     )}

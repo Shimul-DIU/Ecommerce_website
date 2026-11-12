@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,8 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { CountContext } from "../../context/CountContext";
 import { useTranslation } from "../../utils/translations";
-
-const API_URL = "/data/products.json";
+import axiosInstance from "../../utils/axiosInstance";
 
 // সবসময় মোট কতগুলো প্রোডাক্ট দেখাবে
 const TOTAL_ITEMS = 12;
@@ -49,7 +48,7 @@ const BestSellers = () => {
 
   const itemsPerRow = getItemsCount(width);
 
-  // API call (dummy JSON থেকে)
+  // Rank active products by the quantity sold.
   useEffect(() => {
     const controller = new AbortController();
 
@@ -57,17 +56,24 @@ const BestSellers = () => {
       try {
         setLoading(true);
         setError("");
-        const res = await fetch(API_URL, { signal: controller.signal });
-        if (!res.ok) throw new Error("প্রোডাক্ট লোড করা যায়নি");
-        const data = await res.json();
-        const list = Array.isArray(data) ? data : data.products || [];
+        const response = await axiosInstance.get("/api/products", {
+          signal: controller.signal,
+        });
+        const list = response.data?.data;
+        if (!Array.isArray(list)) {
+          throw new Error("Product list could not be loaded");
+        }
 
-        // সবচেয়ে বেশি বিক্রি হওয়া আগে
-        setProducts([...list].sort((a, b) => (b.sold || 0) - (a.sold || 0)));
+        const bestSellers = list
+          .filter((product) => product.status === "Active" && Number(product.sold) > 0)
+          .sort((a, b) => Number(b.sold || 0) - Number(a.sold || 0));
+        setProducts(bestSellers);
       } catch (err) {
-        if (err.name !== "AbortError") setError(err.message);
+        if (!controller.signal.aborted) {
+          setError(err.response?.data?.message || err.message);
+        }
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     };
 
@@ -103,9 +109,6 @@ const BestSellers = () => {
         <div className="flex items-center gap-3">
           <span className="hidden sm:block h-8 w-1 rounded-full bg-[#B08946]" />
           <div>
-            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-[#B08946]">
-              {t("Most Loved")}
-            </p>
             <div className="flex items-center gap-2">
               <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#16241F] leading-tight">
                 {t("Best Sellers")}
@@ -349,6 +352,11 @@ const BestSellers = () => {
             );
           })}
         </div>
+      )}
+      {!loading && products.length === 0 && (
+        <p className="rounded-xl border border-[#E4DDCE] bg-white px-4 py-8 text-center text-sm text-[#16241F]/55">
+          No best sellers available yet.
+        </p>
       )}
     </section>
   );

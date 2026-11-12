@@ -2,21 +2,21 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, Package, Home, Receipt,  Check } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "../../utils/translations";
+import formatOrderDate from "../../utils/formatOrderDate";
+import getOrderItems from "../../utils/getOrderItems";
 
 export default function OrderSuccess() {
- const { t } = useTranslation();
- const location=useLocation()
- console.log(location)
- console.log(location.state.order)
+  const { t } = useTranslation();
+  const location = useLocation();
   const [visible, setVisible] = useState(false);
-  const order = location.state.order
+  const order = location.state.order;
+  const orderItems = getOrderItems(order);
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 50);
     return () => clearTimeout(t);
   }, []);
 
-
-  const subtotal = order.subtotal
+  const subtotal = order.subtotal;
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
@@ -41,7 +41,9 @@ export default function OrderSuccess() {
           <div className="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-3">
             <div>
               <p className="text-xs text-slate-500">{t("Order ID")}</p>
-              <p className="text-sm font-medium text-slate-900">{order.productSnapshot.productId}</p>
+              <p className="text-sm font-medium text-slate-900">
+                {order._id}
+              </p>
             </div>
             <button
 
@@ -57,17 +59,21 @@ export default function OrderSuccess() {
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
               <p className="text-xs text-slate-500">{t("Order Date")}</p>
-              <p className="font-medium text-slate-900">{order.createdAt}</p>
+              <p className="font-medium text-slate-900">
+                {formatOrderDate(order.createdAt)}
+              </p>
             </div>
             <div>
               <p className="text-xs text-slate-500">{t("Payment Method")}</p>
-              <p className="font-medium text-slate-900">{order.paymentMethod}</p>
+              <p className="font-medium text-slate-900">
+                {order.payment?.method || order.paymentMethod}
+              </p>
             </div>
             <div className="col-span-2">
               <p className="text-xs text-slate-500">{t("Estimated Delivery")}</p>
               <p className="font-medium text-slate-900 flex items-center gap-1.5">
                 <Package className="w-4 h-4 text-slate-400" />
-                {order.estimatedDelivery}
+                {formatOrderDate(order.estimatedDelivery)}
               </p>
             </div>
           </div>
@@ -78,16 +84,20 @@ export default function OrderSuccess() {
               {t("Items")}
             </p>
             <div className="space-y-2">
-
-                <div  className="flex justify-between text-sm">
+              {orderItems.map((item) => (
+                <div
+                  key={item.productId}
+                  className="flex justify-between text-sm"
+                >
                   <span className="text-slate-700">
-                    {order.productSnapshot.name} <span className="text-slate-400">x{order.quantity}</span>
+                    {item.name}{" "}
+                    <span className="text-slate-400">x{item.quantity}</span>
                   </span>
-                  <span className="text-slate-900 font-medium">
-                  ৳{(order.productSnapshot.price * order.quantity).toLocaleString()}
+                  <span className="font-medium text-slate-900">
+                    ৳{(item.price * item.quantity).toLocaleString()}
                   </span>
                 </div>
-
+              ))}
             </div>
           </div>
 

@@ -11,15 +11,16 @@ import {
 } from "lucide-react";
 import AddProductSection from "./AddProductSection";
 import axiosInstance from "../../../utils/axiosInstance";
+import formatOrderDate from "../../../utils/formatOrderDate";
 import { useTranslation } from "../../../utils/translations";
 
 /* ---------------- Status styles ---------------- */
 const statusStyles = {
-  Pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  Processing: "bg-blue-50 text-blue-700 border-blue-200",
-  "In Transit": "bg-amber-50 text-amber-700 border-amber-200",
-  Delivered: "bg-green-50 text-green-700 border-green-200",
-  Cancelled: "bg-red-50 text-red-700 border-red-200",
+  pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
+  processing: "bg-blue-50 text-blue-700 border-blue-200",
+  shipped: "bg-amber-50 text-amber-700 border-amber-200",
+  delivered: "bg-green-50 text-green-700 border-green-200",
+  cancelled: "bg-red-50 text-red-700 border-red-200",
 };
 
 const fallbackStatus = "bg-slate-100 text-slate-600 border-slate-200";
@@ -78,21 +79,40 @@ export default function Overview() {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+
     const fetchOrder = async () => {
       try {
-        setLoading(true);
-        const res = await axiosInstance.get("/api/orders/order-details");
-        setOrders(res.data.orders || []);
+        const res = await axiosInstance.get("/api/orders/order-details", {
+          signal: controller.signal,
+        });
+        if (active) setOrders(res.data.orders || []);
       } catch (error) {
-        console.error("Error fetching orders:", error);
+        if (active && !controller.signal.aborted) {
+          console.error("Error fetching orders:", error);
+        }
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
+
     fetchOrder();
+    const refreshVisibleOrders = () => {
+      if (document.visibilityState === "visible") fetchOrder();
+    };
+    const intervalId = window.setInterval(refreshVisibleOrders, 30000);
+    window.addEventListener("focus", fetchOrder);
+
+    return () => {
+      active = false;
+      controller.abort();
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", fetchOrder);
+    };
   }, []);
 
-  const inTransitCount = orders.filter((o) => o.status === "In Transit").length;
+  const inTransitCount = orders.filter((o) => o.status === "shipped").length;
   const recentOrders = orders.slice(0, 2);
 
   if (loading) {
@@ -218,11 +238,7 @@ export default function Overview() {
                   {order.createdAt && (
                     <p className="flex items-center gap-1.5 text-xs text-[#16241F]/50">
                       <CalendarDays className="h-3.5 w-3.5 text-[#B08946]" />
-                      {new Date(order.createdAt).toLocaleDateString("en-GB", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
+                      {formatOrderDate(order.createdAt)}
                     </p>
                   )}
 

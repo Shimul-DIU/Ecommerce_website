@@ -5,7 +5,7 @@ const ordersDetails = async (req, res) => {
 
     const orders = await Order.find({
       user: req.user._id,
-    });
+    }).sort({ createdAt: -1 });
 
     if (orders.length === 0) {
       return res.status(404).json({

@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 
 // যেসব category-তে sub category নেই
-export const NO_SUBCATEGORY = ["deal", "new-arrival"];
+export const NO_SUBCATEGORY = [
+  "deal",
+  "new-arrival",
+];
 
 const productSchema = new mongoose.Schema(
   {
@@ -49,11 +52,17 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
 
-    // কতগুলো বিক্রি হয়েছে (deal progress bar-এর জন্য)
+    // Total units sold; used to rank best sellers.
     sold: {
       type: Number,
       min: 0,
       default: 0,
+    },
+
+    homepageSection: {
+      type: String,
+      enum: ["none", "latest-products", "best-sellers", "both"],
+      default: "none",
     },
 
     // শুধু deal-এর জন্য (শেষ হওয়ার সময়)

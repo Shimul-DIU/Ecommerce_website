@@ -67,6 +67,7 @@ const AddProduct = () => {
     stock: "",
     dealEndsAt: "",
     status: "Active",
+    homepageSection: "none",
     description: "",
     image: null,
   });
@@ -221,6 +222,20 @@ const AddProduct = () => {
                   <option value="new-arrival">New Arrival</option>
                 </select>
                 <FieldError msg={error.category} />
+                <label className={`${labelClass} mt-4`}>Homepage Section</label>
+                <select
+                  name="homepageSection"
+                  value={form.homepageSection}
+                  onChange={handleChange}
+                  className={inputClass(error.homepageSection)}
+                >
+                  <option value="none">None</option>
+                  <option value="latest-products">Latest Products</option>
+                </select>
+                <FieldError msg={error.homepageSection} />
+                <p className="mt-1 text-xs text-[#16241F]/50">
+                  Best Sellers updates automatically based on sales.
+                </p>
               </div>
 
               {/* SUB CATEGORY */}
@@ -344,6 +359,7 @@ const AddProduct = () => {
                 />
                 <FieldError msg={error.description} />
               </div>
+
             </div>
           </div>
         </div>

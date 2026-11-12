@@ -12,43 +12,49 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSearchParams } from "react-router-dom";
+import axiosInstance from "../../utils/axiosInstance";
+import formatOrderDate from "../../utils/formatOrderDate";
 
 const ITEMS_PER_PAGE = 6;
 
-const STATUSES = ["Pending", "Processing", "Delivered", "Cancelled"];
+const STATUSES = ["pending", "processing", "shipped", "delivered", "cancelled"];
+
+const STATUS_LABELS = {
+  pending: "Pending",
+  processing: "Processing",
+  shipped: "Shipped",
+  delivered: "Delivered",
+  cancelled: "Cancelled",
+};
 
 const STATUS_STYLES = {
-  Pending: {
+  pending: {
     badge: "bg-amber-50 text-amber-700 ring-amber-200",
     dot: "bg-amber-500",
   },
-  Processing: {
+  processing: {
     badge: "bg-sky-50 text-sky-700 ring-sky-200",
     dot: "bg-sky-500",
   },
-  Delivered: {
+  shipped: {
+    badge: "bg-violet-50 text-violet-700 ring-violet-200",
+    dot: "bg-violet-500",
+  },
+  delivered: {
     badge: "bg-emerald-50 text-emerald-700 ring-emerald-200",
     dot: "bg-emerald-500",
   },
-  Cancelled: {
+  cancelled: {
     badge: "bg-red-50 text-red-600 ring-red-200",
     dot: "bg-red-500",
   },
 };
 
-// ডেমো ডাটা (পরে API থেকে আনবেন)
-const INITIAL_ORDERS = [
-  { _id: "101", customer: "Shimul Mia", phone: "01711-000001", amount: 1200, payment: "bKash", status: "Pending", date: "2026-11-04" },
-  { _id: "102", customer: "Rahim Uddin", phone: "01811-000002", amount: 800, payment: "Nagad", status: "Delivered", date: "2026-11-03" },
-  { _id: "103", customer: "Karim Hossain", phone: "01911-000003", amount: 2000, payment: "COD", status: "Processing", date: "2026-11-03" },
-  { _id: "104", customer: "Nusrat Jahan", phone: "01611-000004", amount: 3500, payment: "bKash", status: "Delivered", date: "2026-11-02" },
-  { _id: "105", customer: "Sabbir Ahmed", phone: "01511-000005", amount: 950, payment: "COD", status: "Cancelled", date: "2026-11-02" },
-  { _id: "106", customer: "Tania Akter", phone: "01711-000006", amount: 1800, payment: "Nagad", status: "Pending", date: "2026-11-01" },
-  { _id: "107", customer: "Imran Hasan", phone: "01811-000007", amount: 2750, payment: "bKash", status: "Processing", date: "2026-11-01" },
-  { _id: "108", customer: "Mim Sultana", phone: "01911-000008", amount: 640, payment: "COD", status: "Delivered", date: "2026-10-31" },
-  { _id: "109", customer: "Fahim Reza", phone: "01611-000009", amount: 4200, payment: "bKash", status: "Pending", date: "2026-10-31" },
-  { _id: "110", customer: "Rima Begum", phone: "01511-000010", amount: 1300, payment: "Nagad", status: "Delivered", date: "2026-10-30" },
-];
+const PAYMENT_LABELS = {
+  bkash: "bKash",
+  nagad: "Nagad",
+  cod: "COD",
+};
 
 const filterClass =
   "w-full rounded-xl border border-[#E4DDCE] bg-[#FAF6EF]/50 px-4 py-2.5 text-sm text-[#16241F] outline-none transition placeholder:text-[#16241F]/35 focus:border-[#B08946] focus:bg-white focus:ring-2 focus:ring-[#B08946]/25";
@@ -60,13 +66,6 @@ const getInitials = (name = "") =>
     .join("")
     .slice(0, 2)
     .toUpperCase();
-
-const formatDate = (iso) =>
-  new Date(iso).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 
 // পেজ নম্বরের তালিকা, যেমন: 1 ... 4 5 6 ... 10
 const getPageNumbers = (current, total) => {
@@ -85,21 +84,68 @@ const getPageNumbers = (current, total) => {
 };
 
 const Orders = () => {
-  const [orders, setOrders] = useState(INITIAL_ORDERS);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [statusUpdateError, setStatusUpdateError] = useState("");
+  const [updatingOrderId, setUpdatingOrderId] = useState(null);
   const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
 
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const fetchOrders = async () => {
+      try {
+        setLoadError("");
+        const response = await axiosInstance.get("/api/admin/orders", {
+          signal: controller.signal,
+        });
+        const data = response.data?.data;
+        if (!Array.isArray(data)) {
+          throw new Error("Order list could not be loaded.");
+        }
+
+        setOrders(
+          data.map((order) => ({
+            ...order,
+            customer: order.customer?.name || "Unknown customer",
+            phone: order.customer?.phone || "",
+            amount: Number(order.total || 0),
+            payment:
+              PAYMENT_LABELS[order.payment?.method] ||
+              order.payment?.method ||
+              "—",
+            status: order.status || "pending",
+          }))
+        );
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error("Failed to fetch admin orders:", error);
+          setLoadError(
+            error.response?.data?.message || error.message || "Failed to fetch orders."
+          );
+        }
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    };
+
+    fetchOrders();
+    return () => controller.abort();
+  }, []);
+
   // ================= STATS =================
   const countBy = (status) => orders.filter((o) => o.status === status).length;
 
   const stats = [
     { id: 1, title: "Total Orders", value: orders.length, icon: faReceipt },
-    { id: 2, title: "Pending", value: countBy("Pending"), icon: faClock },
-    { id: 3, title: "Processing", value: countBy("Processing"), icon: faTruckFast },
-    { id: 4, title: "Delivered", value: countBy("Delivered"), icon: faCircleCheck },
+    { id: 2, title: "Pending", value: countBy("pending"), icon: faClock },
+    { id: 3, title: "Processing", value: countBy("processing"), icon: faTruckFast },
+    { id: 4, title: "Delivered", value: countBy("delivered"), icon: faCircleCheck },
   ];
 
   // ================= FILTER =================
@@ -142,12 +188,30 @@ const Orders = () => {
   };
 
   // ================= STATUS UPDATE =================
-  const handleStatusChange = (id, newStatus) => {
-    setOrders((prev) =>
-      prev.map((o) => (o._id === id ? { ...o, status: newStatus } : o))
-    );
-    // TODO: API কল এখানে দিন
-    // await axiosInstance.patch(`/api/admin/orders/${id}`, { status: newStatus });
+  const handleStatusChange = async (id, newStatus) => {
+    setStatusUpdateError("");
+    setUpdatingOrderId(id);
+    try {
+      const response = await axiosInstance.patch(
+        `/api/admin/orders/${id}/status`,
+        { status: newStatus }
+      );
+      const updatedStatus = response.data?.data?.status;
+      if (!updatedStatus) throw new Error("Order status was not updated.");
+
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === id ? { ...order, status: updatedStatus } : order
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update order status:", error);
+      setStatusUpdateError(
+        error.response?.data?.message || error.message || "Failed to update order status."
+      );
+    } finally {
+      setUpdatingOrderId(null);
+    }
   };
 
   return (
@@ -229,12 +293,18 @@ const Orders = () => {
             <option value="All">All Status</option>
             {STATUSES.map((s) => (
               <option key={s} value={s}>
-                {s}
+                {STATUS_LABELS[s]}
               </option>
             ))}
           </select>
         </div>
       </div>
+
+      {statusUpdateError && (
+        <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+          {statusUpdateError}
+        </p>
+      )}
 
       {/* ================= TABLE ================= */}
       <div className="overflow-hidden rounded-2xl border border-[#E4DDCE] bg-white shadow-sm">
@@ -264,8 +334,26 @@ const Orders = () => {
             </thead>
 
             <tbody>
-              {paginatedOrders.map((order) => {
-                const style = STATUS_STYLES[order.status];
+              {loading ? (
+                <tr>
+                  <td colSpan="7" className="px-5 py-10 text-center text-[#16241F]/55">
+                    Loading orders...
+                  </td>
+                </tr>
+              ) : loadError ? (
+                <tr>
+                  <td colSpan="7" className="px-5 py-10 text-center text-red-600">
+                    {loadError}
+                  </td>
+                </tr>
+              ) : paginatedOrders.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="px-5 py-10 text-center text-[#16241F]/55">
+                    No orders found.
+                  </td>
+                </tr>
+              ) : paginatedOrders.map((order) => {
+                const style = STATUS_STYLES[order.status] || STATUS_STYLES.pending;
 
                 return (
                   <tr
@@ -293,7 +381,7 @@ const Orders = () => {
                     </td>
 
                     <td className="px-3 py-3.5 text-[#16241F]/70">
-                      {formatDate(order.date)}
+                      {formatOrderDate(order.createdAt)}
                     </td>
 
                     <td className="px-3 py-3.5">
@@ -313,6 +401,7 @@ const Orders = () => {
                         />
                         <select
                           value={order.status}
+                          disabled={updatingOrderId === order._id}
                           onChange={(e) =>
                             handleStatusChange(order._id, e.target.value)
                           }
@@ -320,7 +409,7 @@ const Orders = () => {
                         >
                           {STATUSES.map((s) => (
                             <option key={s} value={s}>
-                              {s}
+                              {STATUS_LABELS[s]}
                             </option>
                           ))}
                         </select>
