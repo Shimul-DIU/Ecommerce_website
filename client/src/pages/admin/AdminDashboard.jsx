@@ -4,25 +4,33 @@ import {
   faCartShopping,
   faUsers,
   faBox,
-  faArrowTrendUp,
-  faArrowTrendDown,
   faPlus,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axiosInstance from "../../utils/axiosInstance";
 
 const STATUS_STYLES = {
-  Delivered: {
+  delivered: {
     badge: "bg-emerald-50 text-emerald-700 ring-emerald-200",
     bar: "bg-emerald-500",
   },
-  Pending: {
+  pending: {
     badge: "bg-amber-50 text-amber-700 ring-amber-200",
     bar: "bg-amber-500",
   },
-  Processing: {
+  processing: {
     badge: "bg-sky-50 text-sky-700 ring-sky-200",
     bar: "bg-sky-500",
+  },
+  shipped: {
+    badge: "bg-violet-50 text-violet-700 ring-violet-200",
+    bar: "bg-violet-500",
+  },
+  cancelled: {
+    badge: "bg-red-50 text-red-700 ring-red-200",
+    bar: "bg-red-500",
   },
 };
 
@@ -35,56 +43,82 @@ const getInitials = (name = "") =>
     .toUpperCase();
 
 export default function AdminDashboard() {
-  const stats = [
-    {
-      id: 1,
-      title: "Revenue",
-      value: "৳12,500",
-      icon: faMoneyBillWave,
-      change: "+12.5%",
-      up: true,
-    },
-    {
-      id: 2,
-      title: "Orders",
-      value: "320",
-      icon: faCartShopping,
-      change: "+8.2%",
-      up: true,
-    },
-    {
-      id: 3,
-      title: "Customers",
-      value: "1,240",
-      icon: faUsers,
-      change: "+3.1%",
-      up: true,
-    },
-    {
-      id: 4,
-      title: "Products",
-      value: "540",
-      icon: faBox,
-      change: "-1.4%",
-      up: false,
-    },
-  ];
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const orders = [
-    { id: 101, customer: "Shimul Mia", amount: "৳120", status: "Pending" },
-    { id: 102, customer: "Rahim Uddin", amount: "৳80", status: "Delivered" },
-    { id: 103, customer: "Karim Hossain", amount: "৳200", status: "Processing" },
-  ];
+  useEffect(() => {
+    let active = true;
 
-  // অর্ডারের স্ট্যাটাস অনুযায়ী হিসাব
+    const loadDashboardData = async () => {
+      try {
+        const response = await axiosInstance.get("/api/admin/dashboard/summary");
+        if (active) {
+          setDashboardData(response.data);
+          setError("");
+        }
+      } catch (requestError) {
+        if (active) {
+          setError(
+            requestError.response?.data?.message ||
+              "Failed to load dashboard data"
+          );
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    loadDashboardData();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const summary = dashboardData?.summary;
+  const orders = dashboardData?.recentOrders || [];
+  const statusCounts = dashboardData?.statusCounts || {};
   const statusSummary = Object.keys(STATUS_STYLES).map((status) => {
-    const count = orders.filter((o) => o.status === status).length;
+    const count = statusCounts[status] || 0;
     return {
       status,
-      count,
-      percent: orders.length ? Math.round((count / orders.length) * 100) : 0,
+      count: dashboardData ? count : null,
+      percent:
+        summary?.orders > 0
+          ? Math.round((count / summary.orders) * 100)
+          : 0,
     };
   });
+  const stats = [
+    {
+      id: "revenue",
+      title: "Revenue",
+      value: summary ? `৳${Number(summary.revenue || 0).toLocaleString()}` : "—",
+      description: "From delivered orders",
+      icon: faMoneyBillWave,
+    },
+    {
+      id: "orders",
+      title: "Orders",
+      value: summary ? Number(summary.orders || 0).toLocaleString() : "—",
+      description: "All-time orders",
+      icon: faCartShopping,
+    },
+    {
+      id: "customers",
+      title: "Customers",
+      value: summary ? Number(summary.customers || 0).toLocaleString() : "—",
+      description: "Registered customers",
+      icon: faUsers,
+    },
+    {
+      id: "products",
+      title: "Products",
+      value: summary ? Number(summary.products || 0).toLocaleString() : "—",
+      description: "Catalog products",
+      icon: faBox,
+    },
+  ];
 
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -131,6 +165,15 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {error && (
+        <div
+          className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          role="alert"
+        >
+          {error}
+        </div>
+      )}
+
       {/* ================= STATS CARDS ================= */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((item) => (
@@ -155,21 +198,8 @@ export default function AdminDashboard() {
               </span>
             </div>
 
-            <div className="mt-4 flex items-center gap-2 text-xs">
-              <span
-                className={`flex items-center gap-1 rounded-full px-2 py-0.5 font-bold ${
-                  item.up
-                    ? "bg-emerald-50 text-emerald-600"
-                    : "bg-red-50 text-red-500"
-                }`}
-              >
-                <FontAwesomeIcon
-                  icon={item.up ? faArrowTrendUp : faArrowTrendDown}
-                  className="text-[10px]"
-                />
-                {item.change}
-              </span>
-              <span className="text-[#16241F]/40">vs last month</span>
+            <div className="mt-4 text-xs text-[#16241F]/40">
+              {loading ? "Loading..." : item.description}
             </div>
           </div>
         ))}
@@ -207,42 +237,81 @@ export default function AdminDashboard() {
               </thead>
 
               <tbody>
-                {orders.map((order) => (
-                  <tr
-                    key={order.id}
-                    className="border-t border-[#E4DDCE]/70 transition-colors hover:bg-[#FAF6EF]/60"
-                  >
-                    <td className="px-5 py-3.5 font-bold text-[#16241F]">
-                      #{order.id}
-                    </td>
+                {orders.map((order) => {
+                  const status = String(order.status || "").toLowerCase();
+                  const statusStyle =
+                    STATUS_STYLES[status] || STATUS_STYLES.pending;
+                  const customerName = order.customer?.name || "Customer";
 
-                    <td className="px-3 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#16241F] text-xs font-bold text-[#B08946] ring-2 ring-[#B08946]/40">
-                          {getInitials(order.customer)}
-                        </span>
-                        <span className="font-semibold text-[#16241F]">
-                          {order.customer}
-                        </span>
-                      </div>
-                    </td>
+                  return (
+                    <tr
+                      key={order._id}
+                      className="border-t border-[#E4DDCE]/70 transition-colors hover:bg-[#FAF6EF]/60"
+                    >
+                      <td className="px-5 py-3.5 font-bold text-[#16241F]">
+                        #{String(order._id || "").slice(-8).toUpperCase()}
+                      </td>
 
-                    <td className="px-3 py-3.5 font-bold text-[#16241F]">
-                      {order.amount}
-                    </td>
+                      <td className="px-3 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#16241F] text-xs font-bold text-[#B08946] ring-2 ring-[#B08946]/40">
+                            {getInitials(customerName)}
+                          </span>
+                          <span className="font-semibold text-[#16241F]">
+                            {customerName}
+                          </span>
+                        </div>
+                      </td>
 
-                    <td className="px-5 py-3.5">
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${STATUS_STYLES[order.status].badge}`}
-                      >
+                      <td className="px-3 py-3.5 font-bold text-[#16241F]">
+                        ৳{Number(order.total || 0).toLocaleString()}
+                      </td>
+
+                      <td className="px-5 py-3.5">
                         <span
-                          className={`h-1.5 w-1.5 rounded-full ${STATUS_STYLES[order.status].bar}`}
-                        />
-                        {order.status}
-                      </span>
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${statusStyle.badge}`}
+                        >
+                          <span
+                            className={`h-1.5 w-1.5 rounded-full ${statusStyle.bar}`}
+                          />
+                          {status
+                            ? status[0].toUpperCase() + status.slice(1)
+                            : "Unknown"}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+                {!loading && error && !dashboardData && (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="px-5 py-8 text-center text-sm text-red-600"
+                    >
+                      Unable to load orders.
                     </td>
                   </tr>
-                ))}
+                )}
+                {!loading && dashboardData && orders.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="px-5 py-8 text-center text-sm text-[#16241F]/50"
+                    >
+                      No orders yet.
+                    </td>
+                  </tr>
+                )}
+                {loading && (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="px-5 py-8 text-center text-sm text-[#16241F]/50"
+                    >
+                      Loading orders...
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -253,17 +322,19 @@ export default function AdminDashboard() {
           <h2 className="text-base font-extrabold text-[#16241F]">
             Order Status
           </h2>
-          <p className="text-xs text-[#16241F]/50">Based on recent orders</p>
+          <p className="text-xs text-[#16241F]/50">Based on all orders</p>
 
           <div className="mt-5 space-y-5">
             {statusSummary.map((s) => (
               <div key={s.status}>
                 <div className="mb-1.5 flex items-center justify-between text-sm">
                   <span className="font-semibold text-[#16241F]">
-                    {s.status}
+                    {s.status[0].toUpperCase() + s.status.slice(1)}
                   </span>
                   <span className="text-xs font-bold text-[#16241F]/60">
-                    {s.count} orders · {s.percent}%
+                    {s.count === null
+                      ? "—"
+                      : `${s.count} orders · ${s.percent}%`}
                   </span>
                 </div>
                 <div className="h-2.5 w-full overflow-hidden rounded-full bg-[#FAF6EF]">
@@ -281,7 +352,7 @@ export default function AdminDashboard() {
               Total Orders
             </p>
             <p className="mt-1 text-2xl font-extrabold text-[#FAF6EF]">
-              {orders.length}
+              {summary ? Number(summary.orders || 0).toLocaleString() : "—"}
             </p>
           </div>
         </div>

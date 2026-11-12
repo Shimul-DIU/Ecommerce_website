@@ -12,6 +12,7 @@ import {
   getAdminOrders,
   updateOrderStatus,
 } from '../controller/orderController.js';
+import { getAdminDashboardSummary } from '../controller/dashboardController.js';
 import { upload } from '../middleware/upload.js';
 
 const adminRouter = express.Router();
@@ -42,6 +43,7 @@ const limiter = rateLimit({
 // admin login route
 
 // admin dashboard (protected route)
+adminRouter.get('/dashboard/summary', adminAuth, getAdminDashboardSummary);
 adminRouter.get(
   '/dashboard',
   passport.authenticate('admin-jwt', { session: false }),
