@@ -24,6 +24,7 @@ import {
 
 import { CountContext } from "../../context/CountContext";
 import useProducts from "../../hooks/useProducts";
+import useProductPriceRange from "../../hooks/useProductPriceRange";
 import { useScroll } from "../../hooks/useScroll";
 import { useTranslation } from "../../utils/translations";
 import getProductPricing from "../../utils/getProductPricing";
@@ -34,10 +35,6 @@ import matchesProductSubcategory from "../../utils/matchesProductSubcategory";
 /* =========================================================
    PRICE RANGE
    ========================================================= */
-
-const MIN_LIMIT = 100;
-const MAX_LIMIT = 3000;
-
 
 /* =========================================================
    WOMEN CATEGORIES
@@ -99,6 +96,15 @@ const Women = () => {
   } = useContext(CountContext);
 
   const [products, loading, error] = useProducts();
+  const {
+    minPrice,
+    setMinPrice,
+    maxPrice,
+    setMaxPrice,
+    maxAvailablePrice,
+    priceStep,
+    resetPriceRange,
+  } = useProductPriceRange(products);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -134,12 +140,6 @@ const Women = () => {
 
   const [sortBy, setSortBy] =
     useState("default");
-
-  const [minPrice, setMinPrice] =
-    useState(MIN_LIMIT);
-
-  const [maxPrice, setMaxPrice] =
-    useState(MAX_LIMIT);
 
   const [inStockOnly, setInStockOnly] =
     useState(false);
@@ -263,8 +263,7 @@ const Women = () => {
       return nextParams;
     });
     setSortBy("default");
-    setMinPrice(MIN_LIMIT);
-    setMaxPrice(MAX_LIMIT);
+    resetPriceRange();
     setInStockOnly(false);
   };
 
@@ -370,7 +369,7 @@ const Women = () => {
           </label>
 
           <span className="rounded-md border border-[#E4DDCE] bg-[#FAF6EF] px-2 py-1 text-[10px] font-bold text-[#B08946]">
-            ৳{minPrice} - ৳{maxPrice}
+            ৳{minPrice.toLocaleString()} - ৳{maxPrice.toLocaleString()}
           </span>
 
         </div>
@@ -380,14 +379,14 @@ const Women = () => {
 
           <input
             type="number"
-            min={MIN_LIMIT}
-            max={MAX_LIMIT}
+            min="0"
+            max={maxAvailablePrice}
             value={minPrice}
             onChange={(e) =>
               setMinPrice(
                 Math.min(
-                  Number(e.target.value) || MIN_LIMIT,
-                  maxPrice - 50
+                  Number(e.target.value) || 0,
+                  maxPrice - priceStep
                 )
               )
             }
@@ -396,14 +395,14 @@ const Women = () => {
 
           <input
             type="number"
-            min={MIN_LIMIT}
-            max={MAX_LIMIT}
+            min="0"
+            max={maxAvailablePrice}
             value={maxPrice}
             onChange={(e) =>
               setMaxPrice(
                 Math.max(
-                  Number(e.target.value) || MAX_LIMIT,
-                  minPrice + 50
+                  Number(e.target.value) || maxAvailablePrice,
+                  minPrice + priceStep
                 )
               )
             }

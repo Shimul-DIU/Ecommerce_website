@@ -74,3 +74,10 @@ test("continues matching regular products by their own category", () => {
     true
   );
 });
+
+test("matches legacy formatted category names to their navigation category", () => {
+  assert.equal(
+    matchesProductCategory({ category: "Men Fashion" }, "men"),
+    true
+  );
+});

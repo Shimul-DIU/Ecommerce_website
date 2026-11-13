@@ -11,6 +11,7 @@ import { useContext, useMemo, useState } from "react";
 import { CountContext } from "../../context/CountContext";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import useProducts from "../../hooks/useProducts";
+import useProductPriceRange from "../../hooks/useProductPriceRange";
 import { useScroll } from "../../hooks/useScroll";
 import { useTranslation } from "../../utils/translations";
 import getProductPricing from "../../utils/getProductPricing";
@@ -32,9 +33,6 @@ const CATEGORY_OPTIONS = [
   { key: "fishing", label: "Fishing" },
   { key: "electronics", label: "Electronics" },
 ];
-
-const MIN_LIMIT = 100;
-const MAX_LIMIT = 3000;
 
 // "Men's Perfume" -> "mens-perfume", "Attar & Oils" -> "attar-oils"
 const normalize = (str = "") =>
@@ -61,8 +59,17 @@ const Products = () => {
     searchParams.get("category") || location.state?.filter || "all";
   const [sortBy, setSortBy] = useState("default");
 
-  const [minPrice, setMinPrice] = useState(MIN_LIMIT);
-  const [maxPrice, setMaxPrice] = useState(MAX_LIMIT);
+  const {
+    minPrice,
+    setMinPrice,
+    maxPrice,
+    setMaxPrice,
+    maxAvailablePrice,
+    priceStep,
+    minPercent,
+    maxPercent,
+    resetPriceRange,
+  } = useProductPriceRange(products);
 
   const [inStockOnly, setInStockOnly] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -147,13 +154,9 @@ const Products = () => {
   const resetFilters = () => {
     navigate("/products");
     setSortBy("default");
-    setMinPrice(MIN_LIMIT);
-    setMaxPrice(MAX_LIMIT);
+    resetPriceRange();
     setInStockOnly(false);
   };
-
-  const minPercent = ((minPrice - MIN_LIMIT) / (MAX_LIMIT - MIN_LIMIT)) * 100;
-  const maxPercent = ((maxPrice - MIN_LIMIT) / (MAX_LIMIT - MIN_LIMIT)) * 100;
 
   const renderFilterContent = () => (
     <div className="space-y-5">
@@ -204,7 +207,7 @@ const Products = () => {
             {t("Price Range")}
           </label>
           <span className="text-xs font-bold text-[#B08946] bg-[#FAF6EF] px-2.5 py-1 rounded-md border border-[#E4DDCE]">
-            ৳{minPrice} - ৳{maxPrice}
+            ৳{minPrice.toLocaleString()} - ৳{maxPrice.toLocaleString()}
           </span>
         </div>
 
@@ -221,12 +224,15 @@ const Products = () => {
 
           <input
             type="range"
-            min={MIN_LIMIT}
-            max={MAX_LIMIT}
-            step="10"
+            min="0"
+            max={maxAvailablePrice}
+            step={priceStep}
             value={minPrice}
             onChange={(e) => {
-              const val = Math.min(Number(e.target.value), maxPrice - 50);
+              const val = Math.min(
+                Number(e.target.value),
+                maxPrice - priceStep
+              );
               setMinPrice(val);
             }}
             className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none accent-[#B08946] z-30 focus:outline-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto"
@@ -234,12 +240,15 @@ const Products = () => {
 
           <input
             type="range"
-            min={MIN_LIMIT}
-            max={MAX_LIMIT}
-            step="10"
+            min="0"
+            max={maxAvailablePrice}
+            step={priceStep}
             value={maxPrice}
             onChange={(e) => {
-              const val = Math.max(Number(e.target.value), minPrice + 50);
+              const val = Math.max(
+                Number(e.target.value),
+                minPrice + priceStep
+              );
               setMaxPrice(val);
             }}
             className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none accent-[#B08946] z-40 focus:outline-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto"
@@ -247,8 +256,8 @@ const Products = () => {
         </div>
 
         <div className="flex justify-between text-[11px] text-[#16241F]/60 font-medium mt-1">
-          <span>{t("Min")}: ৳{MIN_LIMIT}</span>
-          <span>{t("Max")}: ৳{MAX_LIMIT}</span>
+          <span>{t("Min")}: ৳0</span>
+          <span>{t("Max")}: ৳{maxAvailablePrice.toLocaleString()}</span>
         </div>
       </div>
 

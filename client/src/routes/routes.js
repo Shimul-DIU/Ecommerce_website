@@ -38,6 +38,7 @@ import CartPage from "../pages/client/userDashboard/CartPage.jsx";
 import Men from "../pages/client/Men.jsx";
 import Women from "../pages/client/Women.jsx";
 import Fishing from "../pages/client/Fishing.jsx";
+import About from "../pages/client/About.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -52,6 +53,7 @@ const Router = createBrowserRouter([
       { path: "fishing", Component: Fishing },
       { path: "offers", Component: Offer },
       { path: "contact", Component: Contact },
+      { path: "about", Component: About },
       { path: "card", Component: Card },
       { path: "login", Component: Login },
       { path: "register", Component: Register },

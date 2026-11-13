@@ -24,6 +24,7 @@ import {
 
 import { CountContext } from "../../context/CountContext";
 import useProducts from "../../hooks/useProducts";
+import useProductPriceRange from "../../hooks/useProductPriceRange";
 import { useScroll } from "../../hooks/useScroll";
 import { useTranslation } from "../../utils/translations";
 import getProductPricing from "../../utils/getProductPricing";
@@ -34,10 +35,6 @@ import matchesProductSubcategory from "../../utils/matchesProductSubcategory";
 /* =========================================================
    PRICE RANGE
    ========================================================= */
-
-const MIN_LIMIT = 100;
-const MAX_LIMIT = 3000;
-
 
 /* =========================================================
    MEN CATEGORIES
@@ -97,6 +94,17 @@ const Men = () => {
   } = useContext(CountContext);
 
   const [products, loading, error] = useProducts();
+  const {
+    minPrice,
+    setMinPrice,
+    maxPrice,
+    setMaxPrice,
+    maxAvailablePrice,
+    priceStep,
+    minPercent,
+    maxPercent,
+    resetPriceRange,
+  } = useProductPriceRange(products);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -131,12 +139,6 @@ const Men = () => {
   }, [categoryQuery]);
 
   const [sortBy, setSortBy] = useState("default");
-
-  const [minPrice, setMinPrice] =
-    useState(MIN_LIMIT);
-
-  const [maxPrice, setMaxPrice] =
-    useState(MAX_LIMIT);
 
   const [inStockOnly, setInStockOnly] =
     useState(false);
@@ -272,25 +274,9 @@ const Men = () => {
       return nextParams;
     });
     setSortBy("default");
-    setMinPrice(MIN_LIMIT);
-    setMaxPrice(MAX_LIMIT);
+    resetPriceRange();
     setInStockOnly(false);
   };
-
-
-  /* =======================================================
-     PRICE SLIDER POSITION
-     ======================================================= */
-
-  const minPercent =
-    ((minPrice - MIN_LIMIT) /
-      (MAX_LIMIT - MIN_LIMIT)) *
-    100;
-
-  const maxPercent =
-    ((maxPrice - MIN_LIMIT) /
-      (MAX_LIMIT - MIN_LIMIT)) *
-    100;
 
 
   /* =======================================================
@@ -394,7 +380,7 @@ const Men = () => {
           </label>
 
           <span className="rounded-md border border-[#E4DDCE] bg-[#FAF6EF] px-2 py-1 text-[10px] font-bold text-[#B08946]">
-            ৳{minPrice} - ৳{maxPrice}
+            ৳{minPrice.toLocaleString()} - ৳{maxPrice.toLocaleString()}
           </span>
         </div>
 
@@ -420,14 +406,14 @@ const Men = () => {
           {/* Minimum */}
           <input
             type="range"
-            min={MIN_LIMIT}
-            max={MAX_LIMIT}
-            step="10"
+            min="0"
+            max={maxAvailablePrice}
+            step={priceStep}
             value={minPrice}
             onChange={(e) => {
               const value = Math.min(
                 Number(e.target.value),
-                maxPrice - 50
+                maxPrice - priceStep
               );
 
               setMinPrice(value);
@@ -439,14 +425,14 @@ const Men = () => {
           {/* Maximum */}
           <input
             type="range"
-            min={MIN_LIMIT}
-            max={MAX_LIMIT}
-            step="10"
+            min="0"
+            max={maxAvailablePrice}
+            step={priceStep}
             value={maxPrice}
             onChange={(e) => {
               const value = Math.max(
                 Number(e.target.value),
-                minPrice + 50
+                minPrice + priceStep
               );
 
               setMaxPrice(value);
@@ -458,8 +444,8 @@ const Men = () => {
 
 
         <div className="mt-1 flex justify-between text-[10px] font-medium text-[#16241F]/50">
-          <span>{t("Min")}: ৳{MIN_LIMIT}</span>
-          <span>{t("Max")}: ৳{MAX_LIMIT}</span>
+          <span>{t("Min")}: ৳0</span>
+          <span>{t("Max")}: ৳{maxAvailablePrice.toLocaleString()}</span>
         </div>
 
       </div>

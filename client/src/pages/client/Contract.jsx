@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPhone,
@@ -19,6 +20,7 @@ import { useTranslation } from "../../utils/translations";
 
 const Contact = () => {
   const { t } = useTranslation();
+  const { hash } = useLocation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -29,6 +31,14 @@ const Contact = () => {
 
   const [openFaq, setOpenFaq] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!hash) return;
+    document.getElementById(hash.slice(1))?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, [hash]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -50,10 +60,12 @@ const Contact = () => {
 
   const faqs = [
     {
+      id: "shipping",
       q: "How long does delivery take?",
       a: "Inside Dhaka, delivery takes 24–48 hours. Outside Dhaka, it takes 2–3 business days.",
     },
     {
+      id: "returns",
       q: "Can I return a product if I don't like it?",
       a: "Yes! You can return or exchange items within 7 days according to our return policy.",
     },
@@ -133,7 +145,7 @@ const Contact = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
 
           {/* Contact Form */}
-          <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100">
+          <div id="contact-form" className="lg:col-span-7 scroll-mt-40 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100">
             <h2 className="text-2xl font-bold text-slate-900 mb-2">{t("Send Us a Message")}</h2>
             <p className="text-slate-500 text-sm mb-6">
               Fill out the form below and our team will get back to you as soon as possible.
@@ -272,7 +284,7 @@ const Contact = () => {
         </div>
 
         {/* ================= FAQ SECTION ================= */}
-        <div className="max-w-3xl mx-auto">
+        <div id="faq" className="max-w-3xl mx-auto scroll-mt-40">
           <h2 className="text-2xl font-bold text-center text-slate-900 mb-6">
             Frequently Asked Questions
           </h2>
@@ -280,6 +292,7 @@ const Contact = () => {
             {faqs.map((faq, index) => (
               <div
                 key={index}
+                id={`faq-${faq.id}`}
                 className="bg-white rounded-xl border border-slate-100 overflow-hidden"
               >
                 <button

@@ -28,3 +28,13 @@ test("does not match an unrelated subcategory", () => {
     false
   );
 });
+
+test("does not match a subcategory that appears only inside a different word", () => {
+  assert.equal(
+    matchesProductSubcategory(
+      { subCategory: "Earring", name: "Gold Earrings" },
+      "Ring"
+    ),
+    false
+  );
+});

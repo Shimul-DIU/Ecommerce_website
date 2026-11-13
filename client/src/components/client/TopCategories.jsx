@@ -1,120 +1,149 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTag } from "@fortawesome/free-solid-svg-icons";
+import useProducts from "../../hooks/useProducts";
+import normalizeProductCategory from "../../utils/normalizeProductCategory";
 import { useTranslation } from "../../utils/translations";
 
-const CATEGORIES = [
-  {
-    id: "men",
-    name: "Men's",
-    image: "https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?w=600&h=600&fit=crop&crop=center",
-    itemsCount: 240,
-    soldCount: "12.5K",
-    bgColor: "bg-[#F4F1EA]"
-  },
-  {
-    id: "women",
-    name: "Women's",
-    image: "https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=600&h=600&fit=crop&crop=center",
-    itemsCount: 320,
-    soldCount: "18.2K",
-    bgColor: "bg-[#FDF6F0]"
-  },
-  {
-    id: "jewellery",
-    name: "Jewellery",
-    image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&h=600&fit=crop&crop=center",
-    itemsCount: 180,
-    soldCount: "8.7K",
-    bgColor: "bg-[#F5F0E8]"
-  },
-  {
-    id: "electronics",
-    name: "Electronics",
-    image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=600&h=600&fit=crop&crop=center",
-    itemsCount: 150,
-    soldCount: "6.3K",
-    bgColor: "bg-[#EEF2F6]"
-  },
-  {
-    id: "fishing",
-    name: "Fishing",
-    image: "https://images.unsplash.com/photo-1525815732237-469cdd9874ab?w=600&h=600&fit=crop&crop=center",
-    itemsCount: 95,
-    soldCount: "3.1K",
-    bgColor: "bg-[#E8F0EE]"
-  },
-  {
-    id: "deal",
-    name: "Deal of Day",
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=600&fit=crop&crop=center",
-    itemsCount: 45,
-    soldCount: "2.8K",
-    bgColor: "bg-[#FDF4E6]"
-  }
-];
+const CATEGORY_META = {
+  men: { name: "Men's", bgColor: "bg-[#F4F1EA]" },
+  women: { name: "Women's", bgColor: "bg-[#FDF6F0]" },
+  jewellery: { name: "Jewellery", bgColor: "bg-[#F5F0E8]" },
+  electronics: { name: "Electronics", bgColor: "bg-[#EEF2F6]" },
+  fishing: { name: "Fishing", bgColor: "bg-[#E8F0EE]" },
+  deal: { name: "Deal of Day", bgColor: "bg-[#FDF4E6]" },
+  perfume: { name: "Perfume", bgColor: "bg-[#F5F0E8]" },
+  bags: { name: "Bags & Luggage", bgColor: "bg-[#F4F1EA]" },
+  glasses: { name: "Glasses", bgColor: "bg-[#EEF2F6]" },
+  "new-arrival": { name: "New Arrival", bgColor: "bg-[#FDF6F0]" },
+};
 
 const TopCategories = () => {
   const { t } = useTranslation();
+  const [products, loading, error] = useProducts();
+
+  const categories = Object.values(
+    (products || []).reduce((groups, product) => {
+      if (String(product.status).toLowerCase() !== "active") return groups;
+
+      const id = normalizeProductCategory(product.category);
+      if (!id) return groups;
+
+      if (!groups[id]) {
+        groups[id] = {
+          id,
+          name: CATEGORY_META[id]?.name || product.category,
+          bgColor: CATEGORY_META[id]?.bgColor || "bg-[#F4F1EA]",
+          image: product.image,
+          itemsCount: 0,
+          soldCount: 0,
+        };
+      }
+
+      groups[id].itemsCount += 1;
+      groups[id].soldCount += Number(product.sold) || 0;
+      return groups;
+    }, {})
+  )
+    .sort(
+      (a, b) =>
+        b.soldCount - a.soldCount || b.itemsCount - a.itemsCount
+    )
+    .slice(0, 6);
+
   return (
-    <section className="  w-full mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg md:text-xl lg:text-2xl font-medium text-[#16241F]">
+    <section className="w-full mx-auto">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-lg font-medium text-[#16241F] md:text-xl lg:text-2xl">
           {t("Top Categories")}
         </h2>
         <Link
           to="/products"
-          className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition"
+          className="text-sm font-semibold text-blue-600 transition hover:text-blue-800"
         >
           {t("View All")} →
         </Link>
       </div>
 
-      {/* Grid container */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
-        {CATEGORIES.map((cat) => (
-          <Link
-            key={cat.id}
-            to="/products"
-            state={{ filter: cat.id }}
-            className="group bg-white border border-[#E4DDCE] rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md hover:border-blue-400 block w-full"
-          >
-            {/* Inner container */}
-            <div className="flex h-16 sm:h-20 w-full">
-              {/* Left: Image (Width reduced for small screens) */}
-              <div className={`${cat.bgColor} w-14 sm:w-20 shrink-0 flex items-center justify-center p-1`}>
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  loading="lazy"
-                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
+      {error && (
+        <div
+          className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          role="alert"
+        >
+          {error}
+        </div>
+      )}
 
-              {/* Right: Information */}
-              <div className="flex-1 flex flex-col justify-between p-1.5 sm:p-2 min-w-0">
-                <div>
-                  <h3 className="text-xs sm:text-sm font-bold text-[#16241F] truncate">
-                    {t(cat.name)}
-                  </h3>
-                  <p className="text-[10px] text-[#16241F]/60 truncate">
-                    {cat.itemsCount} {t("items")}
-                  </p>
+      {loading && (
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-6">
+          {Array.from({ length: 6 }, (_, index) => (
+            <div
+              key={index}
+              className="flex h-16 animate-pulse overflow-hidden rounded-lg border border-[#E4DDCE] bg-white sm:h-20"
+            >
+              <div className="w-14 shrink-0 bg-[#E4DDCE]/60 sm:w-20" />
+              <div className="flex flex-1 flex-col justify-center gap-2 p-2">
+                <div className="h-3 w-3/4 rounded bg-[#E4DDCE]/60" />
+                <div className="h-2 w-1/2 rounded bg-[#E4DDCE]/40" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!loading && !error && categories.length === 0 && (
+        <p className="rounded-xl border border-dashed border-[#E4DDCE] bg-white/70 px-4 py-8 text-center text-sm text-[#16241F]/55">
+          No product categories available yet.
+        </p>
+      )}
+
+      {!loading && !error && categories.length > 0 && (
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-6">
+          {categories.map((category) => (
+            <Link
+              key={category.id}
+              to={`/products?category=${encodeURIComponent(category.id)}`}
+              className="group block w-full overflow-hidden rounded-lg border border-[#E4DDCE] bg-white transition-all duration-300 hover:border-blue-400 hover:shadow-md"
+            >
+              <div className="flex h-16 w-full sm:h-20">
+                <div
+                  className={`${category.bgColor} flex w-14 shrink-0 items-center justify-center p-1 sm:w-20`}
+                >
+                  {category.image ? (
+                    <img
+                      src={category.image}
+                      alt=""
+                      loading="lazy"
+                      className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faTag}
+                      className="text-xl text-[#B08946]"
+                    />
+                  )}
                 </div>
 
-                {/* Sold Badge Fix */}
-                <div className="flex items-center">
-                  <span className="inline-flex items-center gap-0.5 sm:gap-1 bg-blue-50 px-1 sm:px-1.5 py-0.5 rounded-full text-blue-700 font-semibold text-[9px] sm:text-[10px] whitespace-nowrap">
-                    <FontAwesomeIcon icon={faTag} className="text-[7px] sm:text-[8px] shrink-0" />
-                    <span>{cat.soldCount} {t("sold")}</span>
+                <div className="flex min-w-0 flex-1 flex-col justify-between p-1.5 sm:p-2">
+                  <div>
+                    <h3 className="truncate text-xs font-bold text-[#16241F] sm:text-sm">
+                      {t(category.name)}
+                    </h3>
+                    <p className="truncate text-[10px] text-[#16241F]/60">
+                      {category.itemsCount.toLocaleString()} {t("items")}
+                    </p>
+                  </div>
+
+                  <span className="inline-flex w-fit items-center gap-1 whitespace-nowrap rounded-full bg-blue-50 px-1.5 py-0.5 text-[9px] font-semibold text-blue-700 sm:text-[10px]">
+                    <FontAwesomeIcon icon={faTag} className="text-[8px]" />
+                    {category.soldCount.toLocaleString()} {t("sold")}
                   </span>
                 </div>
               </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </section>
   );
 };

@@ -1,15 +1,37 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { LanguageContext } from "../../context/LanguageContext";
 import { useTranslation } from "../../utils/translations";
+import {
+  categoryItems,
+  getCategoryLink,
+  getProductCategories,
+} from "../../utils/navigationCategories";
 
 const Sidebar = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
-  const [menOpen, setMenOpen] = useState(false);
-  const [womenOpen, setWomenOpen] = useState(false);
-  const [jewelryOpen, setJewelryOpen] = useState(false);
-  const [perfumeOpen, setPerfumeOpen] = useState(false);
+  const { language } = useContext(LanguageContext);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const productCategories = getProductCategories(language);
+  const navGroups = [
+    {
+      id: "products",
+      label: "Products",
+      path: "/products",
+      items: productCategories.map(({ name, path }) => ({ label: name, path })),
+    },
+    ...["women", "men", "fishing"].map((category) => ({
+      id: category,
+      label: category[0].toUpperCase() + category.slice(1),
+      path: `/${category}`,
+      items: categoryItems[category].map((subItem) => ({
+        label: subItem,
+        path: getCategoryLink(category, subItem),
+      })),
+    })),
+  ];
 
   // Main Link Style (Slightly reduced padding)
   const linkStyle = ({ isActive }) =>
@@ -46,6 +68,8 @@ const Sidebar = ({ isOpen, onClose }) => {
           </h2>
 
           <button
+            type="button"
+            aria-label={t("Close")}
             onClick={onClose}
             className="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 hover:text-red-500 hover:bg-red-50 transition-colors"
           >
@@ -55,184 +79,71 @@ const Sidebar = ({ isOpen, onClose }) => {
 
         {/* Menu List */}
         <ul className="flex-1 overflow-y-auto px-3 py-3 space-y-1 custom-scrollbar">
-          {/* Home */}
+          {/* All Categories */}
+          <li>
+            <NavLink to="/categories" onClick={onClose} className={linkStyle}>
+              {t("All Categories")}
+            </NavLink>
+          </li>
+
           <li>
             <NavLink to="/" onClick={onClose} className={linkStyle}>
               {t("Home")}
             </NavLink>
           </li>
 
-          {/* Products */}
+          {navGroups.map((item) => {
+            const isOpen = openDropdown === item.id;
+
+            return (
+              <li key={item.id}>
+                <div className="flex items-center gap-1">
+                  <NavLink
+                    to={item.path}
+                    onClick={onClose}
+                    className={({ isActive }) => `${linkStyle({ isActive })} flex-1`}
+                  >
+                    {t(item.label)}
+                  </NavLink>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpenDropdown(isOpen ? null : item.id)
+                    }
+                    aria-label={`${t(item.label)} categories`}
+                    aria-expanded={isOpen}
+                    className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100"
+                  >
+                    <FontAwesomeIcon
+                      icon={faChevronDown}
+                      className={`text-xs transition-transform duration-200 ${
+                        isOpen ? "rotate-180 text-blue-600" : ""
+                      }`}
+                    />
+                  </button>
+                </div>
+                {isOpen && (
+                  <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
+                    {item.items.map((subItem) => (
+                      <li key={subItem.path}>
+                        <NavLink
+                          to={subItem.path}
+                          onClick={onClose}
+                          className={subLinkStyle}
+                        >
+                          {t(subItem.label)}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          })}
+
           <li>
-            <NavLink to="/products" onClick={onClose} className={linkStyle}>
-              {t("Products")}
-            </NavLink>
-          </li>
-
-          {/* Men's Submenu */}
-          <li>
-            <button
-              onClick={() => setMenOpen(!menOpen)}
-              className="w-full flex items-center justify-between px-4 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <span>{t("Men's")}</span>
-              <FontAwesomeIcon
-                icon={faChevronDown}
-                className={`text-xs text-gray-400 transition-transform duration-200 ${menOpen ? "rotate-180 text-blue-600" : ""
-                  }`}
-              />
-            </button>
-
-            {menOpen && (
-              <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
-                <li>
-                  <NavLink to="/men/shirt" onClick={onClose} className={subLinkStyle}>
-                    {t("Shirt")}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/men/shorts-jeans" onClick={onClose} className={subLinkStyle}>
-                    {t("Shorts & Jeans")}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/men/safety-shoes" onClick={onClose} className={subLinkStyle}>
-                    {t("Safety Shoes")}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/men/wallet" onClick={onClose} className={subLinkStyle}>
-                    {t("Wallet")}
-                  </NavLink>
-                </li>
-              </ul>
-            )}
-          </li>
-
-          {/* Women's Submenu */}
-          <li>
-            <button
-              onClick={() => setWomenOpen(!womenOpen)}
-              className="w-full flex items-center justify-between px-4 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <span>{t("Women's")}</span>
-              <FontAwesomeIcon
-                icon={faChevronDown}
-                className={`text-xs text-gray-400 transition-transform duration-200 ${womenOpen ? "rotate-180 text-blue-600" : ""
-                  }`}
-              />
-            </button>
-
-            {womenOpen && (
-              <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
-                <li>
-                  <NavLink to="/women/dress-frock" onClick={onClose} className={subLinkStyle}>
-                    {t("Dress & Frock")}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/women/earrings" onClick={onClose} className={subLinkStyle}>
-                    {t("Earrings")}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/women/necklace" onClick={onClose} className={subLinkStyle}>
-                    {t("Necklace")}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/women/makeup-kit" onClick={onClose} className={subLinkStyle}>
-                    {t("Makeup Kit")}
-                  </NavLink>
-                </li>
-              </ul>
-            )}
-          </li>
-
-          {/* Jewellery Submenu */}
-          <li>
-            <button
-              onClick={() => setJewelryOpen(!jewelryOpen)}
-              className="w-full flex items-center justify-between px-4 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <span>{t("Jewellery")}</span>
-              <FontAwesomeIcon
-                icon={faChevronDown}
-                className={`text-xs text-gray-400 transition-transform duration-200 ${jewelryOpen ? "rotate-180 text-blue-600" : ""
-                  }`}
-              />
-            </button>
-
-            {jewelryOpen && (
-              <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
-                <li>
-                  <NavLink to="/jewellery/earrings" onClick={onClose} className={subLinkStyle}>
-                    {t("Earrings")}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/jewellery/couple-rings" onClick={onClose} className={subLinkStyle}>
-                    {t("Couple Rings")}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/jewellery/necklace" onClick={onClose} className={subLinkStyle}>
-                    {t("Necklace")}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/jewellery/bracelets" onClick={onClose} className={subLinkStyle}>
-                    {t("Bracelets")}
-                  </NavLink>
-                </li>
-              </ul>
-            )}
-          </li>
-
-          {/* Perfume Submenu */}
-          <li>
-            <button
-              onClick={() => setPerfumeOpen(!perfumeOpen)}
-              className="w-full flex items-center justify-between px-4 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <span>{t("Perfume")}</span>
-              <FontAwesomeIcon
-                icon={faChevronDown}
-                className={`text-xs text-gray-400 transition-transform duration-200 ${perfumeOpen ? "rotate-180 text-blue-600" : ""
-                  }`}
-              />
-            </button>
-
-            {perfumeOpen && (
-              <ul className="ml-3 mt-1 pl-2.5 border-l-2 border-gray-200 space-y-1">
-                <li>
-                  <NavLink to="/perfume/clothes-perfume" onClick={onClose} className={subLinkStyle}>
-                    {t("Clothes Perfume")}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/perfume/deodorant" onClick={onClose} className={subLinkStyle}>
-                    {t("Deodorant")}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/perfume/flower-fragrance" onClick={onClose} className={subLinkStyle}>
-                    {t("Flower Fragrance")}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/perfume/air-freshener" onClick={onClose} className={subLinkStyle}>
-                    {t("Air Freshener")}
-                  </NavLink>
-                </li>
-              </ul>
-            )}
-          </li>
-
-          {/* Profile */}
-          <li>
-            <NavLink to="/profile" onClick={onClose} className={linkStyle}>
-              {t("Profile")}
+            <NavLink to="/offers" onClick={onClose} className={linkStyle}>
+              {t("Offers")}
             </NavLink>
           </li>
         </ul>

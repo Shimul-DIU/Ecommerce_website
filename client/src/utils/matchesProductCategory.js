@@ -1,11 +1,7 @@
 import PRODUCT_SUBCATEGORIES from "./productSubcategories.js";
+import normalizeProductCategory from "./normalizeProductCategory.js";
 
-const normalize = (value) =>
-  String(value || "")
-    .toLowerCase()
-    .replace(/['’]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+const normalize = normalizeProductCategory;
 
 const matchesProductCategory = (product, category) => {
   const productCategory = normalize(product?.category);

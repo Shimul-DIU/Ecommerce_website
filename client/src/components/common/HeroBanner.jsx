@@ -2,66 +2,43 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../utils/translations";
 
+// এখানে নিজের আসল product এর নাম, দাম ও ছবি বসান
 const banners = [
   {
     id: 1,
-    badge: "HOT DEAL - 50% OFF",
-    title: "LATEST SMARTPHONES",
-    subtitle: "Experience cutting-edge technology with high-res cameras and all-day battery life.",
-    btnText: "Shop Electronics",
-    btnLink: "/products?category=smartphones",
-    bgImage: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1600&auto=format&fit=crop",
-    badgeBg: "#D10024",
-    badgeTextColor: "#FFFFFF",
-    titleColor: "#FFFFFF",
-    subtitleColor: "#E4E6EB",
-    btnBg: "#D10024",
-    btnColor: "#FFFFFF",
+    tag: "MEN'S",
+    productName: "Classic Men's Chronograph Watch",
+    desc: "Stainless steel body, water resistant, perfect for office and party.",
+    oldPrice: 4500,
+    price: 2999,
+    image:
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=900&auto=format&fit=crop",
+    btnText: "Buy Now",
+    btnLink: "/products?category=men&search=watch",
   },
   {
     id: 2,
-    badge: "NEW ARRIVAL",
-    title: "PREMIUM HEADPHONES",
-    subtitle: "Immerse yourself in crystal-clear sound with active noise cancellation.",
-    btnText: "Discover Sound",
-    btnLink: "/products?category=accessories",
-    bgImage: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1600&auto=format&fit=crop",
-    badgeBg: "#2B2D42",
-    badgeTextColor: "#FFFFFF",
-    titleColor: "#FFFFFF",
-    subtitleColor: "#D1D5DB",
-    btnBg: "#FFFFFF",
-    btnColor: "#15161D",
+    tag: "WOMEN'S",
+    productName: "Belle Premium Hand Bag",
+    desc: "Elegant design with durable material and spacious compartments.",
+    oldPrice: 2000,
+    price: 1340,
+    image:
+      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=900&auto=format&fit=crop",
+    btnText: "Buy Now",
+    btnLink: "/products?category=women&search=bag",
   },
   {
     id: 3,
-    badge: "EXCLUSIVES",
-    title: "NEXT-GEN LAPTOPS",
-    subtitle: "Unmatched performance for gaming, editing, and daily productivity.",
+    tag: "JEWELLERY",
+    productName: "Gold Plated Pearl Necklace Set",
+    desc: "Graceful necklace and earring set that makes every occasion special.",
+    oldPrice: 3500,
+    price: 1750,
+    image:
+      "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=900&auto=format&fit=crop",
     btnText: "Buy Now",
-    btnLink: "/products?category=laptops",
-    bgImage: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=1600&auto=format&fit=crop",
-    badgeBg: "#FFB400",
-    badgeTextColor: "#15161D",
-    titleColor: "#FFFFFF",
-    subtitleColor: "#E5E7EB",
-    btnBg: "#D10024",
-    btnColor: "#FFFFFF",
-  },
-  {
-    id: 4,
-    badge: "LIMITED STOCK",
-    title: "SMARTWATCHES & WEARABLES",
-    subtitle: "Track your health, fitness, and daily notifications seamlessly on the go.",
-    btnText: "Explore Collection",
-    btnLink: "/products?category=wearables",
-    bgImage: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1600&auto=format&fit=crop",
-    badgeBg: "#10B981",
-    badgeTextColor: "#FFFFFF",
-    titleColor: "#FFFFFF",
-    subtitleColor: "#D1D5DB",
-    btnBg: "#FFFFFF",
-    btnColor: "#111827",
+    btnLink: "/products?category=jewellery&search=necklace",
   },
 ];
 
@@ -102,77 +79,102 @@ const HeroBanner = () => {
 
   return (
     <div
-      className="w-full mx-auto px-2  mt-2 "
+      className="w-full mx-auto px-2 mt-2"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
       {/* Banner Container */}
-      <div className="relative w-full h-[260px] sm:h-[340px] md:h-[420px] lg:h-[480px] rounded-2xl overflow-hidden shadow-2xl bg-gray-900">
+      <div className="relative w-full h-[300px] sm:h-[380px] md:h-[440px] lg:h-[480px] rounded-2xl overflow-hidden shadow-2xl bg-[#16241F]">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#16241F] via-[#1B2E27] to-[#0F1A16]" />
+        <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-[#B08946]/20 blur-3xl" />
+        <div className="absolute -bottom-24 right-1/3 w-72 h-72 rounded-full bg-[#B08946]/10 blur-3xl" />
+
         {/* Slides */}
         {banners.map((banner, index) => {
           const isActive = index === currentIndex;
+          const discountPercent = Math.round(
+            ((banner.oldPrice - banner.price) / banner.oldPrice) * 100
+          );
+          const savings = banner.oldPrice - banner.price;
+
           return (
             <div
               key={banner.id}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${isActive ? "opacity-100 z-10 pointer-events-auto" : "opacity-0 z-0 pointer-events-none"
-                }`}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                isActive
+                  ? "opacity-100 z-10 pointer-events-auto"
+                  : "opacity-0 z-0 pointer-events-none"
+              }`}
             >
-              {/* Background Image with Dark Overlay */}
-              <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-10000 ease-out"
-                style={{
-                  backgroundImage: `url(${banner.bgImage})`,
-                  transform: isActive ? "scale(1.05)" : "scale(1)",
-                }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-transparent" />
-              </div>
-
-              {/* Content Box */}
-              <div className="relative h-full max-w-xl flex flex-col justify-center px-6 sm:px-12 md:px-16 text-left">
-                {/* Badge */}
-                <div className="mb-2 sm:mb-3">
-                  <span
-                    className="inline-block text-[10px] sm:text-xs font-black tracking-wider px-3 py-1 rounded-md uppercase shadow-md"
-                    style={{
-                      backgroundColor: banner.badgeBg,
-                      color: banner.badgeTextColor,
-                    }}
-                  >
-                    {t(banner.badge)}
+              <div className="relative h-full grid grid-cols-2 items-center gap-2 sm:gap-6 px-5 sm:px-12 md:px-16">
+                {/* Left: Product Info */}
+                <div className="flex flex-col justify-center text-left">
+                  <span className="inline-block w-fit text-[9px] sm:text-xs font-black tracking-[0.2em] text-[#B08946] border border-[#B08946]/60 px-2.5 py-1 rounded-full uppercase mb-2 sm:mb-3">
+                    {t(banner.tag)}
                   </span>
+
+                  <h2 className="text-lg sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-2 sm:mb-3 line-clamp-3">
+                    {t(banner.productName)}
+                  </h2>
+
+                  <p className="hidden sm:block text-sm md:text-base text-white/70 font-medium mb-4 line-clamp-2 max-w-md">
+                    {t(banner.desc)}
+                  </p>
+
+                  {/* Price */}
+                  <div className="flex items-end gap-2 sm:gap-3 mb-1">
+                    <span className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#B08946]">
+                      ৳{banner.price}
+                    </span>
+                    <span className="text-xs sm:text-lg text-white/40 line-through font-semibold mb-0.5 sm:mb-1.5">
+                      ৳{banner.oldPrice}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] sm:text-sm font-bold text-green-400 mb-3 sm:mb-6">
+                    {t("You save")} ৳{savings}
+                  </p>
+
+                  <div>
+                    <Link
+                      to={banner.btnLink}
+                      className="inline-flex items-center justify-center px-5 sm:px-8 py-2 sm:py-3.5 text-[11px] sm:text-sm font-bold uppercase tracking-wider rounded-full bg-[#B08946] text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-[#c29a52] hover:shadow-xl active:scale-95"
+                    >
+                      {t(banner.btnText)}
+                    </Link>
+                  </div>
                 </div>
 
-                {/* Title */}
-                <h2
-                  className="text-2xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-tight leading-tight mb-2 sm:mb-3 drop-shadow-md"
-                  style={{ color: banner.titleColor }}
-                >
-                  {t(banner.title)}
-                </h2>
+                {/* Right: Product Image */}
+                <div className="relative flex items-center justify-center h-full py-6 sm:py-8">
+                  <div className="relative w-full max-w-[200px] sm:max-w-[300px] md:max-w-[380px] aspect-square">
+                    {/* Gold ring */}
+                    <div className="absolute inset-0 rounded-[2rem] rotate-6 border-2 border-[#B08946]/40" />
 
-                {/* Subtitle */}
-                <p
-                  className="text-xs sm:text-sm md:text-base font-medium mb-5 sm:mb-8 line-clamp-2 leading-relaxed opacity-90 max-w-md"
-                  style={{ color: banner.subtitleColor }}
-                >
-                  {t(banner.subtitle)}
-                </p>
+                    <div
+                      className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-2xl border border-white/10 bg-white transition-transform duration-[6000ms] ease-out"
+                      style={{ transform: isActive ? "scale(1.04)" : "scale(1)" }}
+                    >
+                      <img
+                        src={banner.image}
+                        alt={banner.productName}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
 
-                {/* CTA Button */}
-                <div>
-                  <Link
-                    to={banner.btnLink}
-                    className="inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3.5 text-xs sm:text-sm font-bold uppercase tracking-wider rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95"
-                    style={{
-                      backgroundColor: banner.btnBg,
-                      color: banner.btnColor,
-                    }}
-                  >
-                    {t(banner.btnText)}
-                  </Link>
+                    {/* Discount Badge */}
+                    <div className="absolute -top-3 -right-2 sm:-top-5 sm:-right-4 w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full bg-red-600 text-white flex flex-col items-center justify-center shadow-xl border-2 border-white/80 rotate-12">
+                      <span className="text-base sm:text-2xl md:text-3xl font-black leading-none">
+                        {discountPercent}%
+                      </span>
+                      <span className="text-[9px] sm:text-xs font-bold tracking-wider">
+                        OFF
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -182,7 +184,7 @@ const HeroBanner = () => {
         {/* Previous Button */}
         <button
           onClick={goToPrevious}
-          className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/40 hover:bg-[#D10024] text-white rounded-full flex items-center justify-center transition-all duration-300 z-20 backdrop-blur-md border border-white/10 shadow-md group"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 bg-black/40 hover:bg-[#B08946] text-white rounded-full flex items-center justify-center transition-all duration-300 z-20 backdrop-blur-md border border-white/10 shadow-md group"
           aria-label={t("Previous Slide")}
         >
           <svg
@@ -198,7 +200,7 @@ const HeroBanner = () => {
         {/* Next Button */}
         <button
           onClick={goToNext}
-          className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/40 hover:bg-[#D10024] text-white rounded-full flex items-center justify-center transition-all duration-300 z-20 backdrop-blur-md border border-white/10 shadow-md group"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 bg-black/40 hover:bg-[#B08946] text-white rounded-full flex items-center justify-center transition-all duration-300 z-20 backdrop-blur-md border border-white/10 shadow-md group"
           aria-label={t("Next Slide")}
         >
           <svg
@@ -212,16 +214,17 @@ const HeroBanner = () => {
         </button>
 
         {/* Bottom Pagination Dots */}
-        <div className="absolute bottom-4 sm:bottom-6 inset-x-0 flex items-center justify-center gap-2 z-20">
+        <div className="absolute bottom-3 sm:bottom-5 inset-x-0 flex items-center justify-center gap-2 z-20">
           <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
             {banners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`transition-all duration-300 rounded-full h-2 ${index === currentIndex
-                    ? "w-7 bg-[#D10024]"
+                className={`transition-all duration-300 rounded-full h-2 ${
+                  index === currentIndex
+                    ? "w-7 bg-[#B08946]"
                     : "w-2 bg-white/50 hover:bg-white"
-                  }`}
+                }`}
                 aria-label={`${t("Go to slide")} ${index + 1}`}
               />
             ))}

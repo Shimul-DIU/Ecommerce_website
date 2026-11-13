@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFacebookF,
   faLinkedin,
-  faTwitter,
   faGithub,
 } from "@fortawesome/free-brands-svg-icons";
 import {
@@ -30,25 +29,52 @@ export default function Footer() {
     setTimeout(() => setSubmitted(false), 3000);
     setEmail("");
   };
-  const socialIcons =[
-    { icon: faFacebookF, Link:'https://www.facebook.com/shimul.mia.79462'},
-    { icon: faLinkedin, Link:'https://www.linkedin.com/in/md-shimul-71a4b3319/'},
-    { icon: faGithub, Link:'https://github.com/Shimul-DIU'},
-    { icon: faTwitter, Link:'https://www.facebook.com/shimul.mia.79462'},
-
-  ]
+  const socialIcons = [
+    {
+      label: "Facebook",
+      icon: faFacebookF,
+      href: "https://www.facebook.com/shimul.mia.79462",
+    },
+    {
+      label: "LinkedIn",
+      icon: faLinkedin,
+      href: "https://www.linkedin.com/in/md-shimul-71a4b3319/",
+    },
+    {
+      label: "GitHub",
+      icon: faGithub,
+      href: "https://github.com/Shimul-DIU",
+    },
+  ];
   const columns = [
     {
       title: "Shop",
-      links: ["New Arrivals", "Best Sellers", "Men", "Women", "Accessories", "Sale"],
+      links: [
+        { label: "New Arrivals", to: "/products?category=new-arrival" },
+        { label: "Best Sellers", to: "/products?category=best-sellers" },
+        { label: "Men", to: "/men" },
+        { label: "Women", to: "/women" },
+        { label: "Jewellery", to: "/products?category=jewellery" },
+        { label: "Fishing", to: "/fishing" },
+        { label: "Sale", to: "/offers" },
+      ],
     },
     {
       title: "Customer Care",
-      links: ["Track Order", "Shipping Info", "Returns & Exchanges", "Size Guide", "FAQs"],
+      links: [
+        { label: "Track Order", to: "/userDashboard/user-orders" },
+        { label: "Shipping Info", to: "/contact#faq-shipping" },
+        { label: "Returns & Exchanges", to: "/contact#faq-returns" },
+        { label: "Size Guide", to: "/contact#contact-form" },
+        { label: "FAQs", to: "/contact#faq" },
+      ],
     },
     {
       title: "Company",
-      links: ["About Us", "Careers", "Blog", "Affiliate Program", "Sustainability"],
+      links: [
+        { label: "About Us", to: "/about" },
+        { label: "Contact Us", to: "/contact" },
+      ],
     },
   ];
 
@@ -126,14 +152,14 @@ export default function Footer() {
               {t(col.title)}
             </h3>
             <ul className="mt-4 space-y-2.5">
-              {col.links.map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
+              {col.links.map(({ label, to }) => (
+                <li key={label}>
+                  <Link
+                    to={to}
                     className="text-sm text-slate-400 hover:text-amber-400 transition-colors"
                   >
-                    {t(link)}
-                  </a>
+                    {t(label)}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -144,26 +170,31 @@ export default function Footer() {
       {/* Contact + socials */}
       <div className="w-full max-w-none mx-auto px-6 py-6 border-t border-slate-800 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-sm text-slate-400">
-          <span className="flex items-center gap-2">
-            <FontAwesomeIcon icon={faPhone} className="w-4 h-4 text-amber-400" /> +880 1922773703
-          </span>
-          <span className="flex items-center gap-2">
-            <FontAwesomeIcon icon={faEnvelope} className="w-4 h-4 text-amber-400" />shimuldiu7@gmail.com
-          </span>
+          <a href="tel:+8801922773703" className="flex items-center gap-2 hover:text-amber-400">
+            <FontAwesomeIcon icon={faPhone} className="w-4 h-4 text-amber-400" />
+            +880 1922773703
+          </a>
+          <a href="mailto:shimuldiu7@gmail.com" className="flex items-center gap-2 hover:text-amber-400">
+            <FontAwesomeIcon icon={faEnvelope} className="w-4 h-4 text-amber-400" />
+            shimuldiu7@gmail.com
+          </a>
           <span className="flex items-center gap-2">
             <FontAwesomeIcon icon={faLocationDot} className="w-4 h-4 text-amber-400" /> Dhaka, Bangladesh
           </span>
         </div>
 
         <div className="flex items-center gap-4">
-          {socialIcons.map((icon, i) => (
-            <Link to={icon.Link}
-              key={i}
-
+          {socialIcons.map(({ label, icon, href }) => (
+            <a
+              href={href}
+              key={label}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
               className="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-amber-400 hover:text-slate-900 text-slate-300 transition-colors"
             >
-              <FontAwesomeIcon icon={icon.icon} className="w-4 h-4" />
-            </Link>
+              <FontAwesomeIcon icon={icon} className="w-4 h-4" />
+            </a>
           ))}
         </div>
       </div>
@@ -174,11 +205,6 @@ export default function Footer() {
           <p className="text-xs text-slate-500">
             © {new Date().getFullYear()} Shimul_shop. {t("All rights reserved.")}
           </p>
-          <div className="flex items-center gap-4 text-xs text-slate-500">
-            <a href="#" className="hover:text-amber-400 transition-colors">{t("Privacy Policy")}</a>
-            <a href="#" className="hover:text-amber-400 transition-colors">{t("Terms of Service")}</a>
-            <a href="#" className="hover:text-amber-400 transition-colors">{t("Cookies")}</a>
-          </div>
         </div>
       </div>
     </footer>

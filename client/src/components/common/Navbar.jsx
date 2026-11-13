@@ -26,6 +26,11 @@ import { getInitials } from "../../utils/getInitials";
 import useProducts from "../../hooks/useProducts";
 import { LanguageContext } from "../../context/LanguageContext";
 import { translate } from "../../utils/translations";
+import {
+  categoryItems,
+  getCategoryLink,
+  getProductCategories,
+} from "../../utils/navigationCategories";
 
 const ICON_ACTION = "text-lg sm:text-xl md:text-lg";
 const AVATAR_SIZE = "w-8 h-8 sm:w-10 sm:h-10";
@@ -89,30 +94,7 @@ const Navbar = ({ onMenuClick }) => {
     };
   }, []);
 
-  // Products ক্যাটাগরির ড্রপডাউন ডাটা স্ট্রাকচার
-  const productCategories = [
-    { name: language === "BN" ? "পারফিউম (Perfume)" : "Perfume", path: "/products?category=perfume" },
-    { name: language === "BN" ? "জুয়েলারি (Jewellery)" : "Jewellery", path: "/products?category=jewellery" },
-    { name: language === "BN" ? "নারী (Women)" : "Women", path: "/products?category=women" },
-    { name: language === "BN" ? "পুরুষ (Men)" : "Men", path: "/products?category=men" },
-    { name: language === "BN" ? "মাছ ধরা (Fishing)" : "Fishing", path: "/products?category=fishing" },
-  ];
-
-  // Category Sub-Items Config (Mega Menu for All Categories)
-  const categoryItems = {
-    all: {
-      perfume: ["Men's Perfume", "Women's Perfume", "Attar", "Body Spray"],
-      jewellery: ["Ring", "Necklace", "Earring", "Bracelet"],
-      women: ["Dress", "Saree", "Bag", "Shoes"],
-      men: ["T-Shirt", "Shirt", "Pant", "Shoes", "Watch"],
-      fishing: ["Fishing Rods", "Fishing Reels", "Fishing Lines", "Fishing Hooks", "Fishing Lures", "Fishing Accessories"],
-    },
-    perfume: ["Men's Perfume", "Women's Perfume", "Attar", "Body Spray"],
-    jewellery: ["Ring", "Necklace", "Earring", "Bracelet"],
-    women: ["Dress", "Saree", "Bag", "Shoes"],
-    men: ["T-Shirt", "Shirt", "Pant", "Shoes"],
-    fishing: ["Fishing Rods", "Fishing Reels", "Fishing Lines", "Fishing Hooks", "Fishing Lures", "Fishing Accessories"],
-  };
+  const productCategories = getProductCategories(language);
 
   const navItems = [
     {
@@ -176,24 +158,6 @@ const Navbar = ({ onMenuClick }) => {
     navigate(search ? `/products?search=${encodeURIComponent(search)}` : "/products");
     setSearchOpen(false);
     setSearchFocused(false);
-  };
-
-  const getCategoryLink = (category, subItem) => {
-    const subcategory = subItem
-      .toLowerCase()
-      .replace(/['’]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-
-    if (["men", "women", "fishing"].includes(category)) {
-      const filterCategory =
-        category === "men" && subcategory === "t-shirt"
-          ? "men-tshirt"
-          : `${category}-${subcategory.replace(/^fishing-/, "")}`;
-      return `/${category}?category=${encodeURIComponent(filterCategory)}`;
-    }
-
-    return `/products?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`;
   };
 
   const searchSuggestions = query.trim()
@@ -270,8 +234,7 @@ const Navbar = ({ onMenuClick }) => {
       </div>
       {[
         { to: "/userDashboard", icon: faUser, label: "My Profile" },
-        { to: "/admin/login", icon: faUserShield, label: "Admin" },
-        { to: "/orders", icon: faBoxOpen, label: "Orders" },
+        { to: "/userDashboard/user-orders", icon: faBoxOpen, label: "Orders" },
       ].map((m) => (
         <Link
           key={m.to}

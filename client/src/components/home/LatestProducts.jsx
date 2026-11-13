@@ -117,6 +117,8 @@ const LatestProducts = () => {
       {/* Section Header */}
       <div className="flex items-center justify-between pb-3">
         <div className="flex items-center gap-2">
+                    <span className="hidden sm:block h-8 w-1 rounded-full bg-[#B08946]" />
+
           <h2 className="text-xl md:text-2xl lg:text-3xl font-medium text-[#16241F]">
             {t("Latest Products")}
           </h2>
