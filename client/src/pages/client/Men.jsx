@@ -27,6 +27,8 @@ import useProducts from "../../hooks/useProducts";
 import { useScroll } from "../../hooks/useScroll";
 import { useTranslation } from "../../utils/translations";
 import getProductPricing from "../../utils/getProductPricing";
+import matchesProductCategory from "../../utils/matchesProductCategory";
+import matchesProductSubcategory from "../../utils/matchesProductSubcategory";
 
 
 /* =========================================================
@@ -168,17 +170,14 @@ const Men = () => {
       তাই এখানেও একই structure রাখা হয়েছে।
     */
 
-    let result = products.filter(
-      (item) => item.category === "men"
+    let result = products.filter((item) =>
+      matchesProductCategory(item, "men")
     );
 
     if (activeCategory !== "men") {
       const subCategoryName = activeCategory.replace("men-", "");
-      result = result.filter(
-        (item) =>
-          item.subCategory === activeCategory ||
-          item.subCategory === subCategoryName ||
-          item.name?.toLowerCase().includes(subCategoryName)
+      result = result.filter((item) =>
+        matchesProductSubcategory(item, subCategoryName)
       );
     }
 
@@ -196,6 +195,7 @@ const Men = () => {
         const searchableText = [
           item.name,
           item.category,
+          item.subcategoryCategory,
           item.description,
         ]
           .filter(Boolean)

@@ -73,6 +73,7 @@ const AdminProducts = () => {
     return (
       item.name?.toLowerCase().includes(q) ||
       item.category?.toLowerCase().includes(q) ||
+      item.subcategoryCategory?.toLowerCase().includes(q) ||
       item.subCategory?.toLowerCase().includes(q)
     );
   });

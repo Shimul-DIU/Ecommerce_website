@@ -9,24 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axiosInstance from "../../../utils/axiosInstance";
-
-const categoryItems = {
-  perfume: ["Men's Perfume", "Women's Perfume", "Attar", "Body Spray"],
-  jewellery: ["Ring", "Necklace", "Earring", "Bracelet"],
-  women: ["Dress", "Saree", "Bag", "Shoes"],
-  men: ["T-Shirt", "Shirt", "Pant", "Shoes", "Watch"],
-  bags: ["Backpack", "Handbag"],
-  glasses: ["Sunglasses"],
-  fishing: [
-    "Fishing Rods",
-    "Fishing Reels",
-    "Fishing Lines",
-    "Fishing Hooks",
-    "Fishing Lures",
-    "Fishing Accessories",
-  ],
-  electronics: ["Mobile", "Laptop", "Headphone", "Keyboard", "Mouse"],
-};
+import PRODUCT_SUBCATEGORIES from "../../../utils/productSubcategories.js";
 
 const inputClass = (hasError) =>
   `w-full rounded-xl border bg-[#FAF6EF]/50 px-4 py-2.5 text-sm text-[#16241F] outline-none transition placeholder:text-[#16241F]/35 focus:border-[#B08946] focus:bg-white focus:ring-2 focus:ring-[#B08946]/25 ${
@@ -66,6 +49,7 @@ const AddProduct = () => {
     name: "",
     category: "",
     subCategory: "",
+    subcategoryCategory: "",
     price: "",
     discountPercent: 0,
     oldPrice: "",
@@ -104,6 +88,8 @@ const AddProduct = () => {
           name: product.name || "",
           category: product.category || "",
           subCategory: product.subCategory || "",
+          subcategoryCategory:
+            product.subcategoryCategory || product.category || "",
           price: String(
             isDealProduct
               ? product.price
@@ -140,7 +126,11 @@ const AddProduct = () => {
   }, [id]);
 
   const isDeal = form.category === "deal";
-  const hasSubCategory = !!categoryItems[form.category];
+  const subcategoryGroups =
+    form.category === "new-arrival"
+      ? Object.entries(PRODUCT_SUBCATEGORIES)
+      : [[form.category, PRODUCT_SUBCATEGORIES[form.category] || []]];
+  const hasSubCategory = subcategoryGroups.some(([, items]) => items.length > 0);
 
   const handleChange = (e) => {
     const { name, value, files, type } = e.target;
@@ -160,6 +150,7 @@ const AddProduct = () => {
         ...prev,
         category: value,
         subCategory: "",
+        subcategoryCategory: value === "new-arrival" ? "" : value,
         price:
           prev.category === "deal" && value !== "deal" && prev.oldPrice
             ? String(prev.oldPrice)
@@ -170,6 +161,17 @@ const AddProduct = () => {
             ? 0
             : prev.discountPercent,
         dealEndsAt: value === "deal" ? prev.dealEndsAt : "",
+      }));
+      setError({});
+      return;
+    }
+
+    if (name === "subCategory") {
+      const [subcategoryCategory, subCategory] = JSON.parse(value);
+      setForm((prev) => ({
+        ...prev,
+        subcategoryCategory,
+        subCategory,
       }));
       setError({});
       return;
@@ -323,7 +325,7 @@ const AddProduct = () => {
                   <option value="fishing">Fishing</option>
                   <option value="electronics">Electronics</option>
                   <option value="deal">Deal of the Day</option>
-                  <option value="new-arrival">New Arrival</option>
+                  <option value="new-arrival">New Arrival (New Arrivals section)</option>
                 </select>
                 <FieldError msg={error.category} />
                 <label className={`${labelClass} mt-4`}>Homepage Section</label>
@@ -338,6 +340,8 @@ const AddProduct = () => {
                 </select>
                 <FieldError msg={error.homepageSection} />
                 <p className="mt-1 text-xs text-[#16241F]/50">
+                  Category “New Arrival” controls the New Arrivals section.
+                  Latest Products only controls its own homepage section;
                   Best Sellers updates automatically based on sales.
                 </p>
               </div>
@@ -348,7 +352,14 @@ const AddProduct = () => {
                 <select
                   name="subCategory"
                   required={hasSubCategory}
-                  value={form.subCategory}
+                  value={
+                    form.subCategory
+                      ? JSON.stringify([
+                          form.subcategoryCategory || form.category,
+                          form.subCategory,
+                        ])
+                      : ""
+                  }
                   onChange={handleChange}
                   disabled={!form.category || !hasSubCategory}
                   className={`${inputClass(
@@ -362,12 +373,27 @@ const AddProduct = () => {
                       ? "No sub category"
                       : "Select a sub category"}
                   </option>
-                  {hasSubCategory &&
-                    categoryItems[form.category].map((item) => (
-                      <option key={item} value={item}>
-                        {item}
-                      </option>
-                    ))}
+                  {subcategoryGroups.map(([category, items]) =>
+                    items.length > 0 ? (
+                      <optgroup
+                        key={category}
+                        label={
+                          form.category === "new-arrival"
+                            ? `${category[0].toUpperCase()}${category.slice(1)}`
+                            : undefined
+                        }
+                      >
+                        {items.map((item) => (
+                          <option
+                            key={`${category}-${item}`}
+                            value={JSON.stringify([category, item])}
+                          >
+                            {item}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ) : null
+                  )}
                 </select>
                 <FieldError msg={error.subCategory} />
               </div>

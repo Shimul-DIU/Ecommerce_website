@@ -38,3 +38,19 @@ test("derives legacy deal discounts from the old price", () => {
     }
   );
 });
+
+test("derives a discount when the stored percentage is zero but prices differ", () => {
+  assert.deepEqual(
+    getProductPricing({
+      price: 800,
+      originalPrice: 1000,
+      discountPercent: 0,
+    }),
+    {
+      price: 800,
+      originalPrice: 1000,
+      discountPercent: 20,
+      savingsAmount: 200,
+    }
+  );
+});

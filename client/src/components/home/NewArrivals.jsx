@@ -30,6 +30,13 @@ const gridColsMap = {
   6: "grid-cols-6",
 };
 
+const normalizeCategory = (category) =>
+  String(category || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 const NewArrivals = () => {
   const { t } = useTranslation();
   const { wishlist, cart, toggleWishlist, toggleCart } =
@@ -50,6 +57,11 @@ const NewArrivals = () => {
   }, []);
 
   const gridColsClass = gridColsMap[itemsPerRow] || "grid-cols-6";
+  const newArrivalProducts = products?.filter(
+    (product) =>
+      String(product.status).toLowerCase() === "active" &&
+      normalizeCategory(product.category) === "new-arrival"
+  );
 
   if (error) {
     return (
@@ -61,7 +73,7 @@ const NewArrivals = () => {
     );
   }
 
-  const visibleProductsList = products?.slice(0, itemsPerRow);
+  const visibleProductsList = newArrivalProducts?.slice(0, itemsPerRow);
 
   return (
     <section className="w-full mx-auto">
@@ -76,7 +88,7 @@ const NewArrivals = () => {
                 {t("New Arrivals")}
               </h2>
               <span className="hidden sm:inline-block bg-[#16241F] text-[#FAF6EF] text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                {products?.length || 0}
+                {newArrivalProducts?.length || 0}
               </span>
             </div>
           </div>
@@ -84,7 +96,7 @@ const NewArrivals = () => {
 
         <Link
           to="/products"
-          state={{ filter: "all" }}
+          state={{ filter: "new-arrival" }}
           className="group flex items-center gap-1.5 text-sm sm:text-base font-semibold text-[#16241F] hover:text-[#B08946] transition-colors duration-200"
         >
           <span>{t("See All")}</span>
@@ -115,7 +127,13 @@ const NewArrivals = () => {
       )}
 
       {/* ============ Products Grid ============ */}
-      {!loading && (
+      {!loading && newArrivalProducts.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-[#E4DDCE] bg-white/70 px-4 py-8 text-center text-sm text-[#16241F]/55">
+          No new arrival products yet. Set the product category to “New
+          Arrival” in the admin panel to show it here.
+        </div>
+      )}
+      {!loading && newArrivalProducts.length > 0 && (
         <div className={`grid ${gridColsClass} gap-3 sm:gap-4`}>
           {visibleProductsList?.map((item, index) => {
             const inWishlist = wishlist?.includes(String(item._id));
@@ -123,7 +141,7 @@ const NewArrivals = () => {
             const isOutOfStock = item.stock <= 0;
             const isLowStock = item.stock > 0 && item.stock <= 5;
 
-            const { originalPrice, discountPercent, savingsAmount } =
+            const { price, originalPrice, discountPercent, savingsAmount } =
               getProductPricing(item);
 
             // প্রথম ৩টি প্রোডাক্টে "NEW" ব্যাজ
@@ -152,14 +170,14 @@ const NewArrivals = () => {
 
                   {/* Top Left Badges */}
                   <div className="absolute top-2.5 left-2.5 z-10 flex flex-col items-start gap-1">
-                    {isNew && !isOutOfStock && (
+                    {/* {isNew && !isOutOfStock && (
                       <span className="bg-[#16241F] text-[#B08946] text-[9px] sm:text-[10px] font-extrabold tracking-[0.15em] px-2 py-0.5 rounded-full shadow-md">
                         NEW
                       </span>
-                    )}
+                    )} */}
                     {discountPercent > 0 && !isOutOfStock && (
-                      <span className="bg-[#B08946] text-[#16241F] text-[10px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full shadow-md">
-                        -{discountPercent}%
+                      <span className="inline-flex items-center rounded-full bg-[#B42318] px-2 py-1 text-[9px] font-extrabold leading-none text-white shadow-md ring-1 ring-white/80 sm:px-2.5 sm:py-1.5 sm:text-xs">
+                        {discountPercent}% OFF
                       </span>
                     )}
                   </div>
@@ -269,22 +287,21 @@ const NewArrivals = () => {
 
                   {/* Price */}
                   <div className="mt-auto pt-3">
-                    <div className="flex items-end justify-between gap-2 border-t border-dashed border-[#E4DDCE] pt-3">
-                      <div className="flex flex-col leading-none">
-                        {originalPrice > item.price && (
-                          <span className="text-[11px] sm:text-xs text-[#16241F]/40 line-through font-medium mb-1">
-                            ৳{originalPrice}
+                    <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-2 border-t border-dashed border-[#E4DDCE] pt-3">
+                      <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                        <span className="text-lg font-extrabold leading-none text-[#16241F] sm:text-xl">
+                          ৳{price.toLocaleString()}
+                        </span>
+                        {originalPrice > price && (
+                          <span className="text-[10px] font-medium leading-none text-[#16241F]/45 line-through sm:text-xs">
+                            ৳{originalPrice.toLocaleString()}
                           </span>
                         )}
-                        <span className="text-lg sm:text-xl font-extrabold text-[#16241F]">
-                          ৳{item.price}
-                        </span>
                       </div>
 
-                      {/* Mobile এ ছোট Buy বাটন, ডেস্কটপে Save লেখা */}
                       {savingsAmount > 0 && !isOutOfStock ? (
-                        <span className="hidden sm:inline-block text-[10px] sm:text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full whitespace-nowrap">
-                          Save ৳{savingsAmount}
+                        <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[9px] font-bold leading-none text-emerald-700 sm:text-[10px]">
+                          Save ৳{savingsAmount.toLocaleString()}
                         </span>
                       ) : null}
 

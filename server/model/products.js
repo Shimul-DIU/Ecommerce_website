@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 // যেসব category-তে sub category নেই
 export const NO_SUBCATEGORY = [
   "deal",
-  "new-arrival",
 ];
 
 const productSchema = new mongoose.Schema(
@@ -30,6 +29,12 @@ const productSchema = new mongoose.Schema(
         },
         "Sub category is required",
       ],
+    },
+
+    subcategoryCategory: {
+      type: String,
+      trim: true,
+      default: "",
     },
 
     price: {

@@ -14,6 +14,8 @@ import useProducts from "../../hooks/useProducts";
 import { useScroll } from "../../hooks/useScroll";
 import { useTranslation } from "../../utils/translations";
 import getProductPricing from "../../utils/getProductPricing";
+import matchesProductCategory from "../../utils/matchesProductCategory";
+import matchesProductSubcategory from "../../utils/matchesProductSubcategory";
 
 const CATEGORY_OPTIONS = [
   { key: "all", label: "All Categories" },
@@ -85,23 +87,26 @@ const Products = () => {
                 )
                 .sort((a, b) => Number(b.sold || 0) - Number(a.sold || 0))
             : products.filter(
-                (item) => normalize(item.category) === normalize(activeCategory)
+                (item) => matchesProductCategory(item, activeCategory)
               );
 
     // 2) Subcategory filter (sidebar theke)
     if (subcategoryQuery) {
-      result = result.filter((item) => {
-        const sub = normalize(item.subCategory);
-        const name = normalize(item.name);
-        return sub === subcategoryQuery || name.includes(subcategoryQuery);
-      });
+      result = result.filter((item) =>
+        matchesProductSubcategory(item, subcategoryQuery)
+      );
     }
 
     // 3) Search filter
     if (searchQuery) {
       const searchTerms = searchQuery.split(/\s+/).filter(Boolean);
       result = result.filter((item) => {
-        const searchableText = [item.name, item.category, item.description]
+        const searchableText = [
+          item.name,
+          item.category,
+          item.subcategoryCategory,
+          item.description,
+        ]
           .filter(Boolean)
           .join(" ")
           .toLowerCase();
@@ -318,13 +323,18 @@ const Products = () => {
         )}
 
         <div className="flex gap-8 items-start">
+          {/* Filter sidebar: sticky, page scroll korle o jaygay thakbe */}
           <aside
-            className={`hidden lg:block w-64 shrink-0 bg-white border border-[#E4DDCE] rounded-2xl p-5 shadow-sm sticky ${isScrolled ? "top-[100px] " : ""
-              } `}
-          >
-            {renderFilterContent()}
-          </aside>
+  className={`sticky self-start hidden w-64 shrink-0 rounded-2xl border border-[#E4DDCE] bg-white p-5 shadow-sm transition-[top] duration-300 lg:block z-10 ${
+    isScrolled
+      ? "top-4 max-h-[calc(100vh-2rem)]"
+      : "top-[10px] max-h-[calc(100vh-180px)]"
+  } overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
+>
+  {renderFilterContent()}
+</aside>
 
+          {/* Shudhu product gulo scroll hobe */}
           <main className="flex-1 min-w-0">
             {loading && (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4.5">
@@ -411,10 +421,11 @@ const Products = () => {
                                 ? "Remove from wishlist"
                                 : "Add to wishlist"
                             }
-                            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inWishlist
+                            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${
+                              inWishlist
                                 ? "bg-red-500 text-white"
                                 : "bg-white/90 text-[#16241F]/60 hover:text-red-500 hover:bg-white"
-                              }`}
+                            }`}
                           >
                             <FontAwesomeIcon
                               icon={faHeart}
@@ -432,10 +443,11 @@ const Products = () => {
                             aria-label={
                               inCart ? "Remove from cart" : "Add to cart"
                             }
-                            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${inCart
+                            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md backdrop-blur-md transition-all duration-200 active:scale-90 ${
+                              inCart
                                 ? "bg-[#16241F] text-[#B08946]"
                                 : "bg-white/90 text-[#16241F]/60 hover:text-[#16241F] hover:bg-white"
-                              }`}
+                            }`}
                           >
                             <FontAwesomeIcon
                               icon={faShoppingCart}

@@ -28,6 +28,8 @@ import useProducts from "../../hooks/useProducts";
 import { useScroll } from "../../hooks/useScroll";
 import { useTranslation } from "../../utils/translations";
 import getProductPricing from "../../utils/getProductPricing";
+import matchesProductCategory from "../../utils/matchesProductCategory";
+import matchesProductSubcategory from "../../utils/matchesProductSubcategory";
 
 
 /* =========================================================
@@ -153,8 +155,8 @@ const Fishing = () => {
       যদি "fishing" নামে থাকে তাহলে এটি ঠিক থাকবে।
     */
 
-    let result = products.filter(
-      (item) => item.category === "fishing"
+    let result = products.filter((item) =>
+      matchesProductCategory(item, "fishing")
     );
 
 
@@ -166,11 +168,10 @@ const Fishing = () => {
       const selectedFishingCategory = FISHING_CATEGORIES.find(
         (category) => category.key === activeCategory
       );
-      const subCategoryName = selectedFishingCategory?.label.toLowerCase() || "";
+      const subCategoryName = selectedFishingCategory?.label || "";
 
-      result = result.filter(
-        (item) =>
-          item.subCategory?.trim().toLowerCase() === subCategoryName
+      result = result.filter((item) =>
+        matchesProductSubcategory(item, subCategoryName)
       );
     }
 
@@ -188,6 +189,7 @@ const Fishing = () => {
         const searchableText = [
           item.name,
           item.category,
+          item.subcategoryCategory,
           item.subCategory,
           item.description,
         ]

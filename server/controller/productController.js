@@ -11,6 +11,7 @@ export const productController = async (req, res) => {
       name,
       category,
       subCategory,
+      subcategoryCategory,
       status,
       price,
       stock,
@@ -29,6 +30,9 @@ export const productController = async (req, res) => {
     // sub category শুধু সেই category-তে লাগবে যেখানে আছে
     if (!NO_SUBCATEGORY.includes(category)) {
       fields.subCategory = subCategory;
+    }
+    if (category === "new-arrival") {
+      fields.subcategoryCategory = subcategoryCategory;
     }
 
     // deal হলে এই দুটোও লাগবে
@@ -87,6 +91,11 @@ export const productController = async (req, res) => {
       name,
       category,
       subCategory: subCategory || "",
+      subcategoryCategory: NO_SUBCATEGORY.includes(category)
+        ? ""
+        : category === "new-arrival"
+          ? subcategoryCategory
+          : category,
       status,
       ...pricing,
       stock,
@@ -161,6 +170,12 @@ export const updateProduct = async (req, res) => {
     const category = body.category ?? product.category;
     const name = body.name ?? product.name;
     const subCategory = body.subCategory ?? product.subCategory;
+    const subcategoryCategory =
+      category === "new-arrival"
+        ? body.subcategoryCategory ?? product.subcategoryCategory
+        : NO_SUBCATEGORY.includes(category)
+          ? ""
+          : category;
     const status = body.status ?? product.status;
     const price =
       body.price ??
@@ -191,6 +206,15 @@ export const updateProduct = async (req, res) => {
         error: { subCategory: "Sub category is required" },
       });
     }
+    if (
+      category === "new-arrival" &&
+      !String(subcategoryCategory || "").trim()
+    ) {
+      return res.status(400).json({
+        success: false,
+        error: { subcategoryCategory: "Select a parent category" },
+      });
+    }
 
     const pricing = resolveProductPricing({
       category,
@@ -217,6 +241,7 @@ export const updateProduct = async (req, res) => {
       name: String(name).trim(),
       category,
       subCategory: subCategory || "",
+      subcategoryCategory,
       status,
       ...pricing,
       stock,

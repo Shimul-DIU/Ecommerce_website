@@ -17,7 +17,9 @@ const getProductPricing = (product = {}) => {
       ? null
       : Number(rawDiscount);
   const discountPercent =
-    storedDiscount !== null && Number.isFinite(storedDiscount)
+    storedDiscount !== null &&
+    Number.isFinite(storedDiscount) &&
+    storedDiscount > 0
       ? storedDiscount
       : originalPrice > price
         ? Math.round(((originalPrice - price) / originalPrice) * 100)

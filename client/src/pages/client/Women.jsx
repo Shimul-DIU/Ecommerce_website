@@ -27,6 +27,8 @@ import useProducts from "../../hooks/useProducts";
 import { useScroll } from "../../hooks/useScroll";
 import { useTranslation } from "../../utils/translations";
 import getProductPricing from "../../utils/getProductPricing";
+import matchesProductCategory from "../../utils/matchesProductCategory";
+import matchesProductSubcategory from "../../utils/matchesProductSubcategory";
 
 
 /* =========================================================
@@ -160,17 +162,14 @@ const Women = () => {
       যদি "women" নামে থাকে তাহলে এটি ঠিক থাকবে।
     */
 
-    let result = products.filter(
-      (item) => item.category === "women"
+    let result = products.filter((item) =>
+      matchesProductCategory(item, "women")
     );
 
     if (activeCategory !== "women") {
       const subCategoryName = activeCategory.replace("women-", "");
-      result = result.filter(
-        (item) =>
-          item.subCategory === activeCategory ||
-          item.subCategory === subCategoryName ||
-          item.name?.toLowerCase().includes(subCategoryName)
+      result = result.filter((item) =>
+        matchesProductSubcategory(item, subCategoryName)
       );
     }
 
@@ -188,6 +187,7 @@ const Women = () => {
         const searchableText = [
           item.name,
           item.category,
+          item.subcategoryCategory,
           item.description,
         ]
           .filter(Boolean)

@@ -161,6 +161,7 @@ const Offer = () => {
         const searchableText = [
           item.name,
           item.category,
+          item.subcategoryCategory,
           item.subCategory,
           item.description,
         ]
