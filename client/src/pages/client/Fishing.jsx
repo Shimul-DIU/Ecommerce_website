@@ -655,10 +655,11 @@ const Fishing = () => {
           ================================================= */}
 
           <aside
-            className={`hidden w-60 shrink-0 rounded-2xl border border-[#E4DDCE] bg-white p-5 shadow-sm lg:block xl:w-64 ${isScrolled
-              ? "sticky top-[92px]"
-              : "sticky top-[76px]"
-              } `}
+            className={`sticky z-40 hidden w-60 shrink-0 overflow-y-auto rounded-2xl border border-[#E4DDCE] bg-white p-5 shadow-sm transition-[top,max-height] duration-300 lg:block xl:w-64 ${
+              isScrolled
+                ? "top-[90px] max-h-[calc(100vh-6rem)]"
+                : "top-[160px] max-h-[calc(100vh-10rem)]"
+            }`}
           >
 
             {renderFilterContent()}

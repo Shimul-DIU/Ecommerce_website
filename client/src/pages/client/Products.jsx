@@ -334,14 +334,14 @@ const Products = () => {
         <div className="flex gap-8 items-start">
           {/* Filter sidebar: sticky, page scroll korle o jaygay thakbe */}
           <aside
-  className={`sticky self-start hidden w-64 shrink-0 rounded-2xl border border-[#E4DDCE] bg-white p-5 shadow-sm transition-[top] duration-300 lg:block z-10 ${
-    isScrolled
-      ? "top-4 max-h-[calc(100vh-2rem)]"
-      : "top-[10px] max-h-[calc(100vh-180px)]"
-  } overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
->
-  {renderFilterContent()}
-</aside>
+            className={`sticky z-40 self-start hidden w-64 shrink-0 overflow-y-auto rounded-2xl border border-[#E4DDCE] bg-white p-5 shadow-sm transition-[top,max-height] duration-300 lg:block [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+              isScrolled
+                ? "top-[90px] max-h-[calc(100vh-6rem)]"
+                : "top-[160px] max-h-[calc(100vh-10rem)]"
+            }`}
+          >
+            {renderFilterContent()}
+          </aside>
 
           {/* Shudhu product gulo scroll hobe */}
           <main className="flex-1 min-w-0">

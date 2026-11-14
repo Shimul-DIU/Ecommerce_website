@@ -17,7 +17,7 @@ const Userlayout = () => {
   };
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden">
+    <div className="min-h-screen w-full overflow-x-clip">
       <ScrollToTop />
 
       {/* Mobile Sidebar */}
@@ -30,7 +30,7 @@ const Userlayout = () => {
       <Navbar onMenuClick={handleMenuOpen} />
 
       {/* Main Content */}
-      <main className="w-full min-w-0 overflow-x-hidden pt-24 pb-20 md:pt-32 md:pb-0">
+      <main className="w-full min-w-0 overflow-x-clip pt-24 pb-20 md:pt-32 md:pb-0">
         <Outlet />
       </main>
 
