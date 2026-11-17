@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
+import { useScroll } from "../../../hooks/useScroll";
 import { useTranslation } from "../../../utils/translations";
 
 const navItems = [
@@ -23,6 +24,7 @@ const navItems = [
 const UserDashboardNavbar = ({ setIsExpanded }) => {
   const { t } = useTranslation();
   const { logout } = useContext(AuthContext);
+  const isScrolled = useScroll();
 
   const closeOnMobile = () => {
     if (setIsExpanded && window.innerWidth < 640) setIsExpanded(false);
@@ -93,7 +95,13 @@ const UserDashboardNavbar = ({ setIsExpanded }) => {
       {/* ==========================================
           2. DESKTOP SIDEBAR (>= sm screens)
          ========================================== */}
-      <aside className="sticky top-0 z-40 hidden h-screen w-64 shrink-0 flex-col justify-between overflow-hidden bg-[#16241F] p-4 text-[#FAF6EF] sm:flex md:pt-6">
+      <aside
+        className={`sticky z-40 hidden w-64 shrink-0 flex-col justify-between overflow-hidden bg-[#16241F] p-4 text-[#FAF6EF] transition-[top,height] duration-300 sm:flex md:pt-9 ${
+          isScrolled
+            ? "top-[10px] h-[calc(100vh-68px)]"
+            : "top-[100px] h-[calc(100vh-10rem)]"
+        }`}
+      >
         {/* decorative circles */}
         <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#B08946]/10" />
         <div className="pointer-events-none absolute -bottom-20 -left-16 h-52 w-52 rounded-full bg-[#B08946]/10" />

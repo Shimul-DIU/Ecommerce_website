@@ -27,7 +27,7 @@ const fallbackStatus = "bg-slate-100 text-slate-600 border-slate-200";
 
 /* ---------------- Stat Card ---------------- */
 const StatCard = ({ label, value, Icon }) => (
-  <div className="group relative h-full overflow-hidden rounded-2xl border border-[#E4DDCE] bg-white p-4 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg sm:p-5">
+  <div className="group relative h-full min-h-[102px] overflow-hidden rounded-2xl border border-[#E4DDCE] bg-white p-4 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg sm:p-5">
     {/* decorative circle */}
     <div className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-[#B08946]/10 transition group-hover:scale-125 sm:h-24 sm:w-24" />
 
@@ -56,7 +56,7 @@ const OverviewSkeleton = () => (
       <div className="h-8 w-48 rounded-md bg-[#E4DDCE]/70" />
     </div>
 
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 2xl:grid-cols-4">
       {[1, 2, 3, 4].map((i) => (
         <div key={i} className="h-28 rounded-2xl bg-[#E4DDCE]/50" />
       ))}
@@ -151,7 +151,7 @@ export default function Overview() {
       )}
 
       {/* ============ STAT CARDS ============ */}
-      <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:gap-4 2xl:grid-cols-4">
         <Link to="/userDashboard/user-orders" className="block">
           <StatCard
             label={t("Total Orders")}
