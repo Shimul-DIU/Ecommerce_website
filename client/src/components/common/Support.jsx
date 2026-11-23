@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useContext, useState } from "react";
+import { LanguageContext } from "../../context/LanguageContext";
 
 const translations = {
   bn: {
@@ -127,25 +128,11 @@ function FaqItem({ q, a }) {
 const emptyForm = { name: "", email: "", orderId: "", category: "order", message: "" };
 
 export default function Support() {
-  const [lang, setLang] = useState("bn");
+  const { language } = useContext(LanguageContext);
+  const lang = language === "BN" ? "bn" : "en";
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
-
-  // সেভ করা ভাষা লোড করা
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("support-lang");
-      if (saved === "bn" || saved === "en") setLang(saved);
-    } catch {}
-  }, []);
-
-  const changeLang = (l) => {
-    setLang(l);
-    try {
-      localStorage.setItem("support-lang", l);
-    } catch {}
-  };
 
   const t = translations[lang];
 
@@ -176,29 +163,6 @@ export default function Support() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-12">
-      {/* Language switcher */}
-      <div className="mb-6 flex justify-end">
-        <div className="inline-flex overflow-hidden rounded-lg border border-gray-300 text-sm">
-          {[
-            { code: "bn", label: "বাংলা" },
-            { code: "en", label: "English" },
-          ].map((l) => (
-            <button
-              key={l.code}
-              type="button"
-              onClick={() => changeLang(l.code)}
-              className={`px-4 py-1.5 font-medium transition ${
-                lang === l.code
-                  ? "bg-indigo-600 text-white"
-                  : "bg-white text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              {l.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Header */}
       <div className="mb-10 text-center">
         <h1 className="text-3xl font-bold text-gray-900">{t.title}</h1>
