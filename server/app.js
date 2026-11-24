@@ -17,6 +17,7 @@ import orderRouter from './routes/orderRoute/clientOrderRoute.js';
 import authRouter from './routes/authRoute.js';
 import reviewRouter from './routes/reviewRouter.js';
 import wishlistRouter from './routes/wishlist.route.js';
+import supportRouter from './routes/supportRoute.js';
 
 const app = express();
 
@@ -50,5 +51,6 @@ app.use('/api/orders', orderRouter);
 
 app.use("/api/reviews", reviewRouter);
 app.use('/api/wishlist', wishlistRouter);
+app.use('/api/support', supportRouter);
 
 export default app;

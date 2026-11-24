@@ -40,6 +40,7 @@ import Women from "../pages/client/Women.jsx";
 import Fishing from "../pages/client/Fishing.jsx";
 import About from "../pages/client/About.jsx";
 import Support from "../components/common/Support.jsx";
+import HelpPage from "../components/common/Help.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -55,6 +56,7 @@ const Router = createBrowserRouter([
       { path: "offers", Component: Offer },
       { path: "contact", Component: Contact },
       { path: "support", Component: Support },
+      { path: "help", Component: HelpPage },
       { path: "about", Component: About },
       { path: "card", Component: Card },
       { path: "login", Component: Login },

@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
+import axiosInstance from "../../utils/axiosInstance";
 
 const translations = {
   bn: {
@@ -133,6 +134,8 @@ export default function Support() {
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const t = translations[lang];
 
@@ -146,15 +149,29 @@ export default function Support() {
     return err;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const err = validate();
     setErrors(err);
-    if (Object.keys(err).length === 0) {
-      // এখানে API call করুন: fetch("/api/support", { method: "POST", body: JSON.stringify({ ...form, lang }) })
-      console.log("Ticket:", form);
+    setSubmitError("");
+    if (Object.keys(err).length === 0 && !isSending) {
+      setIsSending(true);
+      try {
+        await axiosInstance.post("/api/support", {
+          ...form,
+          lang,
+          source: "support-page",
+        });
       setSubmitted(true);
       setForm(emptyForm);
+      } catch (error) {
+        setSubmitError(
+          error.response?.data?.message ||
+            "Could not send the ticket. Please try again."
+        );
+      } finally {
+        setIsSending(false);
+      }
     }
   };
 
@@ -216,6 +233,11 @@ export default function Support() {
               className="space-y-4 rounded-xl border border-gray-200 bg-white p-5"
               noValidate
             >
+              {submitError && (
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                  {submitError}
+                </p>
+              )}
               <div>
                 <input
                   name="name"
@@ -281,9 +303,10 @@ export default function Support() {
 
               <button
                 type="submit"
-                className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                disabled={isSending}
+                className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
               >
-                {t.submit}
+                {isSending ? "..." : t.submit}
               </button>
             </form>
           )}
