@@ -500,7 +500,7 @@ const SocialLogin = async (req, res) => {
       });
     }
 
-    let user = await Users.findOne({ email });
+    let user = await Users.findOne({ email }).select("+password");
 
     const prov = provider || "google";
 
